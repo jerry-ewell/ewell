@@ -14,7 +14,7 @@ export default function Home() {
             <Button type="primary">
               <NavLink to="/project-list">Projects</NavLink>
             </Button>
-            <Button type="ghost">
+            <Button ghost>
               <NavLink to="/create-project">Create</NavLink>
             </Button>
           </Row>

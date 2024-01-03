@@ -10,7 +10,7 @@ import { circulationValidator, periodDurationValidator, Validators } from 'pages
 import { numberGtZEROValidator } from 'utils/validate';
 import { PriceDecimal, ZERO } from 'constants/misc';
 import { RangePickerProps } from 'antd/lib/date-picker';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import { ConfirmTradingPair } from 'pages/CreateProject/types';
 import { useCallback, useMemo, useState } from 'react';
 import Web3Button from 'components/Web3Button';
@@ -50,21 +50,21 @@ const installmentList: FormItemProps[][] = [
 ];
 
 const disabledDate: RangePickerProps['disabledDate'] = (current) => {
-  return current && current < moment().endOf('day').add(-1, 'd');
+  return current && current < dayjs().endOf('day').add(-1, 'd');
 };
 const disabledMinutes = 1;
-const disabledTime: any = (current?: moment.Moment) => {
+const disabledTime: any = (current?: dayjs.Dayjs) => {
   if (!current) return;
-  const now = moment().add(disabledMinutes, 'm');
-  const isHours = now.hours() >= current?.hours();
+  const now = dayjs().add(disabledMinutes, 'm');
+  const isHours = now.hour() >= current?.hour();
   return {
     disabledHours: () => {
-      const arr = new Array(now.hours()).fill('').map((_, k) => k);
+      const arr = new Array(now.hour()).fill('').map((_, k) => k);
       return arr;
     },
     disabledMinutes: () => {
       if (isHours) {
-        const arr = new Array(now.minutes()).fill('').map((_, k) => k);
+        const arr = new Array(now.minute()).fill('').map((_, k) => k);
         return arr;
       }
     },
@@ -216,11 +216,11 @@ function unifyState(state: any): any {
   Object.keys(state || {}).map((k) => {
     const item = state[k];
     if (k.includes('Time')) {
-      const diff = moment(item).diff(moment());
+      const diff = dayjs(item).diff(dayjs());
       if (ZERO.gt(diff)) {
         obj[k] = undefined;
       } else {
-        obj[k] = moment(item);
+        obj[k] = dayjs(item);
       }
     } else {
       obj[k] = item;
@@ -282,7 +282,7 @@ export default function ProjectPanel({ onNext, onPre }: { onNext: () => void; on
       if (i.type === 'datePicker') {
         childrenProps = {
           ...i.childrenProps,
-          showTime: { hideDisabledOptions: true, defaultValue: moment().add(disabledMinutes, 'm') },
+          showTime: { hideDisabledOptions: true, defaultValue: dayjs().add(disabledMinutes, 'm') },
         };
       }
       return { ...i, extra, rules, childrenProps };

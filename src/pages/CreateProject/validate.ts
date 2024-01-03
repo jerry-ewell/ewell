@@ -1,7 +1,7 @@
 import { FormInstance } from 'antd';
 import { NamePath } from 'antd/lib/form/interface';
 import { ZERO } from 'constants/misc';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import { isUrl } from 'utils/reg';
 import { integerGtZEROValidator, integerValidator, numberGtZEROValidator } from 'utils/validate';
 import { ltTip } from './utils';
@@ -50,7 +50,7 @@ export const maxSubscriptionValidator: ValidatorFun = async (form, v) => {
 
 export const startsAtValidator: ValidatorFun = async (form, v) => {
   if (!v) return Promise.reject('please select start time');
-  const endTime: moment.Moment = form.getFieldValue('endTime');
+  const endTime: dayjs.Dayjs = form.getFieldValue('endTime');
   if (endTime && ZERO.plus(endTime.diff(v)).lte(0))
     return Promise.reject('The start date should be before the end date.');
   validateFields(form, ['endTime']);
@@ -59,7 +59,7 @@ export const startsAtValidator: ValidatorFun = async (form, v) => {
 
 export const endsAtValidator: ValidatorFun = async (form, v) => {
   if (!v) return Promise.reject('please select end time');
-  const startTime: moment.Moment = form.getFieldValue('startTime');
+  const startTime: dayjs.Dayjs = form.getFieldValue('startTime');
   if (startTime && ZERO.plus(startTime.diff(v)).gte(0))
     return Promise.reject('The end date should be later than start date.');
   validateFields(form, ['startTime']);

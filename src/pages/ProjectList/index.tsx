@@ -14,7 +14,6 @@ import { useActiveWeb3React } from 'hooks/web3';
 import { useMemo } from 'react';
 import { useDeepCompareEffect, useSetState } from 'react-use';
 import ProjectCard from './components/ProjectCard';
-const { TabPane } = Tabs;
 import './styles.less';
 const defaultActiveKey = '1';
 const LOAD_NUMBER = 20;
@@ -113,18 +112,29 @@ export default function ProjectList() {
   }, [toolSearch, activeKey, account]);
   const loading = !projectList;
   const list = loading ? loaderList : projectList;
+  const tabItems = useMemo(() => {
+    return [
+      {
+        key: '1',
+        label: <div className="tab-title">Projects</div>,
+      },
+      {
+        key: '2',
+        label: <div className="tab-title">My projects</div>,
+      },
+    ];
+  }, []);
   return (
     <div className="common-page project-list">
       <Tabs
         defaultActiveKey={defaultActiveKey}
         activeKey={activeKey}
         centered
+        items={tabItems}
         onChange={(v) => {
           setActiveKey({ activeKey: v });
-        }}>
-        <TabPane tab={<div className="tab-title">Projects</div>} key="1" />
-        <TabPane tab={<div className="tab-title">My projects</div>} key="2" />
-      </Tabs>
+        }}
+      />
       <InfiniteList
         loaded={!projectList || !projectListTotal || projectListTotal <= projectList.length}
         loadMoreData={() => getList(true, toolSearch)}

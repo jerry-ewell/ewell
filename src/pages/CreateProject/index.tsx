@@ -12,7 +12,7 @@ import storages from './storages';
 import './styles.less';
 import { reSetSessionStorage } from './utils';
 const { Step } = Steps;
-const { TabPane } = Tabs;
+// const { TabPane } = Tabs;
 const steps = [
   {
     title: 'Confirm the Trading Pair',
@@ -83,11 +83,37 @@ export default function CreateProject() {
       </Steps>
     );
   }, [current, isMobile]);
+  const items = useMemo(() => {
+    return [
+      {
+        key: '0',
+        label: '',
+        children: (
+          <ConfirmTradingPair tradingPair={tradingPair} ref={ref} onNext={onNext} setTradingPair={setTradingPair} />
+        ),
+      },
+      {
+        key: '1',
+        label: '',
+        children: <ProjectPanel onPre={onPre} onNext={onNext} />,
+      },
+      {
+        key: '2',
+        label: '',
+        children: <AdditionalInformation onNext={onNext} onPre={onPre} />,
+      },
+      {
+        key: '3',
+        label: '',
+        children: <CompleteCreation onPre={onPre} />,
+      },
+    ];
+  }, [tradingPair, ref, onNext, onPre, setTradingPair]);
   return (
     <div className="page-body common-page create-project">
       {stepsMemo}
-      <Tabs activeKey={current.toString()} destroyInactiveTabPane>
-        <TabPane key="0">
+      <Tabs activeKey={current.toString()} items={items} destroyInactiveTabPane>
+        {/* <TabPane key="0">
           <ConfirmTradingPair tradingPair={tradingPair} ref={ref} onNext={onNext} setTradingPair={setTradingPair} />
         </TabPane>
         <TabPane key="1">
@@ -98,7 +124,7 @@ export default function CreateProject() {
         </TabPane>
         <TabPane key="3">
           <CompleteCreation onPre={onPre} />
-        </TabPane>
+        </TabPane> */}
       </Tabs>
     </div>
   );
