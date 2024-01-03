@@ -1,0 +1,35 @@
+@import '../../assets/theme/color.less';
+
+.progress-dot(@bg) {
+  width: 18px;
+  height: 18px;
+  position: absolute;
+  top: 50%;
+  left: 0;
+  transform: translate(-50%, -50%);
+  border: 3px solid @bg-1;
+  box-shadow: 0 0 10px rgba(0 0 0 / 15%);
+  border-radius: 12px;
+  background: @bg;
+  z-index: 10;
+  transition: all 0.4s cubic-bezier(0.08, 0.82, 0.17, 1) 0s;
+}
+
+.base-progress-wrapper {
+  width: 100%;
+  position: relative;
+}
+
+.base-progress {
+  line-height: 62px;
+  font-size: 6px;
+}
+.progress-dot-wrapper {
+  .progress-dot(@progress4);
+}
+.base-progress-active {
+  .progress-dot(@progress2);
+}
+.base-progress-max {
+  .progress-dot(@progress3);
+}

@@ -1,0 +1,81 @@
+@import '../../../../assets/theme/color.less';
+
+.arrow-outlined {
+  width: 17.68px;
+  height: 17.68px;
+  border: 2px solid transparent;
+  border-bottom-color: @border-4;
+  border-left-color: @border-4;
+  display: inline-block;
+}
+
+.whitelist-common-modal {
+  .@{app-prefix}-btn {
+    font-weight: 500;
+    line-height: 50px;
+    height: auto;
+    font-size: 16px;
+  }
+  .@{app-prefix}-modal-content {
+    border-radius: 10px;
+  }
+  .@{app-prefix}-modal-header {
+    padding: 34px 0 21px;
+    margin-left: 70px;
+    margin-right: 70px;
+    border-bottom-color: @border-4;
+    .@{app-prefix}-modal-title {
+      font-weight: 600;
+      font-size: 24px;
+      line-height: 36px;
+      text-align: center;
+      color: @font-2;
+    }
+    .common-modal-left-icon {
+      text-align: left;
+      text-indent: 4px;
+    }
+  }
+  .@{app-prefix}-modal-body {
+    padding: 27px 70px 39px;
+    max-height: 576px;
+    overflow-y: scroll;
+  }
+}
+
+.mobile-site {
+  .whitelist-common-modal {
+    .form-button-wrapper {
+      flex-flow: column wrap;
+      .@{app-prefix}-col {
+        padding: 0 !important;
+        &:last-child {
+          margin-top: 0.9286rem;
+        }
+      }
+    }
+    .@{app-prefix}-btn {
+      line-height: 2.8571rem;
+      font-size: 1.1429rem;
+    }
+    .@{app-prefix}-modal-content {
+      border-radius: 0.3571rem;
+    }
+    .@{app-prefix}-modal-header {
+      padding: 1.3571rem 0 1.0714rem;
+      margin-left: 2.1429rem;
+      margin-right: 2.1429rem;
+      .@{app-prefix}-modal-title {
+        font-size: 1.7143rem;
+        line-height: 2.5714rem;
+      }
+      .common-modal-left-icon {
+        text-indent: 0.2857rem;
+      }
+    }
+    .@{app-prefix}-modal-body {
+      padding: 2rem 2.1429rem 2.7143rem;
+      max-height: calc(75vh - 5.2857rem);
+    }
+  }
+}

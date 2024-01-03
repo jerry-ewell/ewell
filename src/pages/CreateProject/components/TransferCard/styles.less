@@ -1,0 +1,65 @@
+@import '../../../../assets/theme/color.less';
+.transfer-card {
+  border-radius: 12px;
+  margin: auto;
+  width: 90%;
+  max-width: 550px;
+  background: @bg-12;
+  padding: 30px 40px;
+  word-wrap: break-word;
+  word-break: break-all;
+  margin-bottom: 40px;
+  .ewell-alert-info,
+  .ewell-alert-success {
+    background: transparent;
+    border-width: 0;
+    font-size: 16px;
+    .anticon {
+      font-size: 20px;
+    }
+  }
+  .ewell-alert-info .anticon {
+    color: @font-2;
+  }
+  .transfer-tip-row {
+    margin-top: 10px;
+    .title {
+      width: 135px;
+      color: @font-7;
+    }
+    .address {
+      width: calc(100% - 160px);
+    }
+  }
+}
+.create-project .transfer-card .ewell-btn {
+  margin-top: 30px;
+  width: 160px;
+  border-color: @bg-10;
+  color: @font-8;
+}
+
+.mobile-site {
+  .transfer-card {
+    .ewell-alert-info,
+    .ewell-alert-success {
+      font-size: 14px;
+      .anticon {
+        font-size: 18px;
+      }
+    }
+    .transfer-tip-row {
+      margin-top: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      .title {
+        width: auto;
+      }
+      .address {
+        text-align: center;
+        width: auto;
+      }
+    }
+  }
+}

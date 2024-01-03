@@ -1,0 +1,108 @@
+@import '../../assets/theme/color.less';
+.project-info-wrapper {
+  .project-left {
+    margin-right: 50px;
+  }
+
+  .action-card-wrapper {
+    width: 420px;
+    .@{app-prefix}-btn {
+      font-weight: 500;
+    }
+    .@{app-prefix}-btn-primary {
+      width: 100%;
+      border-radius: 10px;
+      text-align: center;
+      height: auto;
+      padding: 0;
+    }
+    .@{app-prefix}-btn-default {
+      height: auto;
+      color: @font-2;
+    }
+  }
+  .action-card-title {
+    font-weight: 600;
+    font-size: 24px;
+    line-height: 36px;
+    color: @font-2;
+    padding-bottom: 21px;
+    border-bottom: 1px solid @border-4;
+    margin-bottom: 34px;
+  }
+}
+
+.utils-modal .project-manner-modal {
+  .@{app-prefix}-modal-body {
+    padding: 34px 90px 46px;
+  }
+  .@{app-prefix}-modal-confirm-title {
+    font-weight: 600;
+    font-size: 24px;
+    line-height: 36px;
+    padding-bottom: 21px;
+  }
+  .@{app-prefix}-modal-confirm-content {
+    margin: 56px 0 51px;
+    font-weight: 300;
+    font-size: 24px;
+    line-height: 36px;
+    color: @font-3;
+    .warning-tip {
+      color: @font-9;
+    }
+  }
+  .@{app-prefix}-btn {
+    font-size: 16px;
+    line-height: 24px;
+    font-weight: 500;
+  }
+  .@{app-prefix}-btn + .@{app-prefix}-btn {
+    margin-left: 20px;
+  }
+}
+
+.mobile-site {
+  .project-info-wrapper {
+    padding: 0 2rem;
+    .project-info-content {
+      display: block;
+    }
+    .project-left {
+      margin-right: 0;
+    }
+
+    .action-card-wrapper {
+      width: 100%;
+      .@{app-prefix}-btn-primary {
+        border-radius: 0.3571rem;
+      }
+    }
+    .action-card-title {
+      font-size: 1.7143rem;
+      line-height: 2.5714rem;
+      padding-bottom: 1.0714rem;
+      margin-bottom: 1.3571rem;
+      text-align: center;
+    }
+  }
+
+  .utils-modal .project-manner-modal {
+    .@{app-prefix}-modal-body {
+      padding: 1.3571rem 2.1429rem 2.8571rem;
+    }
+    .@{app-prefix}-modal-confirm-title {
+      font-size: 1.7143rem;
+      line-height: 2.5714rem;
+    }
+    .@{app-prefix}-modal-confirm-content {
+      margin: 2.0714rem 0 2.5714rem;
+      font-size: 1rem;
+      line-height: 1.5rem;
+      .@{app-prefix}-btn {
+        font-size: 1.1429rem;
+        line-height: 1.7143rem;
+      }
+    }
+  }
+}

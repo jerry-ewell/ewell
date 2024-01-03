@@ -1,0 +1,62 @@
+@import '../../assets/theme/color.less';
+.ido-info-wrapper {
+  .common-card {
+    margin-bottom: 35px;
+    padding: 0 45px;
+    &:last-child {
+      margin-bottom: 80px;
+    }
+  }
+
+  .info-detail {
+    line-height: 47px;
+    font-weight: 400;
+    font-size: 16px;
+    padding-top: 3px;
+    padding-bottom: 13px;
+    li {
+      padding: 0 31px 0 43px;
+      &:nth-of-type(2n) {
+        background-color: @bg-3;
+      }
+    }
+    h6 {
+      font-size: 16px;
+      color: @font-7;
+    }
+    span {
+      font-weight: 600;
+      color: @dark-color;
+    }
+  }
+}
+
+.mobile-site .ido-info-wrapper {
+  padding-top: 2.1429rem;
+  .common-card {
+    margin-bottom: 1.3571rem;
+    padding: 0 2.3571rem;
+  }
+  .project-team-get {
+    margin-bottom: 3rem;
+  }
+
+  .info-detail {
+    line-height: 2.5714rem;
+    font-size: 0.8571rem;
+    padding-top: 0;
+    padding-bottom: 0.4286rem;
+    li {
+      padding: 0 0.7143rem;
+    }
+    h6 {
+      font-size: 0.8571rem;
+    }
+  }
+  .scroll-to-top {
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-bottom: 3rem;
+  }
+}

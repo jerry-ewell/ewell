@@ -1,0 +1,38 @@
+@import '~antd/dist/antd.variable.less';
+@import './assets/theme/customer.theme.less';
+@import './assets/theme/customize.less';
+.page-container {
+  height: calc(100vh - @header-height);
+  color: @font-1;
+  overflow: scroll;
+}
+.page-body {
+  margin-top: 10px;
+  background: white;
+  padding: 10px;
+}
+.vertical-form {
+  .@{app-prefix}-form-item {
+    .@{app-prefix}-form-item-label,
+    .@{app-prefix}-form-item-control {
+      flex: 0 0 100%;
+      max-width: 100%;
+    }
+  }
+  .@{app-prefix}-form-item .@{app-prefix}-form-item-label {
+    padding: 0 0 8px;
+    line-height: 1.5715;
+    white-space: initial;
+    text-align: left;
+  }
+}
+.@{app-prefix}-btn {
+  height: 45px;
+  border-radius: 10px;
+}
+.mobile-site {
+  .@{app-prefix}-btn {
+    height: 40px;
+    border-radius: 5px;
+  }
+}

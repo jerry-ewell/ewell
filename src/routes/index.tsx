@@ -1,0 +1,52 @@
+import { useRoutes } from 'react-router-dom';
+// import { lazy } from 'react';
+// const Example = lazy(() => import('pages/Example'));
+// const Home = lazy(() => import('pages/Home'));
+// const ProjectList = lazy(() => import('pages/ProjectList'));
+// const ProjectInfo = lazy(() => import('pages/ProjectInfo'));
+// const LiquidityUnlock = lazy(() => import('pages/LiquidityUnlock'));
+// const CreateProject = lazy(() => import('pages/CreateProject'));
+// const EditInformation = lazy(() => import('pages/EditInformation'));
+import Example from 'pages/Example';
+import Home from 'pages/Home';
+import ProjectList from 'pages/ProjectList';
+import ProjectInfo from 'pages/ProjectInfo';
+import LiquidityUnlock from 'pages/LiquidityUnlock';
+import CreateProject from 'pages/CreateProject';
+import EditInformation from 'pages/EditInformation';
+
+export const PageRouter = () =>
+  useRoutes([
+    {
+      path: '/',
+      element: <Home />,
+    },
+    {
+      path: '/project-list',
+      element: <ProjectList />,
+    },
+    {
+      path: '/example',
+      element: <Example />,
+    },
+    {
+      path: '/project/:projectId',
+      element: <ProjectInfo />,
+    },
+    {
+      path: '/liquidity-unlock/:projectId',
+      element: <LiquidityUnlock />,
+    },
+    {
+      path: '/create-project',
+      element: <CreateProject />,
+    },
+    {
+      path: '/edit-information/:projectId',
+      element: <EditInformation />,
+    },
+    {
+      path: '*',
+      element: <Home />,
+    },
+  ]);

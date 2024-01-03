@@ -1,0 +1,39 @@
+@import '../../../../assets/theme/color.less';
+
+.edit-white-modal {
+  .@{app-prefix}-form-item-label {
+    font-size: 16px;
+    line-height: 24px;
+    color: @font-7;
+    padding-bottom: 17px;
+  }
+  .@{app-prefix}-input {
+    padding: 20px 20px 31px;
+    height: 84px;
+    font-size: 16px;
+    line-height: 24px;
+    color: @font-10;
+    background: @bg-3;
+    border-radius: 10px;
+    border: none;
+  }
+  .@{app-prefix}-input:focus,
+  .@{app-prefix}-input-focused {
+    box-shadow: none;
+  }
+}
+
+.mobile-site .edit-white-modal {
+  .@{app-prefix}-form-item-label {
+    font-size: 1rem;
+    line-height: 2.5714rem;
+    padding-bottom: 0.6429rem;
+  }
+  .@{app-prefix}-input {
+    padding: 1.2857rem 1.1429rem;
+    height: 5rem;
+    font-size: 0.8571rem;
+    line-height: 1.2857rem;
+    border-radius: 0.7143rem;
+  }
+}

@@ -1,0 +1,56 @@
+@import '../../assets/theme/color.less';
+
+.base-breadcrumb-wrapper {
+  margin-left: 50px;
+  padding: 58px 0;
+  li {
+    display: flex;
+    align-items: center;
+  }
+  li:last-child .@{app-prefix}-breadcrumb-link {
+    color: @primary-color;
+    cursor: auto;
+  }
+  .@{app-prefix}-breadcrumb-link {
+    line-height: 150%;
+    color: @dark-color;
+    font-size: 16px;
+    svg {
+      font-size: 22px;
+    }
+  }
+
+  .@{app-prefix}-breadcrumb-separator {
+    margin: 0 11px;
+  }
+  .separator {
+    width: 8.49px;
+    height: 8.49px;
+    display: inline-block;
+    border-bottom: 2px solid @bg-4;
+    border-left: 2px solid @bg-4;
+    transform: rotate(-135deg);
+  }
+}
+
+.mobile-site {
+  .base-breadcrumb-wrapper {
+    margin-left: 0;
+    padding: 1.5rem 0 2.2857rem;
+
+    .@{app-prefix}-breadcrumb-link {
+      font-size: 1rem;
+      svg {
+        font-size: 1.5714rem;
+      }
+    }
+
+    .@{app-prefix}-breadcrumb-separator {
+      margin: 0 0.6429rem 0 0.5rem;
+    }
+    .separator {
+      width: 0.6064rem;
+      height: 0.6064rem;
+    }
+  }
+}
