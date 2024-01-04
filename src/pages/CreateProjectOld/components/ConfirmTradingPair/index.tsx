@@ -5,7 +5,7 @@ import Web3Button from 'components/Web3Button';
 import { useToken } from 'hooks/tokens';
 import useDebounce from 'hooks/useDebounce';
 import { useActiveWeb3React } from 'hooks/web3';
-import { TradingPair } from 'pages/CreateProject/types';
+import { TradingPair } from 'pages/CreateProjectOld/types';
 import { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
 const layout = { labelCol: { span: 6 }, wrapperCol: { span: 14 } };
 

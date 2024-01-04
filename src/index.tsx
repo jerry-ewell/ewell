@@ -27,7 +27,24 @@ ConfigProvider.config({
 function ContextProviders({ children }: { children?: React.ReactNode }) {
   const { language } = useLanguage();
   return (
-    <ConfigProvider locale={ANTD_LOCAL[language]} autoInsertSpaceInButton={false} prefixCls={prefixCls}>
+    <ConfigProvider
+      locale={ANTD_LOCAL[language]}
+      autoInsertSpaceInButton={false}
+      prefixCls={prefixCls}
+      theme={{
+        token: {
+          colorPrimary: '#070a26',
+          colorTextDescription: '#888997',
+          colorSplit: '#888997',
+        },
+        components: {
+          Steps: {
+            iconSize: 40,
+            iconFontSize: 16,
+            titleLineHeight: 40,
+          },
+        },
+      }}>
       <ProjectProvider>
         <ModalProvider>
           <WhiteListProvider>
