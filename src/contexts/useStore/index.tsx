@@ -4,7 +4,7 @@ import { supportedChainId } from 'constants/index';
 import { ZERO } from 'constants/misc';
 import { useAElfContractContext } from 'contexts/useAElfContract';
 import { useActiveWeb3React } from 'hooks/web3';
-import { createContext, useContext, useEffect, useMemo, useReducer, useState } from 'react';
+import { createContext, ReactNode, useContext, useEffect, useMemo, useReducer, useState } from 'react';
 import { useEffectOnce, useSearchParam } from 'react-use';
 import isMobile from 'utils/isMobile';
 import { switchNetwork } from 'utils/network';
@@ -29,12 +29,12 @@ function reducer(state: any, { type, payload }: any) {
   }
 }
 
-export default function Provider({ children }: { children: React.ReactNode }) {
+export default function Provider({ children }: { children: ReactNode }) {
   const [state, dispatch] = useReducer(reducer, INITIAL_STATE);
-  const { chainId, library, aelfInstance } = useActiveWeb3React();
-  const [contracts] = useAElfContractContext();
+  // const { chainId, library, aelfInstance } = useActiveWeb3React();
+  // const [contracts] = useAElfContractContext();
   const [mobile, setMobile] = useState<boolean>();
-  useMemo(() => initialized(chainId, library, aelfInstance, contracts), [chainId, library, aelfInstance, contracts]);
+  // useMemo(() => initialized(chainId, library, aelfInstance, contracts), [chainId, library, aelfInstance, contracts]);
   const toChainId = useSearchParam('toChainId');
   useEffectOnce(() => {
     if (toChainId && supportedChainId[Number(toChainId) as SupportedChainId])

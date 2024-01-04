@@ -9,10 +9,10 @@ import Footer from 'components/Footer';
 function App() {
   return (
     <>
-      <Modals />
+      {/* <Modals /> */}
       {/* <Suspense fallback={null}> */}
       <BrowserRouter>
-        <Header />
+        {/* <Header /> */}
         <ScrollToTop />
         <div className="page-container">
           <PageRouter />
