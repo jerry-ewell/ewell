@@ -4,20 +4,23 @@
 //! author : suupic : https://github.com/suupic
 //! author : Zeno Zeng : https://github.com/zenozeng
 //! author : uu109 : https://github.com/uu109
-import moment from 'moment/moment';
+// import moment from 'moment/moment';
+import dayjs from 'dayjs';
+import updateLocale from 'dayjs/plugin/updateLocale';
 (function (global, factory) {
-  factory(moment);
-})(this, function (moment) {
+  factory(dayjs);
+})(this, function (dayjs) {
   'use strict';
 
   //! moment.js locale configuration
-
-  var zhCn = moment.defineLocale('zh-cn', {
+  dayjs.extend(updateLocale);
+  var zhCn = dayjs.updateLocale('zh-cn', {
     months: '一月_二月_三月_四月_五月_六月_七月_八月_九月_十月_十一月_十二月'.split('_'),
     monthsShort: '1月_2月_3月_4月_5月_6月_7月_8月_9月_10月_11月_12月'.split('_'),
     weekdays: '星期日_星期一_星期二_星期三_星期四_星期五_星期六'.split('_'),
     weekdaysShort: '周日_周一_周二_周三_周四_周五_周六'.split('_'),
     weekdaysMin: '日_一_二_三_四_五_六'.split('_'),
+    // TODO
     longDateFormat: {
       LT: 'HH:mm',
       LTS: 'HH:mm:ss',
@@ -120,6 +123,5 @@ import moment from 'moment/moment';
       doy: 4, // The week that contains Jan 4th is the first week of the year.
     },
   });
-
   return zhCn;
 });

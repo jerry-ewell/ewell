@@ -21,7 +21,7 @@ export default function CommonModal({
 }: ModalWhiteListProps) {
   return (
     <Modal
-      visible
+      open
       maskClosable={false}
       centered={centered}
       destroyOnClose

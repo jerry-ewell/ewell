@@ -15,24 +15,19 @@ import logo from './images/logo.svg';
 import './styles.less';
 
 function MobileDrawer({
-  visible,
-  setVisible,
+  open,
+  setOpen,
   noAccount,
 }: {
-  visible: boolean;
-  setVisible: (b: boolean) => void;
+  open: boolean;
+  setOpen: (b: boolean) => void;
   noAccount: () => void;
 }) {
   const { account } = useActiveWeb3React();
   const modalDispatch = useModalDispatch();
   const navigate = useNavigate();
   return (
-    <Drawer
-      width={'100%'}
-      closable={false}
-      onClose={() => setVisible(false)}
-      visible={visible}
-      className="header-drawer">
+    <Drawer width={'100%'} closable={false} onClose={() => setOpen(false)} open={open} className="header-drawer">
       <Row
         className="menu-item"
         onClick={() => {
@@ -44,7 +39,7 @@ function MobileDrawer({
       <Row
         onClick={() => {
           navigate('/project-list');
-          setVisible(false);
+          setOpen(false);
         }}
         className="menu-item">
         <IconFont type={Icons.projects} />
@@ -53,7 +48,7 @@ function MobileDrawer({
       <Row
         onClick={() => {
           navigate('/create-project');
-          setVisible(false);
+          setOpen(false);
         }}
         className="menu-item">
         <IconFont type={Icons.create} />
@@ -70,7 +65,7 @@ export default function Header() {
   const { pathname } = useLocation();
   const connect = useAEflConnect();
   const navigate = useNavigate();
-  const [visible, setVisible] = useState<boolean>(false);
+  const [open, setOpen] = useState<boolean>(false);
   const isHome = useMemo(() => {
     return pathname === '/';
   }, [pathname]);
@@ -110,9 +105,9 @@ export default function Header() {
               />
             ) : (
               <IconFont
-                type={!visible ? Icons.menuIcon : Icons.closeIcon}
-                className={clsx('user-icon', 'menu-icon', visible && 'close-icon')}
-                onClick={() => setVisible(!visible)}
+                type={!open ? Icons.menuIcon : Icons.closeIcon}
+                className={clsx('user-icon', 'menu-icon', open && 'close-icon')}
+                onClick={() => setOpen(!open)}
               />
             )
           ) : (
@@ -126,7 +121,7 @@ export default function Header() {
           )}
         </Row>
       </div>
-      {isMobile && <MobileDrawer visible={visible} setVisible={setVisible} noAccount={noAccount} />}
+      {isMobile && <MobileDrawer open={open} setOpen={setOpen} noAccount={noAccount} />}
     </header>
   );
 }

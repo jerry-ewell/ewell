@@ -8,7 +8,7 @@ import { useProjectInfo } from 'contexts/useProjectInfo';
 import { ProjectItemExt } from 'contexts/useProjectInfo/actions';
 import { useProjectInfoByFetch } from 'contexts/useProjectInfo/hooks';
 import { useActiveWeb3React } from 'hooks/web3';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import './styled.less';
@@ -71,7 +71,7 @@ export default function LiquidityUnlock() {
       <BaseBreadcrumb />
       <div className="common-card countdown-wrapper">
         <h3 className="countdown-title">Unlock in</h3>
-        <BaseCountdown value={moment().add(1, 'd').valueOf()} format="DD/HH/mm/ss" delimiter=":" />
+        <BaseCountdown value={dayjs().add(1, 'd').valueOf()} format="DD/HH/mm/ss" delimiter=":" />
       </div>
 
       <div className="common-card pair-info-wrapper">

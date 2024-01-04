@@ -13,7 +13,7 @@ import { useSessionStorage } from 'react-use';
 import { unifyProject, unifyProjectFromInfo } from 'utils/project';
 import storages from '../../storages';
 import { getInfo, getInstallments, reSetSessionStorage } from '../../utils';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import { getProtobufTime } from 'utils';
 import { usePendingProjectAddress } from 'hooks/project';
 import { useBalances } from 'hooks/useBalances';
@@ -41,7 +41,7 @@ export default function CompleteCreation({ onPre }: { onPre: () => void }) {
     .dp(tokenDecimal);
   const onRegister = useCallback(async () => {
     if (!account || loading) return;
-    const now = moment();
+    const now = dayjs();
     if (ZERO.lt(now.diff(info.startTime)) || ZERO.lt(now.diff(info.endTime))) {
       message.error('The start date should be later than now.');
       return;

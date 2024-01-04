@@ -8,13 +8,12 @@ export default function Home() {
       <div className="home-body common-page">
         <div className="home-card">
           <h1>EWELL IDO</h1>
-          {/*  eslint-disable-next-line react/no-unescaped-entities */}
           <p>Dedicated to facilitating DApps' fundraising</p>
           <Row className="home-button-row">
             <Button type="primary">
               <NavLink to="/project-list">Projects</NavLink>
             </Button>
-            <Button type="ghost">
+            <Button ghost>
               <NavLink to="/create-project">Create</NavLink>
             </Button>
           </Row>

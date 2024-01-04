@@ -6,7 +6,7 @@ import { useProjectInfo } from 'contexts/useProjectInfo';
 import { basicProjectInfoView } from 'contexts/useProjectInfo/actions';
 import { useProjectInfoDispatch } from 'contexts/useProjectInfo/hooks';
 import { useActiveWeb3React } from 'hooks/web3';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { PROGRESS_RATE } from 'types/project';
 import { parseInputNumberChange } from 'utils/input';
@@ -224,7 +224,7 @@ export default function JoinCard() {
           </h3>
           {idoProgressRate === PROGRESS_RATE.comingSoon && (
             <BaseCountdown
-              value={moment((idoInfo?.startTime ?? 0) * 1000).valueOf()}
+              value={dayjs((idoInfo?.startTime ?? 0) * 1000).valueOf()}
               format="DD/HH/mm/ss"
               delimiter=":"
               onFinish={successBack}
@@ -232,7 +232,7 @@ export default function JoinCard() {
           )}
           {idoProgressRate === PROGRESS_RATE.onGoing && (
             <BaseCountdown
-              value={moment((idoInfo?.endTime ?? 0) * 1000).valueOf()}
+              value={dayjs((idoInfo?.endTime ?? 0) * 1000).valueOf()}
               format="DD/HH/mm/ss"
               delimiter=":"
               onFinish={successBack}

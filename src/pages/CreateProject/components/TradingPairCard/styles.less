@@ -1,0 +1,53 @@
+@primary-text: #070a26;
+
+.trading-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 14px 24px;
+  border-radius: 8px;
+  box-sizing: border-box;
+  border: 1px solid @primary-text;
+  cursor: pointer;
+
+  .card-left {
+    display: flex;
+    align-items: center;
+    
+    .token-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 16px;
+      margin-right: 8px;
+      background-color: @primary-text;
+      text-align: center;
+      color: #fff;
+      font-size: 26px;
+      line-height: 32px;
+    }
+    .token-name {
+      font-size: 16px;
+      line-height: 24px;
+    }
+    .chain-info {
+      font-size: 12px;
+      line-height: 20px;
+    }
+  }
+
+  .card-right {
+    color: @primary-text;
+    .token-quantity {
+      font-size: 16px;
+      line-height: 24px;
+      font-weight: 500;
+      
+    }
+    .token-value {
+      font-size: 12px;
+      line-height: 20px;
+    }
+  }
+  
+}
