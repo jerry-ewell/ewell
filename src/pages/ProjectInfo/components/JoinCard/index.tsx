@@ -403,7 +403,6 @@ export default function JoinCard() {
                         Do you want to continue?
                       </>
                     ),
-                    closeIcon: () => null,
                     onOk: UnInvestClick,
                   });
                 }}

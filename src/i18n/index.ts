@@ -44,7 +44,7 @@ export function useLanguage(): {
 } {
   const { i18n } = useTranslation();
   const changeLanguage = useCallback(
-    (value) => {
+    (value: any) => {
       if (i18n.language !== value && LOCAL_LANGUAGE_LIST.includes(value)) {
         if (value === 'zh') {
           dayjs.locale('zh-cn');

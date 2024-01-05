@@ -51,7 +51,6 @@ export default function CreateProject() {
       showModal({
         title: 'Tips',
         content: 'Do you want to autofill what you filled in last time?',
-        closeIcon: () => null,
         onOk: () => {
           ref.current?.setFieldsValue(tradingPair);
         },
