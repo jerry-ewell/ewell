@@ -11,7 +11,7 @@ export type ToolItemInstance = {
 export interface ModalWhiteListProps extends ModalProps {
   className?: string;
   leftCallBack?: () => void;
-  leftElement?: React.ReactNode | boolean;
+  leftElement?: ReactNode | boolean;
   transitionName?: string;
 }
 /**
@@ -37,7 +37,7 @@ export interface WhiteListConfigType {
   // projectId?: string;
 }
 export interface WhiteListProviderProps extends WhiteListConfigType {
-  children?: React.ReactNode;
+  children?: ReactNode;
 }
 
 export enum MODAL_ACTION_TYPE {

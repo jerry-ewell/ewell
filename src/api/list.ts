@@ -1,4 +1,3 @@
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { API_REQ_FUNCTION, UrlObj } from './types';
 
 export const DEFAULT_METHOD = 'GET';

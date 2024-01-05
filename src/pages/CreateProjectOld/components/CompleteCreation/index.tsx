@@ -104,9 +104,9 @@ export default function CompleteCreation({ onPre }: { onPre: () => void }) {
           </Button>
         </Col>
         <Col span={11} offset={2}>
-          <Web3Button disabled={transferBalance.gt(0)} type="primary" loading={loading} onClick={onRegister}>
+          {/* <Web3Button disabled={transferBalance.gt(0)} type="primary" loading={loading} onClick={onRegister}>
             Continue
-          </Web3Button>
+          </Web3Button> */}
         </Col>
       </Row>
       <ToTop />

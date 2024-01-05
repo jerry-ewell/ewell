@@ -79,9 +79,9 @@ export function InformationForm({
             </Button>
           </Col>
           <Col span={11} offset={2}>
-            <Web3Button loading={loading} htmlType="submit" type="primary">
+            {/* <Web3Button loading={loading} htmlType="submit" type="primary">
               Continue
-            </Web3Button>
+            </Web3Button> */}
           </Col>
         </Row>
         <ToTop />

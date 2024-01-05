@@ -1,6 +1,6 @@
-import { useCallback, useMemo } from 'react';
+import { useMemo } from 'react';
 import { useWalletContext } from '.';
-import { useWebLogin, WebLoginState } from 'aelf-web-login';
+import { useWebLogin } from 'aelf-web-login';
 
 export function useWallet() {
   const [state] = useWalletContext();
@@ -9,11 +9,10 @@ export function useWallet() {
   const wallet = useMemo(() => {
     return state.wallet;
   }, [state]);
-  const isLogin = useMemo(() => loginState === WebLoginState.logining || !!wallet, [loginState, wallet]);
 
   return {
     wallet,
-    isLogin,
+    loginState,
     login,
     logout,
   };

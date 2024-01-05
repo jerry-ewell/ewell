@@ -338,9 +338,9 @@ export default function ProjectPanel({ onNext, onPre }: { onNext: () => void; on
             </Button>
           </Col>
           <Col span={11} offset={2}>
-            <Web3Button htmlType="submit" type="primary">
+            {/* <Web3Button htmlType="submit" type="primary">
               Continue
-            </Web3Button>
+            </Web3Button> */}
           </Col>
         </Row>
         <ToTop />

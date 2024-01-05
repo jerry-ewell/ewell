@@ -12,7 +12,7 @@ function App() {
       {/* <Modals /> */}
       {/* <Suspense fallback={null}> */}
       <BrowserRouter>
-        {/* <Header /> */}
+        <Header />
         <ScrollToTop />
         <div className="page-container">
           <PageRouter />

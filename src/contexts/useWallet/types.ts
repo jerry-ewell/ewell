@@ -1,5 +1,5 @@
 import { IWallet } from './Wallet/types';
 
-export type WalletContextState = {
+export type TWalletContextState = {
   wallet?: IWallet;
 };

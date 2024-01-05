@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { setThemes } from 'utils/themes';
 import './styles.less';
 import { useWallet } from 'contexts/useWallet/hooks';
+import Web3Button from 'components/Web3Button';
 
 export default function Example() {
   const [url, setUrl] = useState('');
@@ -17,6 +18,12 @@ export default function Example() {
 
   return (
     <div>
+      <Web3Button
+        onClick={() => {
+          console.log('111');
+        }}>
+        Continue
+      </Web3Button>
       <Button
         type="primary"
         onClick={() => {

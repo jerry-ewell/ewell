@@ -22,7 +22,7 @@ class Wallet implements IWallet {
   }
 
   public callContract<T, R>(params: CallContractParams<T>): Promise<R> {
-    if (this.walletType === WalletType.elf) {
+    if (this.walletType !== WalletType.portkey) {
       return this._callContract(params);
     }
 

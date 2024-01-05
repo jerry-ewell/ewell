@@ -100,9 +100,9 @@ const ConfirmTradingPair = forwardRef(
               </Col>
             );
           })}
-          <Web3Button htmlType="submit" type="primary">
+          {/* <Web3Button htmlType="submit" type="primary">
             Continue
-          </Web3Button>
+          </Web3Button> */}
         </Col>
       </Form>
     );

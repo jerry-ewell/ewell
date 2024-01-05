@@ -1,13 +1,13 @@
 import { Button, Col, Row } from 'antd';
 import { useMobile } from 'contexts/useStore/hooks';
 
-interface ModalFooter {
+interface IModalFooter {
   onCancel?: (e?: any) => void;
   loading?: boolean;
   onConfirm?: (e?: any) => void;
 }
 
-export default function ModalFooter({ onCancel, loading, onConfirm }: ModalFooter) {
+export default function ModalFooter({ onCancel, loading, onConfirm }: IModalFooter) {
   const isMobile = useMobile();
   return (
     <Row justify="space-between" gutter={isMobile ? 0 : 20} className="form-button-wrapper">

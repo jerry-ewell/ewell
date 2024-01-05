@@ -14,6 +14,7 @@ import 'aelf-web-login/dist/assets/index.css';
 import { useLanguage } from 'i18n';
 import { ANTD_LOCAL } from 'i18n/config';
 import { ReactNode } from 'react';
+import StoreProvider from './contexts/useStore';
 
 function ContextProviders({ children }: { children?: ReactNode }) {
   const { language } = useLanguage();
@@ -36,14 +37,16 @@ function ContextProviders({ children }: { children?: ReactNode }) {
           },
         },
       }}>
-      {children}
+      <StoreProvider>
+        <WalletProvider>{children}</WalletProvider>
+      </StoreProvider>
     </ConfigProvider>
   );
 }
 ReactDOM.render(
-  <WalletProvider>
+  <ContextProviders>
     <App />
-  </WalletProvider>,
+  </ContextProviders>,
   document.getElementById('root'),
 );
 

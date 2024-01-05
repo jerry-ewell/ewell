@@ -14,67 +14,67 @@ import { shortenAddress } from 'utils';
 import logo from './images/logo.svg';
 import './styles.less';
 
-function MobileDrawer({
-  open,
-  setOpen,
-  noAccount,
-}: {
-  open: boolean;
-  setOpen: (b: boolean) => void;
-  noAccount: () => void;
-}) {
-  const { account } = useActiveWeb3React();
-  const modalDispatch = useModalDispatch();
-  const navigate = useNavigate();
-  return (
-    <Drawer width={'100%'} closable={false} onClose={() => setOpen(false)} open={open} className="header-drawer">
-      <Row
-        className="menu-item"
-        onClick={() => {
-          !account ? noAccount() : modalDispatch(basicModalView.setAccountModal.actions(true));
-        }}>
-        <IconFont type={Icons.user} />
-        {account ? shortenAddress(account) : 'Connect'}
-      </Row>
-      <Row
-        onClick={() => {
-          navigate('/project-list');
-          setOpen(false);
-        }}
-        className="menu-item">
-        <IconFont type={Icons.projects} />
-        Projects
-      </Row>
-      <Row
-        onClick={() => {
-          navigate('/create-project');
-          setOpen(false);
-        }}
-        className="menu-item">
-        <IconFont type={Icons.create} />
-        Create
-      </Row>
-    </Drawer>
-  );
-}
+// function MobileDrawer({
+//   open,
+//   setOpen,
+//   noAccount,
+// }: {
+//   open: boolean;
+//   setOpen: (b: boolean) => void;
+//   noAccount: () => void;
+// }) {
+//   const { account } = useActiveWeb3React();
+//   const modalDispatch = useModalDispatch();
+//   const navigate = useNavigate();
+//   return (
+//     <Drawer width={'100%'} closable={false} onClose={() => setOpen(false)} open={open} className="header-drawer">
+//       <Row
+//         className="menu-item"
+//         onClick={() => {
+//           !account ? noAccount() : modalDispatch(basicModalView.setAccountModal.actions(true));
+//         }}>
+//         <IconFont type={Icons.user} />
+//         {account ? shortenAddress(account) : 'Connect'}
+//       </Row>
+//       <Row
+//         onClick={() => {
+//           navigate('/project-list');
+//           setOpen(false);
+//         }}
+//         className="menu-item">
+//         <IconFont type={Icons.projects} />
+//         Projects
+//       </Row>
+//       <Row
+//         onClick={() => {
+//           navigate('/create-project');
+//           setOpen(false);
+//         }}
+//         className="menu-item">
+//         <IconFont type={Icons.create} />
+//         Create
+//       </Row>
+//     </Drawer>
+//   );
+// }
 
 export default function Header() {
   const isMobile = useMobile();
-  const { account } = useActiveWeb3React();
-  const modalDispatch = useModalDispatch();
+  // const { account } = useActiveWeb3React();
+  // const modalDispatch = useModalDispatch();
   const { pathname } = useLocation();
-  const connect = useAEflConnect();
+  // const connect = useAEflConnect();
   const navigate = useNavigate();
   const [open, setOpen] = useState<boolean>(false);
   const isHome = useMemo(() => {
     return pathname === '/';
   }, [pathname]);
 
-  const noAccount = useCallback(() => {
-    if (!isMobile || ChainConstants.chainType !== 'ELF')
-      return modalDispatch(basicModalView.setWalletModal.actions(true));
-    connect();
-  }, [connect, isMobile, modalDispatch]);
+  // const noAccount = useCallback(() => {
+  //   if (!isMobile || ChainConstants.chainType !== 'ELF')
+  //     return modalDispatch(basicModalView.setWalletModal.actions(true));
+  //   connect();
+  // }, [connect, isMobile, modalDispatch]);
 
   return (
     <header className="header">
@@ -96,7 +96,7 @@ export default function Header() {
               </Button>
             </>
           ) : null}
-          {isMobile && account ? (
+          {/* {isMobile && account ? (
             isHome ? (
               <IconFont
                 type={Icons.user}
@@ -118,10 +118,10 @@ export default function Header() {
               }}>
               {account ? shortenAddress(account) : 'Connect'}
             </Button>
-          )}
+          )} */}
         </Row>
       </div>
-      {isMobile && <MobileDrawer open={open} setOpen={setOpen} noAccount={noAccount} />}
+      {/* {isMobile && <MobileDrawer open={open} setOpen={setOpen} noAccount={noAccount} />} */}
     </header>
   );
 }
