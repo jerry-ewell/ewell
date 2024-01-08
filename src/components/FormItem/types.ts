@@ -1,7 +1,19 @@
-import type { CascaderProps, DatePickerProps, InputProps, RadioProps, RowProps, SelectProps, UploadProps } from 'antd';
+import type {
+  CascaderProps,
+  DatePickerProps,
+  InputProps,
+  RadioProps,
+  RowProps,
+  SelectProps,
+  UploadProps,
+  InputNumberProps,
+  FlexProps,
+} from 'antd';
 import type { PasswordProps, TextAreaProps } from 'antd/lib/input';
 import type { FormTreeProps } from './components/FormTree';
 import type { CommonSelectItem } from 'components/CommonSelect';
+import { FormItemProps } from './index';
+import { ReactHTML, ReactHTMLElement } from 'react';
 
 export type inputProps = {
   type: 'input';
@@ -78,5 +90,29 @@ export type searchSelectProps = {
 export type customizeProps = {
   type: 'customize';
   children?: JSX.Element;
+  childrenProps?: any;
+};
+
+export type inputNumberProps = {
+  type: 'inputNumber';
+  childrenProps?: InputNumberProps;
+};
+export type FieldsGroupProps = {
+  type: 'fieldsGroup';
+  label: string;
+  name?: string;
+  fieldsList: FormItemProps[];
+  childrenProps?: any;
+};
+
+export type inlineFieldProps = {
+  type: 'inlineField';
+  inlineFieldList: Omit<FormItemProps, 'inlineFieldProps'>[];
+  flexProps?: FlexProps;
+  childrenProps?: any;
+};
+export type pureTextProps = {
+  type: 'pureText';
+  text?: string;
   childrenProps?: any;
 };

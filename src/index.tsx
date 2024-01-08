@@ -36,12 +36,19 @@ function ContextProviders({ children }: { children?: React.ReactNode }) {
           colorPrimary: '#070a26',
           colorTextDescription: '#888997',
           colorSplit: '#888997',
+          controlHeight: 48,
         },
         components: {
           Steps: {
             iconSize: 40,
             iconFontSize: 16,
             titleLineHeight: 40,
+          },
+          Form: {
+            itemMarginBottom: 48,
+            labelRequiredMarkColor: '#FF703D',
+            labelFontSize: 16,
+            verticalLabelMargin: '0 0 4px',
           },
         },
       }}>
