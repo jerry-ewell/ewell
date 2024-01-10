@@ -54,10 +54,7 @@
     "web3-core": "^1.6.1",
     "web3-eth-contract": "^1.6.1",
     "web3-utils": "^1.6.1",
-    "@react-spring/web": "^9.7.0",
-    "@reduxjs/toolkit": "^1.8.5",
-    "react-redux": "^8.0.5",
-    "redux-persist": "^6.0.0"
+    "@react-spring/web": "^9.7.0"
   },
   "browserslist": {
     "production": [
