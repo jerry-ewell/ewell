@@ -15,13 +15,14 @@ import { useLanguage } from 'i18n';
 import { ANTD_LOCAL } from 'i18n/config';
 import { ReactNode } from 'react';
 import StoreProvider from './contexts/useStore';
+import { AELFDProvider } from 'test-my-design';
 
 function ContextProviders({ children }: { children?: ReactNode }) {
   const { language } = useLanguage();
   return (
-    <ConfigProvider
-      locale={ANTD_LOCAL[language]}
-      autoInsertSpaceInButton={false}
+    <AELFDProvider
+      // locale={ANTD_LOCAL[language]}
+      // autoInsertSpaceInButton={false}
       prefixCls={prefixCls}
       theme={{
         token: {
@@ -40,7 +41,7 @@ function ContextProviders({ children }: { children?: ReactNode }) {
       <StoreProvider>
         <WalletProvider>{children}</WalletProvider>
       </StoreProvider>
-    </ConfigProvider>
+    </AELFDProvider>
   );
 }
 ReactDOM.render(

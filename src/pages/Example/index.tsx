@@ -1,10 +1,10 @@
-import { Button } from 'antd';
 import { useLockCallback } from 'hooks';
 import { useState } from 'react';
 import { setThemes } from 'utils/themes';
 import './styles.less';
 import { useWallet } from 'contexts/useWallet/hooks';
 import Web3Button from 'components/Web3Button';
+import { Tabs, Search, Button, Input, Pagination, Dropdown, Typography, Collapse } from 'test-my-design';
 
 export default function Example() {
   const [url, setUrl] = useState('');
@@ -25,7 +25,7 @@ export default function Example() {
         Continue
       </Web3Button>
       <Button
-        type="primary"
+        // type="primary"
         onClick={() => {
           login();
         }}>
@@ -44,6 +44,10 @@ export default function Example() {
       <Button type="primary" onClick={() => setThemes('light')}>
         light
       </Button>
+      <div style={{ width: '300px', height: '500px' }}>
+        <Pagination total={100}></Pagination>
+      </div>
+
       {/* <Network /> */}
       <div className="dark-box" />
       <div className="light-box" />
