@@ -6,6 +6,22 @@ const NETWORK_CONFIG_LIST = {
     webLoginGraphqlUrl: 'https://dapp-portkey.portkey.finance/Portkey_DID/PortKeyIndexerCASchema/graphql',
     webLoginRequestDefaultsUrl: 'https://did-portkey.portkey.finance',
     webLoginConnectUrl: 'https://auth-portkey.portkey.finance',
+    ewellContractAddress: '',
+    whitelistContractAddress: '',
+    mainChainInfo: {
+      chainId: 'AELF',
+      exploreUrl: 'https://explorer.aelf.io/',
+      endPoint: '',
+      caContractAddress: '',
+      tokenContractAddress: 'JRmBduh4nXWi1aXgdUsj5gJrzeZb2LxmrAbf7W99faZSvoAaE',
+    },
+    sideChainInfo: {
+      chainId: 'tDVV',
+      exploreUrl: '',
+      endPoint: '',
+      caContractAddress: '',
+      tokenContractAddress: '',
+    },
   },
   testnet: {
     networkType: 'TESTNET',
@@ -13,10 +29,49 @@ const NETWORK_CONFIG_LIST = {
     sideChainId: 'tDVW',
     webLoginGraphqlUrl: 'https://dapp-portkey.portkey.finance/Portkey_DID/PortKeyIndexerCASchema/graphql',
     webLoginConnectUrl: 'https://auth-portkey-test.portkey.finance',
+    ewellContractAddress: '',
+    whitelistContractAddress: '',
+    mainChainInfo: {
+      chainId: 'AELF',
+      exploreUrl: '',
+      endPoint: '',
+      caContractAddress: '',
+      tokenContractAddress: '',
+    },
+    sideChainInfo: {
+      chainId: 'tDVW',
+      exploreUrl: '',
+      endPoint: '',
+      caContractAddress: '',
+      tokenContractAddress: '',
+    },
   },
-  test1: {},
+  test3: {
+    networkType: 'MAIN',
+    mainChainId: 'AELF',
+    sideChainId: 'tDVV',
+    webLoginGraphqlUrl: 'http://192.168.66.203:8083/AElfIndexer_DApp/PortKeyIndexerCASchema/graphql',
+    webLoginRequestDefaultsUrl: 'http://192.168.66.203:5001',
+    webLoginConnectUrl: 'http://192.168.66.203:8001',
+    ewellContractAddress: 'C7ZUPUHDwG2q3jR5Mw38YoBHch2XiZdiK6pBYkdhXdGrYcXsb',
+    whitelistContractAddress: '2cGT3RZZy6UJJ3eJPZdWMmuoH2TZBihvMtAtKvLJUaBnvskK2x',
+    mainChainInfo: {
+      chainId: 'AELF',
+      exploreUrl: 'http://192.168.67.156:8000',
+      endPoint: 'http://192.168.66.3:8000',
+      caContractAddress: '2LUmicHyH4RXrMjG4beDwuDsiWJESyLkgkwPdGTR8kahRzq5XS',
+      tokenContractAddress: 'JRmBduh4nXWi1aXgdUsj5gJrzeZb2LxmrAbf7W99faZSvoAaE',
+    },
+    sideChainInfo: {
+      chainId: 'tDVV',
+      exploreUrl: 'http://192.168.66.113:8000',
+      endPoint: 'http://192.168.66.241:8000',
+      caContractAddress: 'RXcxgSXuagn8RrvhQAV81Z652EEYSwR6JLnqHYJ5UVpEptW8Y',
+      tokenContractAddress: '7RzVGiuVWkvL4VfVHdZfQF2Tri3sgLe9U991bohHFfSRZXuGX',
+    },
+  },
 };
 
-export const NETWORK_CONFIG = NETWORK_CONFIG_LIST['mainnet'];
+export const NETWORK_CONFIG = NETWORK_CONFIG_LIST['test3'];
 
 export const DEFAULT_CHAIN_ID = NETWORK_CONFIG.sideChainId;

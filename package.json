@@ -23,7 +23,7 @@
     "@web3-react/injected-connector": "^6.0.7",
     "@web3-react/walletconnect-connector": "^6.2.8",
     "aelf-sdk": "^3.2.39",
-    "aelf-web-login": "^1.1.10-alpha",
+    "aelf-web-login": "^1.1.10-alpha.1",
     "antd": "^5.12.2",
     "axios": "^0.24.0",
     "bignumber.js": "^9.0.1",

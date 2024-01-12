@@ -2,18 +2,26 @@
 @import '../../assets/theme/constants.less';
 .header {
   position: relative;
-  background: @bg-2;
+  // background: @bg-2;
   // z-index: 999;
+
   .header-body {
     margin: auto;
     height: 70px;
     width: 100%;
-    max-width: @page-width; 
+    padding: 0 40px;
+    max-width: @page-width-1360; 
     justify-content: space-between;
   }
+
+  @media (max-width: 1024px) {
+    .header-body {
+      padding: 0 20px;
+    }
+  }
+
   .header-logo{
-    margin-left: 10px;
-    height: 60%;
+    height: 24px;
   }
   .btn-row {
     button {
@@ -29,11 +37,11 @@
 }
 .mobile-site {
   .header {
-    padding: 0 20px;
-    background: @bg-7;
+    // padding: 0 20px;
+    // background: @bg-7;
     .header-logo{
       margin-left: 0;
-      height: 45%;
+      height: 24px;
     }
     .btn-row {
       button {

@@ -1,24 +1,24 @@
-import { WalletInfo, WalletType, CallContractParams } from 'aelf-web-login';
-import { CallContractFunc, GetSignatureFunc, IWallet, IWalletProps } from './types';
+import { WalletInfo, WalletType, CallContractParams, SignatureData, SignatureParams } from 'aelf-web-login';
+import { CallContractFunc, GetSignatureFunc, IWallet, IWalletProps, TSignatureParams } from './types';
 
 class Wallet implements IWallet {
   walletInfo: WalletInfo;
   walletType: WalletType;
-  getSignature: GetSignatureFunc;
+  _getSignature: GetSignatureFunc;
   _callContract: CallContractFunc;
 
   constructor(props: IWalletProps) {
     this.walletInfo = props.walletInfo;
     this.walletType = props.walletType;
     this._callContract = props.callContract;
-    this.getSignature = props.getSignature;
+    this._getSignature = props.getSignature;
   }
 
   setCallContract(callContract: CallContractFunc) {
     this._callContract = callContract;
   }
   setGetSignature(getSignature: GetSignatureFunc) {
-    this.getSignature = getSignature;
+    this._getSignature = getSignature;
   }
 
   public callContract<T, R>(params: CallContractParams<T>): Promise<R> {
@@ -36,6 +36,15 @@ class Wallet implements IWallet {
         methodName: params.methodName,
         args: params.args,
       },
+    });
+  }
+
+  getSignature(params: TSignatureParams): Promise<SignatureData> {
+    return this._getSignature({
+      // TODO: add appName
+      appName: '',
+      address: this.walletInfo.address,
+      ...params,
     });
   }
 }

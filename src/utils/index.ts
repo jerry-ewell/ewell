@@ -74,7 +74,7 @@ export function getExploreLink(data: string, type: 'transaction' | 'token' | 'ad
   }
 }
 
-export const getProtobufTime = (t?: string) => {
+export const getProtobufTime = (t?: string | number | Date) => {
   const time = t ? new Date(t) : new Date();
   return {
     seconds: Math.ceil(time.getTime() / 1000),

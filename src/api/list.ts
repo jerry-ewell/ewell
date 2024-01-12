@@ -15,22 +15,22 @@ export const DEFAULT_METHOD = 'GET';
  * @description api configuration default method is from DEFAULT_METHOD
  * @type {UrlObj}  // The type of this object from UrlObj.
  */
-export const BASE_APIS = {
-  getCurrentBlockHeight: '',
+
+const AuthList = {
+  token: {
+    target: '/connect/token',
+    baseConfig: { method: 'POST' },
+  },
 };
 
 const ProjectApiList = {
-  list: '/api/app/ido/crowdfunding-project',
+  list: '/api/app/project/list',
 };
 /**
  * api request extension configuration directory
  * @description object.key // The type of this object key comes from from @type {UrlObj}
  */
-export const EXPAND_APIS = { project: ProjectApiList };
-
-export type BASE_REQ_TYPES = {
-  [x in keyof typeof BASE_APIS]: API_REQ_FUNCTION;
-};
+export const EXPAND_APIS = { project: ProjectApiList, auth: AuthList };
 
 export type EXPAND_REQ_TYPES = {
   [X in keyof typeof EXPAND_APIS]: {

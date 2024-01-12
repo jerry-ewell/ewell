@@ -15,30 +15,16 @@ import { useLanguage } from 'i18n';
 import { ANTD_LOCAL } from 'i18n/config';
 import { ReactNode } from 'react';
 import StoreProvider from './contexts/useStore';
+import ViewContractProvider from 'contexts/useViewContract';
 
 function ContextProviders({ children }: { children?: ReactNode }) {
   const { language } = useLanguage();
   return (
-    <ConfigProvider
-      locale={ANTD_LOCAL[language]}
-      autoInsertSpaceInButton={false}
-      prefixCls={prefixCls}
-      theme={{
-        token: {
-          colorPrimary: '#070a26',
-          colorTextDescription: '#888997',
-          colorSplit: '#888997',
-        },
-        components: {
-          Steps: {
-            iconSize: 40,
-            iconFontSize: 16,
-            titleLineHeight: 40,
-          },
-        },
-      }}>
+    <ConfigProvider locale={ANTD_LOCAL[language]} autoInsertSpaceInButton={false} prefixCls={prefixCls}>
       <StoreProvider>
-        <WalletProvider>{children}</WalletProvider>
+        <ViewContractProvider>
+          <WalletProvider>{children}</WalletProvider>
+        </ViewContractProvider>
       </StoreProvider>
     </ConfigProvider>
   );

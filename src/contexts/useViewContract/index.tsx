@@ -3,7 +3,7 @@ import React, { createContext, useContext, useMemo, useReducer } from 'react';
 import { TViewContractState } from './types';
 
 export const DESTROY = 'DESTROY';
-const SET_WALLET = 'SET_WALLET';
+export const SET_VIEW_CONTRACT = 'SET_VIEW_CONTRACT';
 
 const INITIAL_STATE = {};
 const ViewContractContext = createContext<any>(INITIAL_STATE);
@@ -15,12 +15,6 @@ export function useViewContractContext(): [TViewContractState, React.Dispatch<an
 //reducer
 function reducer(state: any, { type, payload }: any) {
   switch (type) {
-    case SET_WALLET: {
-      return {
-        ...state,
-        wallet: payload,
-      };
-    }
     case DESTROY: {
       return {};
     }

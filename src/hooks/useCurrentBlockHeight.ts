@@ -6,7 +6,7 @@ import { useActiveWeb3React } from './web3';
 import Web3 from 'web3';
 import { getBlockHeight as getAElfBlockHeight } from 'utils/aelfUtils';
 export async function getBlockHeight() {
-  const blockHeight: any = await request.getCurrentBlockHeight();
+  const blockHeight: any = await (request as any).getCurrentBlockHeight();
   if (!blockHeight || blockHeight?.error) {
     message.error('getCurrencyBlockHeight error');
     return;
