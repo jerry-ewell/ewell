@@ -43,6 +43,7 @@ function ContextProviders({ children }: { children?: React.ReactNode }) {
             iconSize: 40,
             iconFontSize: 16,
             titleLineHeight: 40,
+            finishIconBorderColor: '#070A26',
           },
           Form: {
             itemMarginBottom: 48,

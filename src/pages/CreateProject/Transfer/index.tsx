@@ -3,8 +3,12 @@ import { Button, Steps } from 'antd';
 import { stepsItems } from '../constants';
 import WhiteArrow from 'assets/images/project/whiteArrow.png';
 import './styles.less';
+import { useLocalStorage } from 'react-use';
+import storages from '../storages';
 
 const Transfer: React.FC = () => {
+  const [additional] = useLocalStorage(storages.AdditionalInformation);
+  // const [projectPanel] = useLocalStorage(storages.ProjectPanel);
   return (
     <div className="transfer-page">
       <div className="common-page-1360 transfer-container">

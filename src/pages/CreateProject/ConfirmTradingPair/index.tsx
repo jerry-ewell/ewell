@@ -2,9 +2,9 @@ import React from 'react';
 import TradingPairCard from '../components/TradingPairCard';
 import './styles.less';
 import { Button } from 'antd';
-import { ICreateStepPorps } from '../types';
+import { CreateStepPorps } from '../types';
 
-const ConfirmTradingPair: React.FC<ICreateStepPorps> = ({ onNext, onPre }) => {
+const ConfirmTradingPair: React.FC<CreateStepPorps> = ({ onNext, onPre }) => {
   return (
     <div className="trading-page">
       <div className="trading-title">Start your new project in EWELL</div>
