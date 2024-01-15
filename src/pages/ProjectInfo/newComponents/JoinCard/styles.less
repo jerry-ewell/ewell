@@ -1,0 +1,91 @@
+@import '@assets/theme/color.less';
+
+.join-card-wrapper {
+  padding: 24px;
+  border: 1px solid #070a26;
+  border-radius: 8px;
+
+  span {
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 22px;
+    color: #070a26;
+  }
+
+  .purple-text {
+    color: #863dff;
+  }
+
+  .swap-progress-wrapper {
+    .title {
+      font-size: 16px;
+      font-weight: 500;
+      line-height: 24px;
+      color: #070a26;
+    }
+    .status {
+      padding: 0 8px;
+      border-radius: 200px;
+      background-color: #c1c2c9;
+      font-size: 12px;
+      font-weight: 400;
+      line-height: 20px;
+      color: @font-4;
+      &.purple {
+        background-color: #863dff;
+      }
+    }
+    .progress {
+      display: block;
+    }
+    .percent,
+    .amount {
+      font-size: 16px;
+      font-weight: 500;
+      line-height: 24px;
+      color: #070a26;
+    }
+  }
+
+  .divider {
+    margin: 16px 0;
+    border-bottom: 1px solid #070a26;
+  }
+
+  .project-info-wrapper {
+    gap: 12px;
+  }
+
+  .join-info-wrapper {
+    gap: 12px;
+    .whitelist-tasks-prompt {
+      font-size: 14px;
+      font-weight: 400;
+      line-height: 22px;
+      color: #070a26;
+    }
+    .whitelist-tasks-link-button-wrapper {
+      justify-content: flex-end;
+    }
+  }
+
+  .join-operation-wrapper {
+    gap: 12px;
+    .purchase-input-number {
+      width: 100%;
+      .@{app-prefix}-input-number {
+        border-right: none;
+      }
+      .@{app-prefix}-input-number-group-addon {
+        background-color: @bg-1;
+      }
+      .max-operation {
+        padding-left: 12px;
+        border-left: 1px solid #070a26;
+        font-size: 16px;
+        font-weight: 500;
+        line-height: 24px;
+      }
+    }
+  }
+}

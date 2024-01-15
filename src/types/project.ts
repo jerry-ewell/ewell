@@ -1,3 +1,11 @@
+export enum ProjectStatus {
+  UPCOMING = 2,
+  PARTICIPATORY = 3,
+  UNLOCKED = 4,
+  ENDED = 5,
+  CANCELED = 6,
+}
+
 export enum PROGRESS_RATE {
   comingSoon = 'coming-soon',
   onGoing = 'on-going',
