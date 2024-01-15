@@ -6,8 +6,8 @@ import './styles.less';
 const ProjectList: React.FC = () => {
   return (
     <div className="common-page-1360 project-list">
-      <Prjects />
-      {/* <MyProjects /> */}
+      {/* <Prjects /> */}
+      <MyProjects />
     </div>
   );
 };

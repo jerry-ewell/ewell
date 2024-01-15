@@ -16,7 +16,7 @@ function App() {
         <ScrollToTop />
         <div className="page-container">
           <PageRouter />
-          <Footer />
+          {/* <Footer /> */}
         </div>
       </BrowserRouter>
       {/* </Suspense> */}
