@@ -48,7 +48,8 @@ export function useTokenContract(address?: string) {
 }
 
 export function useWhiteListContract() {
-  return useContract(ChainConstants.constants?.WHITELIST_CONTRACT, ERC20_ABI);
+  return null;
+  // return useContract(ChainConstants.constants?.WHITELIST_CONTRACT, ERC20_ABI);
 }
 
 export function useIDOContract() {

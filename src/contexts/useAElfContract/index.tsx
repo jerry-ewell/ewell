@@ -12,8 +12,11 @@ export const ADD_CONTRACT = 'ADD_CONTRACT';
 const INITIAL_STATE = {};
 const ContractContext = createContext<any>(INITIAL_STATE);
 
+const temp: [ContractContextState, React.Dispatch<any>] = [{}, (value: any) => void 0];
+
 export function useAElfContractContext(): [ContractContextState, React.Dispatch<any>] {
-  return useContext(ContractContext);
+  return temp;
+  // return useContext(ContractContext);
 }
 
 //reducer

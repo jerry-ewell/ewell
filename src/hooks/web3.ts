@@ -17,43 +17,47 @@ type ExtendWeb3ReactContextInterface = Web3ReactContextInterface<provider> & {
   aelfInstance?: any;
   apiChainId?: string;
 };
+
+const temp = {} as any;
+
 // useActiveWeb3React contains all attributes of useWeb3React and aelf combination
 export function useActiveWeb3React() {
-  const context: ExtendWeb3ReactContextInterface = useWeb3React<provider>();
-  const contextNetwork: ExtendWeb3ReactContextInterface = useWeb3React<provider>(NetworkContextName);
-  const [{ userChainId }] = useChain();
-  const { account, defaultAElfBridge, deactivate } = useAElfReact();
-  const tmpContext = useMemo(() => {
-    if (typeof userChainId === 'string') {
-      return {
-        chainId: userChainId,
-        account: account,
-        library: undefined,
-        // TODO
-        apiChainId: ChainConstants.constants?.CHAIN_GUID,
-        error: null,
-        active: !!account,
-        deactivate,
-        connector: account ? 'NIGHT ELF' : undefined,
-        aelfInstance: defaultAElfBridge,
-      };
-    }
-    if (!context.active) {
-      const chainId = new BigNumber(window?.ethereum?.chainId || '');
-      if (!chainId.isNaN()) {
-        contextNetwork.chainId = chainId.toNumber();
-      } else if (userChainId) {
-        contextNetwork.chainId = userChainId;
-      }
-      const provider = getProvider(contextNetwork.chainId);
-      if (provider) contextNetwork.library = provider;
-      contextNetwork.deactivate = context.deactivate;
-      contextNetwork.connector = context.connector;
-      return contextNetwork;
-    }
-    return context;
-  }, [account, context, contextNetwork, deactivate, defaultAElfBridge, userChainId]);
-  return tmpContext;
+  return temp;
+  // const context: ExtendWeb3ReactContextInterface = useWeb3React<provider>();
+  // const contextNetwork: ExtendWeb3ReactContextInterface = useWeb3React<provider>(NetworkContextName);
+  // const [{ userChainId }] = useChain();
+  // const { account, defaultAElfBridge, deactivate } = useAElfReact();
+  // const tmpContext = useMemo(() => {
+  //   if (typeof userChainId === 'string') {
+  //     return {
+  //       chainId: userChainId,
+  //       account: account,
+  //       library: undefined,
+  //       // TODO
+  //       apiChainId: ChainConstants.constants?.CHAIN_GUID,
+  //       error: null,
+  //       active: !!account,
+  //       deactivate,
+  //       connector: account ? 'NIGHT ELF' : undefined,
+  //       aelfInstance: defaultAElfBridge,
+  //     };
+  //   }
+  //   if (!context.active) {
+  //     const chainId = new BigNumber(window?.ethereum?.chainId || '');
+  //     if (!chainId.isNaN()) {
+  //       contextNetwork.chainId = chainId.toNumber();
+  //     } else if (userChainId) {
+  //       contextNetwork.chainId = userChainId;
+  //     }
+  //     const provider = getProvider(contextNetwork.chainId);
+  //     if (provider) contextNetwork.library = provider;
+  //     contextNetwork.deactivate = context.deactivate;
+  //     contextNetwork.connector = context.connector;
+  //     return contextNetwork;
+  //   }
+  //   return context;
+  // }, [account, context, contextNetwork, deactivate, defaultAElfBridge, userChainId]);
+  // return tmpContext;
 }
 
 export function useEagerConnect() {
