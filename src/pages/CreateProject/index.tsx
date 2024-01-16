@@ -1,26 +1,31 @@
-import React from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import clsx from 'clsx';
-import { Steps, StepProps, Breadcrumb } from 'antd';
-import { HomeOutlined } from '@ant-design/icons';
+import { Breadcrumb } from 'antd';
 import './styles.less';
 import ConfirmTradingPair from './ConfirmTradingPair';
+import ProjectInfo from './ProjectInfo';
+import IDOInfo from './IDOInfo';
+import Transfer from './Transfer';
+import ESteps from './components/ESteps';
+import { CreateStepPorps, TSteps } from './types';
+import { stepsItems } from './constants';
+import './styles.less';
 
-const stepsItems: StepProps[] = [
-  {
-    title: 'Trading Pair',
-  },
-  {
-    title: 'Project Information',
-  },
-  {
-    title: 'IDO Information',
-  },
-  {
-    title: 'Preview & Transfer',
-  },
-];
+const ProjectSteps: React.FC<CreateStepPorps>[] = [ConfirmTradingPair, ProjectInfo, IDOInfo, Transfer];
 
 const CreateProject: React.FC = () => {
+  const [currentStep, setCurrentStep] = useState<TSteps>(TSteps.TWO);
+
+  const onNext = useCallback(() => {
+    console.log('onNext');
+    setCurrentStep(currentStep + 1);
+  }, [currentStep]);
+
+  const onPre = useCallback(() => {
+    setCurrentStep(currentStep - 1);
+  }, [currentStep]);
+
+  const renderStep = () => ProjectSteps[currentStep]({ onNext, onPre });
   return (
     <div className="common-page-1360 cre-project">
       <Breadcrumb
@@ -36,8 +41,8 @@ const CreateProject: React.FC = () => {
         ]}
       />
       <div className="project-wrapper">
-        <Steps current={0} items={stepsItems} />
-        <ConfirmTradingPair />
+        {currentStep !== TSteps.FOURE && <ESteps current={currentStep} items={stepsItems} />}
+        {renderStep()}
       </div>
     </div>
   );
