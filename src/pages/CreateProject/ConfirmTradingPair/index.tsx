@@ -2,8 +2,9 @@ import React from 'react';
 import TradingPairCard from '../components/TradingPairCard';
 import './styles.less';
 import { Button } from 'antd';
+import { CreateStepPorps } from '../types';
 
-const ConfirmTradingPair: React.FC = () => {
+const ConfirmTradingPair: React.FC<CreateStepPorps> = ({ onNext, onPre }) => {
   return (
     <div className="trading-page">
       <div className="trading-title">Start your new project in EWELL</div>
@@ -16,7 +17,7 @@ const ConfirmTradingPair: React.FC = () => {
           There is proper token, go to <span className="link-text">Symbol Market</span> and create a?
         </div>
       </div>
-      <Button>{`Next >`}</Button>
+      <Button onClick={() => onNext?.()}>{`Next >`}</Button>
     </div>
   );
 };

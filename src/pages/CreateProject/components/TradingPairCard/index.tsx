@@ -13,7 +13,6 @@ const TradingPairCard: React.FC = () => {
       </div>
       <div className="card-right">
         <div className="token-quantity">500,000,000,000</div>
-        <div className="token-value">$ 378,239,584</div>
       </div>
     </div>
   );
