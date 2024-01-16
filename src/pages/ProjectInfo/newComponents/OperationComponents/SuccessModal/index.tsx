@@ -19,7 +19,10 @@ interface ISuccessModalProps {
 
 export default function SuccessModal({ modalProps, data: { amountList, description, boxData } }: ISuccessModalProps) {
   return (
-    <Modal {...modalProps} wrapClassName={`success-modal-wrapper ${modalProps.wrapClassName}`} footer={null}>
+    <Modal
+      {...modalProps}
+      wrapClassName={`project-info-success-modal-wrapper ${modalProps.wrapClassName}`}
+      footer={null}>
       <Flex vertical gap={24}>
         <Flex vertical align="center">
           <img className="success-icon" src={success} alt="success" />

@@ -11,6 +11,8 @@ import Example from 'pages/Example';
 import Home from 'pages/Home';
 import ProjectList from 'pages/ProjectList';
 import ProjectInfo from 'pages/ProjectInfo';
+import ParticipantList from 'pages/ParticipantList';
+import WhitelistUsers from 'pages/WhitelistUsers';
 import LiquidityUnlock from 'pages/LiquidityUnlock';
 import CreateProject from 'pages/CreateProject';
 import EditInformation from 'pages/EditInformation';
@@ -32,6 +34,14 @@ export const PageRouter = () =>
     {
       path: '/project/:projectId',
       element: <ProjectInfo />,
+    },
+    {
+      path: '/participant-list/:projectId',
+      element: <ParticipantList />,
+    },
+    {
+      path: '/whitelist-users/:projectId',
+      element: <WhitelistUsers />,
     },
     {
       path: '/liquidity-unlock/:projectId',

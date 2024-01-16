@@ -15,7 +15,16 @@ import { AELFDProvider } from 'aelf-design';
 
 function ContextProviders({ children }: { children?: ReactNode }) {
   return (
-    <AELFDProvider prefixCls={prefixCls}>
+    <AELFDProvider
+      prefixCls={prefixCls}
+      customToken={{
+        customAddress: {
+          primaryLinkColor: '#863DFF',
+          primaryIconColor: '#070A26',
+          addressHoverColor: '#863DFF',
+          addressActiveColor: '#863DFF',
+        },
+      }}>
       <StoreProvider>
         <ViewContractProvider>
           <WalletProvider>{children}</WalletProvider>
