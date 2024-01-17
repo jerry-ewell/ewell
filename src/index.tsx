@@ -13,7 +13,7 @@ import StoreProvider from './contexts/useStore';
 import ViewContractProvider from 'contexts/useViewContract';
 import { AELFDProvider, HashAddress } from 'aelf-design';
 import { ConfigProvider } from 'antd';
-import { AELFD_THEME_CONFIG, ANTD_THEME_CONFIG } from 'themTokenConfig';
+import { AELFD_CUSTOM_TOKEN_CONFIG, AELFD_THEME_CONFIG, ANTD_THEME_CONFIG } from 'themTokenConfig';
 
 ConfigProvider.config({
   prefixCls,
@@ -21,17 +21,7 @@ ConfigProvider.config({
 
 function ContextProviders({ children }: { children?: ReactNode }) {
   return (
-    <AELFDProvider
-      customToken={{
-        customAddress: {
-          primaryLinkColor: '#863DFF',
-          primaryIconColor: '#070A26',
-          addressHoverColor: '#070A26',
-          addressActiveColor: '#863DFF',
-        },
-      }}
-      prefixCls={prefixCls}
-      theme={AELFD_THEME_CONFIG}>
+    <AELFDProvider customToken={AELFD_CUSTOM_TOKEN_CONFIG} prefixCls={prefixCls} theme={AELFD_THEME_CONFIG}>
       <ConfigProvider prefixCls={prefixCls} theme={ANTD_THEME_CONFIG}>
         <StoreProvider>
           <ViewContractProvider>
