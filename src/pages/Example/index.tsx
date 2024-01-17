@@ -10,6 +10,7 @@ import { getProtobufTime } from 'utils';
 import { useViewContract } from 'contexts/useViewContract/hooks';
 import { request } from 'api';
 import myEvents from 'utils/myEvent';
+import { WebLoginEvents, useWebLoginEvent } from 'aelf-web-login';
 
 export default function Example() {
   const [url, setUrl] = useState('');
@@ -104,12 +105,22 @@ export default function Example() {
 
   useEffect(() => {
     const { remove } = myEvents.AuthToken.addListener(() => {
-      console.log('authToken change');
+      console.log('login success');
     });
     return () => {
       remove();
     };
   }, []);
+
+  const onLogin = useCallback(() => {
+    console.log('onLogin');
+  }, []);
+  useWebLoginEvent(WebLoginEvents.LOGINED, onLogin);
+
+  const onLogout = useCallback(() => {
+    console.log('onLogout');
+  }, []);
+  useWebLoginEvent(WebLoginEvents.LOGOUT, onLogout);
 
   return (
     <div>
