@@ -13,6 +13,7 @@ import StoreProvider from './contexts/useStore';
 import ViewContractProvider from 'contexts/useViewContract';
 import { AELFDProvider, HashAddress } from 'aelf-design';
 import { ConfigProvider } from 'antd';
+import { AELFD_THEME_CONFIG, ANTD_THEME_CONFIG } from 'themTokenConfig';
 
 ConfigProvider.config({
   prefixCls,
@@ -28,8 +29,10 @@ function ContextProviders({ children }: { children?: ReactNode }) {
           addressHoverColor: '#070A26',
           addressActiveColor: '#863DFF',
         },
-      }}>
-      <ConfigProvider prefixCls={prefixCls}>
+      }}
+      prefixCls={prefixCls}
+      theme={AELFD_THEME_CONFIG}>
+      <ConfigProvider prefixCls={prefixCls} theme={ANTD_THEME_CONFIG}>
         <StoreProvider>
           <ViewContractProvider>
             <WalletProvider>{children}</WalletProvider>

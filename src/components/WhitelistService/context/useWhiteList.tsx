@@ -21,8 +21,11 @@ const INITIAL_STATE: WhiteListState = {
 };
 const WhiteListContext = createContext<any>(INITIAL_STATE);
 
+const temp: [WhiteListState, BasicActions] = [{} as any, { dispatch: (...args: any) => void 0 } as any];
+
 export function useWhiteList(): [WhiteListState, BasicActions] {
-  return useContext(WhiteListContext);
+  return temp;
+  // return useContext(WhiteListContext);
 }
 
 //reducer

@@ -9,8 +9,11 @@ const INITIAL_STATE: ProjectInfoState = {
 };
 const InfoContext = createContext<any>(INITIAL_STATE);
 
+const temp: [ProjectInfoState, BasicActions] = [{} as any, { dispatch: (...args: any) => void 0 } as any];
+
 export function useProjectInfo(): [ProjectInfoState, BasicActions] {
-  return useContext(InfoContext);
+  return temp;
+  // return useContext(InfoContext);
 }
 
 //reducer

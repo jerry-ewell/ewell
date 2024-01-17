@@ -6,9 +6,12 @@ import { useProjectInfo } from '.';
 import { ProjectItemExt } from './actions';
 import { getProjectProgress } from './utils';
 
+const temp = (...args: any) => {};
+
 export function useProjectInfoDispatch() {
-  const [, { dispatch }] = useProjectInfo();
-  return useCallback(dispatch, [dispatch]);
+  return temp;
+  // const [, { dispatch }] = useProjectInfo();
+  // return useCallback(dispatch, [dispatch]);
 }
 
 export function useProjectInfoByFetch(timeStamp?: number) {
