@@ -58,6 +58,16 @@ module.exports = {
         changeOrigin: true,
         secure: true,
       },
+      '/connect': {
+        target: activeApi.connectTokenApi,
+        changeOrigin: true,
+        secure: true,
+      },
+      '/AElfIndexer_DApp': {
+        target: activeApi.webLoginGraphql,
+        changeOrigin: true,
+        secure: true,
+      },
     },
   },
   plugins: [

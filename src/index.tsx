@@ -11,16 +11,31 @@ import 'aelf-web-login/dist/assets/index.css';
 import { ReactNode } from 'react';
 import StoreProvider from './contexts/useStore';
 import ViewContractProvider from 'contexts/useViewContract';
-import { AELFDProvider } from 'aelf-design';
+import { AELFDProvider, HashAddress } from 'aelf-design';
+import { ConfigProvider } from 'antd';
+
+ConfigProvider.config({
+  prefixCls,
+});
 
 function ContextProviders({ children }: { children?: ReactNode }) {
   return (
-    <AELFDProvider prefixCls={prefixCls}>
-      <StoreProvider>
-        <ViewContractProvider>
-          <WalletProvider>{children}</WalletProvider>
-        </ViewContractProvider>
-      </StoreProvider>
+    <AELFDProvider
+      customToken={{
+        customAddress: {
+          primaryLinkColor: '#863DFF',
+          primaryIconColor: '#070A26',
+          addressHoverColor: '#070A26',
+          addressActiveColor: '#863DFF',
+        },
+      }}>
+      <ConfigProvider prefixCls={prefixCls}>
+        <StoreProvider>
+          <ViewContractProvider>
+            <WalletProvider>{children}</WalletProvider>
+          </ViewContractProvider>
+        </StoreProvider>
+      </ConfigProvider>
     </AELFDProvider>
   );
 }

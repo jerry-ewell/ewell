@@ -1,4 +1,4 @@
-import { Button, Drawer, Row } from 'antd';
+import { Button, Drawer, Modal, Row } from 'antd';
 import clsx from 'clsx';
 import IconFont from 'components/IconFont';
 import { ChainConstants } from 'constants/ChainConstants';
@@ -10,118 +10,178 @@ import { useActiveWeb3React, useAEflConnect } from 'hooks/web3';
 import { useCallback, useMemo, useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useLocation } from 'react-use';
-import { shortenAddress } from 'utils';
-import logo from './images/logo.svg';
+import logoSvg from './images/logo.svg';
+import userSvg from './images/user.svg';
+import arrowSvg from 'assets/images/arrow.svg';
 import './styles.less';
+import { useWallet } from 'contexts/useWallet/hooks';
+import { WebLoginState } from 'aelf-web-login';
+import { NETWORK_CONFIG } from 'constants/network';
+import { HashAddress } from 'aelf-design';
 
-// function MobileDrawer({
-//   open,
-//   setOpen,
-//   noAccount,
-// }: {
-//   open: boolean;
-//   setOpen: (b: boolean) => void;
-//   noAccount: () => void;
-// }) {
-//   const { account } = useActiveWeb3React();
-//   const modalDispatch = useModalDispatch();
-//   const navigate = useNavigate();
-//   return (
-//     <Drawer width={'100%'} closable={false} onClose={() => setOpen(false)} open={open} className="header-drawer">
-//       <Row
-//         className="menu-item"
-//         onClick={() => {
-//           !account ? noAccount() : modalDispatch(basicModalView.setAccountModal.actions(true));
-//         }}>
-//         <IconFont type={Icons.user} />
-//         {account ? shortenAddress(account) : 'Connect'}
-//       </Row>
-//       <Row
-//         onClick={() => {
-//           navigate('/project-list');
-//           setOpen(false);
-//         }}
-//         className="menu-item">
-//         <IconFont type={Icons.projects} />
-//         Projects
-//       </Row>
-//       <Row
-//         onClick={() => {
-//           navigate('/create-project');
-//           setOpen(false);
-//         }}
-//         className="menu-item">
-//         <IconFont type={Icons.create} />
-//         Create
-//       </Row>
-//     </Drawer>
-//   );
-// }
+type TMenuItem = {
+  name: string;
+  icon?: string;
+  content?: string;
+  onClick?: () => void;
+  children?: TMenuItem[];
+};
+
+const menuList: TMenuItem[] = [
+  {
+    name: 'Projects',
+    onClick: () => {
+      //
+    },
+  },
+  {
+    name: 'Community',
+    children: [
+      {
+        name: 'Medium',
+        icon: arrowSvg,
+        content: 'Join this open space for discussion news, and announcements.',
+        onClick: () => {
+          //
+        },
+      },
+      {
+        name: 'X',
+        icon: arrowSvg,
+        content: "Stay up-to-date with Ewell's new features and projects.",
+        onClick: () => {
+          //
+        },
+      },
+      {
+        name: 'Telegram',
+        content: 'Meet the community and get live support.',
+        icon: arrowSvg,
+        onClick: () => {
+          //
+        },
+      },
+    ],
+    onClick: () => {
+      //
+    },
+  },
+  {
+    name: 'Launch with EWELL',
+    onClick: () => {
+      //
+    },
+  },
+];
 
 export default function Header() {
   const isMobile = useMobile();
-  // const { account } = useActiveWeb3React();
-  // const modalDispatch = useModalDispatch();
   const { pathname } = useLocation();
-  // const connect = useAEflConnect();
+
   const navigate = useNavigate();
-  const [open, setOpen] = useState<boolean>(false);
   const isHome = useMemo(() => {
     return pathname === '/';
   }, [pathname]);
 
-  // const noAccount = useCallback(() => {
-  //   if (!isMobile || ChainConstants.chainType !== 'ELF')
-  //     return modalDispatch(basicModalView.setWalletModal.actions(true));
-  //   connect();
-  // }, [connect, isMobile, modalDispatch]);
+  const { login, loginState, logout, wallet } = useWallet();
+
+  const onWalletClick = useCallback(() => {
+    console.log('WebLoginState', loginState);
+    if (loginState === WebLoginState.initial) return login();
+  }, [login, loginState]);
 
   return (
     <header className="header">
       <div className="header-body flex-row-center">
         <img
           className="header-logo cursor-pointer"
-          src={logo}
+          src={logoSvg}
           alt="logo"
           onClick={() => navigate('/', { replace: true })}
         />
-        <Row className="btn-row">
-          {!isMobile && !isHome ? (
-            <>
-              <Button ghost>
-                <NavLink to="/project-list">Projects</NavLink>
-              </Button>
-              <Button ghost>
-                <NavLink to="/create-project">Create</NavLink>
-              </Button>
-            </>
-          ) : null}
-          {/* {isMobile && account ? (
-            isHome ? (
-              <IconFont
-                type={Icons.user}
-                className="user-icon"
-                onClick={() => modalDispatch(basicModalView.setAccountModal.actions(true))}
-              />
+        <div className="btn-row">
+          {!isMobile &&
+            menuList.map((menu, menuIdx) => (
+              <div className="btn-item-wrap" key={menuIdx}>
+                <Button className="btn-item-box" type="link" onClick={menu.onClick}>
+                  {menu.name}
+                  {menu.children && <img className="arrow-wrap " src={arrowSvg} alt="" />}
+                </Button>
+                {menu.children && (
+                  <div className="drawer-wrap">
+                    <div className="drawer-wrap-box">
+                      {menu.children.map((childMenu, childMenuIdx) => (
+                        <div className="child-wrap" onClick={childMenu.onClick} key={childMenuIdx}>
+                          <div className="icon-wrap">
+                            <img className="icon-box" src={childMenu.icon} alt="" />
+                          </div>
+                          <div className="child-body-wrap">
+                            <span className="child-title">{childMenu.name}</span>
+                            <span className="child-content">{childMenu.content}</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            ))}
+
+          {!isMobile &&
+            !isHome &&
+            (loginState === WebLoginState.logined ? (
+              <div className="my-wrap">
+                <div className="my-btn cursor-pointer">
+                  <img className="my-icon" src={userSvg} alt="" />
+                  <span className="my-label">My</span>
+                </div>
+
+                <div className="wallet-drawer">
+                  <div className="wallet-drawer-box">
+                    <div className="wallet-item-wrap">
+                      <img src={userSvg} alt="" />
+                      <div className="wallet-item-body">
+                        <span className="wallet-item-title">My Address</span>
+                        <div className="wallet-item-content">
+                          <HashAddress
+                            address={wallet?.walletInfo.address || ''}
+                            preLen={8}
+                            endLen={9}
+                            hasCopy
+                            chain={NETWORK_CONFIG.sideChainId as any}
+                            // size="small"
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="wallet-item-wrap">
+                      <img src={userSvg} alt="" />
+                      <div className="wallet-item-body">
+                        <span className="wallet-item-title">My Projects</span>
+                      </div>
+                    </div>
+
+                    <div
+                      className="wallet-item-wrap"
+                      onClick={() => {
+                        logout();
+                      }}>
+                      <img src={userSvg} alt="" />
+                      <div className="wallet-item-body">
+                        <span className="wallet-item-title">Log Out</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             ) : (
-              <IconFont
-                type={!open ? Icons.menuIcon : Icons.closeIcon}
-                className={clsx('user-icon', 'menu-icon', open && 'close-icon')}
-                onClick={() => setOpen(!open)}
-              />
-            )
-          ) : (
-            <Button
-              ghost
-              onClick={() => {
-                !account ? noAccount() : modalDispatch(basicModalView.setAccountModal.actions(true));
-              }}>
-              {account ? shortenAddress(account) : 'Connect'}
-            </Button>
-          )} */}
-        </Row>
+              <Button className="login-btn" onClick={onWalletClick}>
+                Login
+              </Button>
+            ))}
+        </div>
       </div>
-      {/* {isMobile && <MobileDrawer open={open} setOpen={setOpen} noAccount={noAccount} />} */}
     </header>
   );
 }

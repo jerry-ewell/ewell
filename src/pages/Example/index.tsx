@@ -1,6 +1,6 @@
-import { Button } from 'antd';
+import { Button, Modal } from 'antd';
 import { useLockCallback } from 'hooks';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { setThemes } from 'utils/themes';
 import './styles.less';
 import { useWallet } from 'contexts/useWallet/hooks';
@@ -9,6 +9,7 @@ import { NETWORK_CONFIG } from 'constants/network';
 import { getProtobufTime } from 'utils';
 import { useViewContract } from 'contexts/useViewContract/hooks';
 import { request } from 'api';
+import myEvents from 'utils/myEvent';
 
 export default function Example() {
   const [url, setUrl] = useState('');
@@ -101,6 +102,15 @@ export default function Example() {
     }
   }, []);
 
+  useEffect(() => {
+    const { remove } = myEvents.AuthToken.addListener(() => {
+      console.log('authToken change');
+    });
+    return () => {
+      remove();
+    };
+  }, []);
+
   return (
     <div>
       <Web3Button
@@ -140,12 +150,7 @@ export default function Example() {
       <div className="light-box" />
       {/* {chainId} */}
       <div className="test-class" />
-      {/* <Button type="primary" onClick={() => setUrl((v) => ({ ...v, a: 1 }))}>
-        a
-      </Button> */}
-      {/* <Button type="primary" onClick={() => setUrl((v) => ({ ...v, b: 1 }))}>
-        b
-      </Button> */}
+
       <Button
         type="primary"
         onClick={() => {
