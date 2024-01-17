@@ -14,10 +14,9 @@ import {
 import Wallet from './Wallet';
 import { IWallet } from './Wallet/types';
 import { DEFAULT_CHAIN_ID, NETWORK_CONFIG } from 'constants/network';
-import { useLocalStorage } from 'react-use';
+import { authToken, clearLocalJWT } from './utils';
 
 const APPNAME = 'explorer.aelf.io';
-const RPC_SERVER = 'https://explorer.aelf.io/chain';
 
 setGlobalConfig({
   appName: APPNAME,
@@ -85,10 +84,7 @@ function reducer(state: any, { type, payload }: any) {
   }
 }
 
-type TWalletTokenMap = Record<string, string>;
-
 export function WalletProvider({ children }: { children: React.ReactNode }) {
-  const [walletTokenMap, setWalletTokenMap] = useLocalStorage<TWalletTokenMap>('Token');
   const [state, dispatch] = useReducer(reducer, INITIAL_STATE);
   const webLoginContext = useWebLoginContext();
   const webLoginContextRef = useRef<WebLoginContextType>(webLoginContext);
@@ -113,22 +109,8 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
       type: SET_WALLET,
       payload: wallet,
     });
-
-    // const address = _webLoginContext.wallet.address;
-    // const token = walletTokenMap?.[address];
-    // if (token) {
-    //   // TODO: set API token
-    // } else {
-    //   // get token
-    // }
-    setWalletTokenMap({
-      [_webLoginContext.wallet.address]: _webLoginContext.wallet.publicKey || '',
-    });
-  }, [setWalletTokenMap]);
-
-  useEffect(() => {
-    console.log('walletTokenMap', walletTokenMap);
-  }, [walletTokenMap]);
+    authToken(wallet);
+  }, []);
 
   useWebLoginEvent(WebLoginEvents.LOGINED, onLogin);
 
@@ -138,6 +120,7 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
       type: SET_WALLET,
       payload: undefined,
     });
+    clearLocalJWT();
   }, []);
   useWebLoginEvent(WebLoginEvents.LOGOUT, onLogout);
 
