@@ -1,5 +1,5 @@
-import ActionCard from './newComponents/ActionCard';
-import InfoWrapper from './newComponents/InfoWrapper';
+import ActionCard from './components/ActionCard';
+import InfoWrapper from './components/InfoWrapper';
 import './styles.less';
 import { ProjectInfoUpdater } from './hooks/Updater';
 import BaseBreadcrumb from 'components/BaseBreadcrumb';

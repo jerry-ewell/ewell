@@ -10,7 +10,7 @@ import { useRoutes } from 'react-router-dom';
 import Example from 'pages/Example';
 import Home from 'pages/Home';
 import ProjectList from 'pages/ProjectList';
-import ProjectInfo from 'pages/ProjectInfo';
+import NewProjectInfo from 'pages/NewProjectInfo';
 import ParticipantList from 'pages/ParticipantList';
 import WhitelistUsers from 'pages/WhitelistUsers';
 import LiquidityUnlock from 'pages/LiquidityUnlock';
@@ -33,7 +33,7 @@ export const PageRouter = () =>
     },
     {
       path: '/project/:projectId',
-      element: <ProjectInfo />,
+      element: <NewProjectInfo />,
     },
     {
       path: '/participant-list/:projectId',
