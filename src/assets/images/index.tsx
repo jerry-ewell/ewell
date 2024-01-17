@@ -5,4 +5,6 @@ import nightElfIcon from './nightElf.png';
 import union from './union.svg';
 import arrow from './arrow.svg';
 import success from './success.svg';
-export { metamask, walletConnectIcon, coinbaseWalletIcon, nightElfIcon, union, arrow, success };
+import tableEmpty from './tableEmpty.svg';
+import sandGlass from './sandGlass.svg';
+export { metamask, walletConnectIcon, coinbaseWalletIcon, nightElfIcon, union, arrow, success, tableEmpty, sandGlass };

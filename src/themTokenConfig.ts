@@ -8,6 +8,14 @@ export const AELFD_THEME_CONFIG: IAelfdThemeProviderProps['theme'] = {
     colorSplit: '#888997',
     controlHeight: 48,
   },
+  components: {
+    Table: {
+      headerBg: '#ffffff',
+      headerSplitColor: '#ffffff',
+      headerColor: '#070A26',
+      borderColor: '#070A26',
+    },
+  },
 };
 
 export const ANTD_THEME_CONFIG: ThemeConfig = {

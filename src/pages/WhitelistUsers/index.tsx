@@ -1,7 +1,9 @@
+import { useState } from 'react';
 import { Flex } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
-import { HashAddress, Search, Table, Pagination } from 'aelf-design';
+import { HashAddress, Search, Pagination } from 'aelf-design';
 import BaseBreadcrumb from 'components/BaseBreadcrumb';
+import CommonTable from 'components/CommonTable';
 import UpdateWhitelistUsersButton from 'components/UpdateWhitelistUsersButton';
 import './styles.less';
 
@@ -43,9 +45,41 @@ const data: any[] = [
     address: 'ELF_0x00000000000000ADc04C56Bf30aC9d3c0aAF14dC_AELF',
     time: '03:06:32  28/07/2023',
   },
+  {
+    key: '4',
+    order: '4',
+    address: 'ELF_0x00000000000000ADc04C56Bf30aC9d3c0aAF14dC_AELF',
+    time: '03:06:32  28/07/2023',
+  },
+  {
+    key: '5',
+    order: '5',
+    address: 'ELF_0x00000000000000ADc04C56Bf30aC9d3c0aAF14dC_AELF',
+    time: '03:06:32  28/07/2023',
+  },
+  {
+    key: '6',
+    order: '6',
+    address: 'ELF_0x00000000000000ADc04C56Bf30aC9d3c0aAF14dC_AELF',
+    time: '03:06:32  28/07/2023',
+  },
+  {
+    key: '7',
+    order: '7',
+    address: 'ELF_0x00000000000000ADc04C56Bf30aC9d3c0aAF14dC_AELF',
+    time: '03:06:32  28/07/2023',
+  },
+  {
+    key: '8',
+    order: '8',
+    address: 'ELF_0x00000000000000ADc04C56Bf30aC9d3c0aAF14dC_AELF',
+    time: '03:06:32  28/07/2023',
+  },
 ];
 
 export default function WhitelistUsers() {
+  const [isTableLoading, setIsTableLoading] = useState(false);
+
   return (
     <div className="common-page1 min-height-container whitelist-users-wrapper">
       <BaseBreadcrumb />
@@ -64,7 +98,7 @@ export default function WhitelistUsers() {
           <Search inputClassName="address-search" placeholder="Address" />
         </Flex>
         <Flex vertical gap={16}>
-          <Table columns={columns} dataSource={[] || data} locale={{ emptyText: <div>xxx</div> }} />
+          <CommonTable loading={isTableLoading} columns={columns} dataSource={data} />
           <Flex justify="space-between" align="center">
             <span>Number of Participants Users: 23</span>
             <Pagination current={1} total={90} showSizeChanger={false} />

@@ -17,3 +17,21 @@
   min-width: auto;
   min-height: auto;
 }
+
+/** table **/
+// To increase the weight of the css selector
+.@{app-prefix}-table-wrapper .@{app-prefix}-spin-container .@{app-prefix}-table {
+  border: 1px solid;
+  border-radius: 6px;
+  .@{app-prefix}-table-container table {
+    .@{app-prefix}-table-thead tr .@{app-prefix}-table-cell {
+      border-bottom-left-radius: 0;
+      border-bottom-right-radius: 0;
+    }
+    .@{app-prefix}-table-tbody tr .@{app-prefix}-table-cell {
+      border-bottom: none;
+      border-bottom-left-radius: 6px;
+      border-bottom-right-radius: 6px;
+    }
+  }
+}

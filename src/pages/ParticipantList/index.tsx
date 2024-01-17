@@ -1,7 +1,9 @@
+import { useState } from 'react';
 import { Flex } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
-import { HashAddress, Search, Table, Pagination } from 'aelf-design';
+import { HashAddress, Search, Pagination } from 'aelf-design';
 import BaseBreadcrumb from 'components/BaseBreadcrumb';
+import CommonTable from 'components/CommonTable';
 import './styles.less';
 
 const columns: ColumnsType<any> = [
@@ -53,6 +55,8 @@ const data: any[] = [
 ];
 
 export default function ParticipantList() {
+  const [isTableLoading, setIsTableLoading] = useState(false);
+
   return (
     <div className="common-page1 min-height-container participant-list-wrapper">
       <BaseBreadcrumb />
@@ -66,7 +70,7 @@ export default function ParticipantList() {
         </Flex>
         <Search inputClassName="address-search" placeholder="Address" />
       </Flex>
-      <Table className="table" columns={columns} dataSource={data} />
+      <CommonTable className="table" loading={isTableLoading} columns={columns} dataSource={data} />
       <Flex justify="space-between" align="center">
         <Flex gap={16}>
           <span>Number of Participants Users: 23</span>

@@ -1,6 +1,7 @@
 import { useState, useCallback, useEffect } from 'react';
 import { eventBus } from 'aelf-web-login';
 import { Modal } from 'antd';
+import SandGlassLoading from 'components/SandGlassLoading';
 import { SET_GLOBAL_LOADING } from 'constants/events';
 
 export interface ILoadingInfo {
@@ -32,6 +33,7 @@ export default function PageLoading() {
 
   return (
     <Modal open={loadingInfo.isLoading} footer={null} centered maskClosable={false}>
+      <SandGlassLoading />
       {loadingInfo.text}
     </Modal>
   );
