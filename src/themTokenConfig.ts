@@ -1,4 +1,5 @@
 import { IAelfdThemeProviderProps } from 'aelf-design';
+import { IAelfdCustomToken } from 'aelf-design/dist/es/provider';
 import { ThemeConfig } from 'antd';
 
 export const AELFD_THEME_CONFIG: IAelfdThemeProviderProps['theme'] = {
@@ -65,5 +66,14 @@ export const ANTD_THEME_CONFIG: ThemeConfig = {
     InputNumber: {
       activeBorderColor: '#863DFF',
     },
+  },
+};
+
+export const AELFD_CUSTOM_TOKEN_CONFIG: IAelfdCustomToken = {
+  customAddress: {
+    primaryLinkColor: '#863DFF',
+    primaryIconColor: '#070A26',
+    addressHoverColor: '#070A26',
+    addressActiveColor: '#863DFF',
   },
 };

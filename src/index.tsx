@@ -11,13 +11,17 @@ import 'aelf-web-login/dist/assets/index.css';
 import { ReactNode } from 'react';
 import StoreProvider from './contexts/useStore';
 import ViewContractProvider from 'contexts/useViewContract';
-import { AELFDProvider, Button, Input } from 'aelf-design';
 import { ConfigProvider, Input as AInput, Form } from 'antd';
-import { AELFD_THEME_CONFIG, ANTD_THEME_CONFIG } from './themTokenConfig';
+import { AELFDProvider, HashAddress } from 'aelf-design';
+import { AELFD_CUSTOM_TOKEN_CONFIG, AELFD_THEME_CONFIG, ANTD_THEME_CONFIG } from 'themTokenConfig';
+
+ConfigProvider.config({
+  prefixCls,
+});
 
 function ContextProviders({ children }: { children?: ReactNode }) {
   return (
-    <AELFDProvider prefixCls={prefixCls} theme={AELFD_THEME_CONFIG}>
+    <AELFDProvider customToken={AELFD_CUSTOM_TOKEN_CONFIG} prefixCls={prefixCls} theme={AELFD_THEME_CONFIG}>
       <ConfigProvider prefixCls={prefixCls} theme={ANTD_THEME_CONFIG}>
         <StoreProvider>
           <ViewContractProvider>

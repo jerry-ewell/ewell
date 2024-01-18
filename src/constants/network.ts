@@ -50,7 +50,7 @@ const NETWORK_CONFIG_LIST = {
     networkType: 'MAIN',
     mainChainId: 'AELF',
     sideChainId: 'tDVV',
-    webLoginGraphqlUrl: 'http://192.168.66.203:8083/AElfIndexer_DApp/PortKeyIndexerCASchema/graphql',
+    webLoginGraphqlUrl: '/AElfIndexer_DApp/PortKeyIndexerCASchema/graphql',
     webLoginRequestDefaultsUrl: 'http://192.168.66.203:5001',
     webLoginConnectUrl: 'http://192.168.66.203:8001',
     ewellContractAddress: 'C7ZUPUHDwG2q3jR5Mw38YoBHch2XiZdiK6pBYkdhXdGrYcXsb',
