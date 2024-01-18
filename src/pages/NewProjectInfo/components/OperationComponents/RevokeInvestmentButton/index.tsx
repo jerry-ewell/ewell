@@ -1,7 +1,10 @@
 import { useState } from 'react';
-import { Button, Modal, Flex } from 'antd';
+import { Modal, Flex } from 'antd';
+import { Button, Typography, FontWeightEnum } from 'aelf-design';
 import SuccessModal from '../SuccessModal';
 import './styles.less';
+
+const { Text } = Typography;
 
 export default function RevokeInvestmentButton() {
   const [isSubmitModalOpen, setIsSubmitModalOpen] = useState(false);
@@ -9,7 +12,9 @@ export default function RevokeInvestmentButton() {
 
   return (
     <>
-      <Button
+      <Text
+        className="revoke-investment-button cursor-pointer"
+        fontWeight={FontWeightEnum.Medium}
         onClick={() => {
           Modal.confirm({
             title: 'Revoke Investment',
@@ -44,7 +49,7 @@ export default function RevokeInvestmentButton() {
           });
         }}>
         Revoke Investment
-      </Button>
+      </Text>
       <Modal
         wrapClassName="revoke-investment-modal-wrapper"
         title="Confirm Payment"

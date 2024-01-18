@@ -1,4 +1,6 @@
-import { Progress, InputNumber, Button } from 'antd';
+import clsx from 'clsx';
+import { InputNumber, Flex } from 'antd';
+import { Typography, FontWeightEnum, Progress, Button } from 'aelf-design';
 import PurchaseButton from '../OperationComponents/PurchaseButton';
 import RevokeInvestmentButton from '../OperationComponents/RevokeInvestmentButton';
 import ClaimTokenButtonButton from '../OperationComponents/ClaimTokenButton';
@@ -7,123 +9,134 @@ import { PROJECT_STATUS_TEXT_MAP } from 'constants/project';
 import { tempInfo } from '../temp';
 import './styles.less';
 
+const { Title, Text } = Typography;
+
 export default function JoinCard({ info }: { info: typeof tempInfo }) {
   return (
     <div className="join-card-wrapper">
       <div className="swap-progress-wrapper">
-        <div className="flex-between-center">
-          <span className="title">Swap Progress</span>
-          <span
-            className={`status ${
-              info.projectStatus === ProjectStatus.UNLOCKED || info.projectStatus === ProjectStatus.PARTICIPATORY
-                ? 'purple'
-                : ''
-            }`}>
-            {PROJECT_STATUS_TEXT_MAP[info.projectStatus]}
-          </span>
-        </div>
+        <Flex align="center" justify="space-between">
+          <Title fontWeight={FontWeightEnum.Medium}>Swap Progress</Title>
+          <div
+            className={clsx('status', {
+              'purple-status':
+                info.projectStatus === ProjectStatus.UNLOCKED || info.projectStatus === ProjectStatus.PARTICIPATORY,
+            })}>
+            <Text size="small">{PROJECT_STATUS_TEXT_MAP[info.projectStatus]}</Text>
+          </div>
+        </Flex>
+        {/* TODO: adjust the height */}
         <Progress
-          className="progress"
+          size={['100%', 12]}
           percent={30}
-          showInfo={false}
           strokeColor={info.projectStatus === ProjectStatus.PARTICIPATORY ? '#131631' : '#C1C2C9'}
           trailColor="#F5F5F6"
         />
         <div className="flex-between-center">
-          <span className="percent">50%</span>
-          <span className="amount">250,000/500,000 ELF</span>
+          <Title fontWeight={FontWeightEnum.Medium}>50%</Title>
+          <Title fontWeight={FontWeightEnum.Medium}>250,000/500,000 ELF</Title>
         </div>
       </div>
       <div className="divider" />
-      <div className="project-info-wrapper flex-column">
+      <Flex vertical gap={12}>
         <div className="flex-between-center">
-          <span>Remainder</span>
-          <span>00:13:43</span>
+          <Text>Remainder</Text>
+          <Text fontWeight={FontWeightEnum.Medium}>00:13:43</Text>
         </div>
         <div className="flex-between-center">
-          <span>Sale Price</span>
-          <span>1 ELF = 1 PIGE</span>
+          <Text>Sale Price</Text>
+          <Text fontWeight={FontWeightEnum.Medium}>1 ELF = 1 PIGE</Text>
         </div>
         <div className="flex-between-center">
-          <span>Purchase Quantity</span>
-          <span>10 ELF - 10,000 ELF</span>
+          <Text>Purchase Quantity</Text>
+          <Text fontWeight={FontWeightEnum.Medium}>10 ELF - 10,000 ELF</Text>
         </div>
-      </div>
+      </Flex>
       <div className="divider" />
-      <div className="join-info-wrapper flex-column">
-        {info.isEnableWhitelist && !info.isFinishWhitelist && (
+      <Flex vertical gap={12}>
+        {info.isEnableWhitelist && info.hasWhitelistTasks && !info.isFinishWhitelist && (
           <>
             {(info.projectStatus === ProjectStatus.UPCOMING || info.projectStatus === ProjectStatus.PARTICIPATORY) && (
-              <span className="whitelist-tasks-prompt">
-                The project is whitelisted. Investment projects need to complete Whitelist Tasks first.
-              </span>
+              <Text>The project is whitelisted. Investment projects need to complete Whitelist Tasks first.</Text>
             )}
-            <div className="whitelist-tasks-link-button-wrapper flex">
-              <span
+            <Flex justify="flex-end">
+              <Text
                 className="purple-text cursor-pointer"
+                fontWeight={FontWeightEnum.Medium}
                 onClick={() => {
                   window.open(info.whitelistTasksLink, '_blank');
                 }}>
                 View Whitelist Tasks
-              </span>
-            </div>
+              </Text>
+            </Flex>
           </>
         )}
         {info.isEnableWhitelist && info.isFinishWhitelist && (
           <div className="flex-between-center">
-            <span>Whitelist</span>
-            <span className="purple-text">Joined</span>
+            <Text>Whitelist</Text>
+            <Text className="purple-text" fontWeight={FontWeightEnum.Medium}>
+              Joined
+            </Text>
           </div>
         )}
         {info.isLogin && (!info.isEnableWhitelist || info.isFinishWhitelist) && (
           <>
             {(info.projectStatus === ProjectStatus.PARTICIPATORY ||
               info.projectStatus === ProjectStatus.UNLOCKED ||
-              info.projectStatus === ProjectStatus.ENDED ||
-              (info.projectStatus === ProjectStatus.CANCELED && info.myAllocation.amount > 0)) && (
+              info.projectStatus === ProjectStatus.ENDED) && (
               <div className="flex-between-center">
-                <span>My Allocation</span>
-                <span>
+                <Text>My Allocation</Text>
+                <Text fontWeight={FontWeightEnum.Medium}>
                   {info.myAllocation.amount} {info.myAllocation.symbol}
-                </span>
+                </Text>
               </div>
             )}
             {(info.projectStatus === ProjectStatus.PARTICIPATORY ||
               info.projectStatus === ProjectStatus.UNLOCKED ||
               info.projectStatus === ProjectStatus.ENDED) && (
               <div className="flex-between-center">
-                <span>
+                <Text>
                   {info.projectStatus === ProjectStatus.ENDED && info.hasClaimedToken ? 'Receive' : 'To Receive'}
-                </span>
-                <span>
+                </Text>
+                <Text fontWeight={FontWeightEnum.Medium}>
                   {info.myAllocation.amount} {info.myAllocation.symbol}
-                </span>
+                </Text>
               </div>
             )}
             {info.projectStatus === ProjectStatus.PARTICIPATORY && (
               <>
                 <InputNumber
                   className="purchase-input-number"
-                  value={1}
-                  addonAfter={<div className="purple-text cursor-pointer">MAX</div>}
+                  placeholder="placeholder"
+                  controls={false}
+                  addonAfter={
+                    <div className="max-operation-wrapper">
+                      <Title className="max-operation purple-text cursor-pointer" fontWeight={FontWeightEnum.Medium}>
+                        MAX
+                      </Title>
+                    </div>
+                  }
                 />
                 <PurchaseButton info={info} />
               </>
             )}
-            {(info.projectStatus === ProjectStatus.PARTICIPATORY || info.projectStatus === ProjectStatus.CANCELED) &&
-              info.myAllocation.amount > 0 && <RevokeInvestmentButton />}
+            {info.projectStatus === ProjectStatus.PARTICIPATORY && info.myAllocation.amount > 0 && (
+              <RevokeInvestmentButton />
+            )}
             {info.projectStatus === ProjectStatus.UNLOCKED && info.myAllocation.amount > 0 && (
-              <span className="text-center">{"Claim Token when it's time to unlock!"}</span>
+              <Text className="text-center" fontWeight={FontWeightEnum.Medium}>
+                Claim Token when it's time to unlock!
+              </Text>
             )}
             {info.projectStatus === ProjectStatus.ENDED && info.myAllocation.amount > 0 && !info.hasClaimedToken && (
               <ClaimTokenButtonButton />
             )}
             {info.projectStatus === ProjectStatus.CANCELED && info.hasNotRedeemedDefault && (
-              <Button>Redemption Default</Button>
+              <Button type="primary">Revoke Token</Button>
             )}
           </>
         )}
-      </div>
+      </Flex>
     </div>
   );
 }

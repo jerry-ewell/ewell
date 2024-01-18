@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { Button, Modal, Flex } from 'antd';
+import { Modal, Flex } from 'antd';
+import { Button } from 'aelf-design';
 import ProjectLogo from 'components/ProjectLogo';
 import SuccessModal from '../SuccessModal';
 import { tempInfo } from '../../temp';
@@ -16,6 +17,7 @@ export default function PurchaseButton({ info }: IPurchaseButtonProps) {
   return (
     <>
       <Button
+        type="primary"
         onClick={() => {
           setIsSubmitModalOpen(true);
         }}>

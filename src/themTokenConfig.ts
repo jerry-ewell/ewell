@@ -3,10 +3,18 @@ import { ThemeConfig } from 'antd';
 
 export const AELFD_THEME_CONFIG: IAelfdThemeProviderProps['theme'] = {
   token: {
+    colorTextHeading: '#070A26',
+    colorText: '#070A26',
     colorPrimary: '#070A26',
     colorTextDescription: '#888997',
     colorSplit: '#888997',
     controlHeight: 48,
+    colorPrimaryBorder: '#070A26',
+    colorBorder: '#070A26',
+    colorError: '#F53F3F',
+    colorErrorBorderHover: '#F53F3F',
+    colorTextDisabled: '#C1C2C9',
+    colorBgContainerDisabled: '#EBEBEE',
   },
   components: {
     Table: {
@@ -14,6 +22,21 @@ export const AELFD_THEME_CONFIG: IAelfdThemeProviderProps['theme'] = {
       headerSplitColor: '#ffffff',
       headerColor: '#070A26',
       borderColor: '#070A26',
+    },
+    Tabs: {
+      horizontalItemPaddingSM: '13px 0',
+      horizontalMargin: '0 0 24px 0',
+      inkBarColor: '#863DFF',
+      itemActiveColor: '#863DFF',
+      itemHoverColor: '#863DFF',
+      itemSelectedColor: '#863DFF',
+    },
+    Button: {
+      fontWeight: 500,
+      colorPrimaryHover: '#22253E',
+      colorPrimaryActive: '#131631',
+      primaryShadow: '',
+      colorPrimary: '#070A26',
     },
   },
 };
@@ -37,6 +60,12 @@ export const ANTD_THEME_CONFIG: ThemeConfig = {
       labelRequiredMarkColor: '#FF703D',
       labelFontSize: 16,
       verticalLabelMargin: '0 0 4px',
+    },
+    InputNumber: {
+      activeShadow: '',
+      errorActiveShadow: '',
+      warningActiveShadow: '',
+      addonBg: '#ffffff',
     },
   },
 };

@@ -7,4 +7,18 @@ import arrow from './arrow.svg';
 import success from './success.svg';
 import tableEmpty from './tableEmpty.svg';
 import sandGlass from './sandGlass.svg';
-export { metamask, walletConnectIcon, coinbaseWalletIcon, nightElfIcon, union, arrow, success, tableEmpty, sandGlass };
+import edit from './edit.svg';
+import login from './login.svg';
+export {
+  metamask,
+  walletConnectIcon,
+  coinbaseWalletIcon,
+  nightElfIcon,
+  union,
+  arrow,
+  success,
+  tableEmpty,
+  sandGlass,
+  edit,
+  login,
+};

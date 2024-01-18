@@ -14,6 +14,7 @@ import ViewContractProvider from 'contexts/useViewContract';
 import { AELFDProvider, HashAddress } from 'aelf-design';
 import { ConfigProvider } from 'antd';
 import { AELFD_CUSTOM_TOKEN_CONFIG, AELFD_THEME_CONFIG, ANTD_THEME_CONFIG } from 'themTokenConfig';
+import 'aelf-design/css';
 
 ConfigProvider.config({
   prefixCls,

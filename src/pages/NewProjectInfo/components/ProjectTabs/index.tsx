@@ -1,19 +1,42 @@
-import { Tabs, TabsProps } from 'antd';
+import dayjs from 'dayjs';
+import { Tabs, TabsProps, Flex } from 'antd';
+import { Typography, FontWeightEnum } from 'aelf-design';
 import CommonCard from 'components/CommonCard';
 import './styles.less';
+
+const { Text } = Typography;
 
 enum ProjectTabsLabel {
   DESCRIPTION = 'Description',
   IDO_INFORMATION = 'IDO Information',
 }
 
-export default function ProjectTabs({ description }: { description?: string; IDOInformation?: {} }) {
+export default function ProjectTabs() {
+  const renderCardRow = ({
+    key,
+    label,
+    value,
+    isTime = false,
+  }: {
+    key: string | number;
+    label: string;
+    value: string;
+    isTime?: boolean;
+  }) => (
+    <Flex key={key} className="card-row" justify="space-between" align="self-start" gap={16}>
+      <Text>{label}</Text>
+      <Text className="text-right white-space-pre-wrap" fontWeight={FontWeightEnum.Medium}>
+        {isTime ? dayjs(value).format('DD-MM-YYYY\nH:mm [UTC] Z') : value}
+      </Text>
+    </Flex>
+  );
+
   const items: TabsProps['items'] = [
     {
       key: ProjectTabsLabel.DESCRIPTION,
       label: ProjectTabsLabel.DESCRIPTION,
       children: (
-        <div className="tabs-description-wrapper">
+        <Text className="white-space-pre-wrap">
           The DEFY team believes that in order to make P&E sustainable for the long term, it is critical to wrap the
           earning mechanics in a fun, highly engaging game which is rewarding beyond just playing to earn. Using a rich
           narrative and introducing novel new features into the game, DEFY is built for the long term. Furthermore, the
@@ -30,7 +53,7 @@ export default function ProjectTabs({ description }: { description?: string; IDO
           assets as well as multiple active and passive earning mechanisms that can be leveraged by the players. A
           creators platform will be added for content creators to collaborate with DEFY and bring NFTs into Augmented
           Reality. DEFY intends to bring PvP into DEFY which creates huge longevity.
-        </div>
+        </Text>
       ),
     },
     {
@@ -57,12 +80,13 @@ export default function ProjectTabs({ description }: { description?: string; IDO
                   label: 'Token Unsold',
                   value: 'Return',
                 },
-              ].map(({ label, value }, index) => (
-                <div key={index} className="ido-information-card-line flex-between-center">
-                  <span>{label}</span>
-                  <span>{value}</span>
-                </div>
-              ))}
+              ].map(({ label, value }, index) =>
+                renderCardRow({
+                  key: index,
+                  label,
+                  value,
+                }),
+              )}
             </div>
           </CommonCard>
           <CommonCard className="ido-information-card-wrapper flex-1" title="Schedule">
@@ -70,22 +94,24 @@ export default function ProjectTabs({ description }: { description?: string; IDO
               {[
                 {
                   label: 'IDO Starts At',
-                  value: '23-11-2023 3:00 UTC',
+                  value: '2024-01-12T07:05:57.7204243Z',
                 },
                 {
                   label: 'IDO Ends At',
-                  value: '23-11-2023 20:00 UTC',
+                  value: '2024-01-12T07:05:57.7204243Z',
                 },
                 {
                   label: 'Token Distribution Time',
-                  value: '23-11-2023 8:00 UTC',
+                  value: '2024-01-12T07:05:57.7204243Z',
                 },
-              ].map(({ label, value }, index) => (
-                <div key={index} className="ido-information-card-line flex-between-center">
-                  <span>{label}</span>
-                  <span>{value}</span>
-                </div>
-              ))}
+              ].map(({ label, value }, index) =>
+                renderCardRow({
+                  key: index,
+                  label,
+                  value,
+                  isTime: true,
+                }),
+              )}
             </div>
           </CommonCard>
         </div>
@@ -93,5 +119,5 @@ export default function ProjectTabs({ description }: { description?: string; IDO
     },
   ];
 
-  return <Tabs items={items} />;
+  return <Tabs size="small" items={items} />;
 }
