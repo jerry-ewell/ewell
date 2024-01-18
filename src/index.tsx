@@ -12,7 +12,7 @@ import { ReactNode } from 'react';
 import StoreProvider from './contexts/useStore';
 import ViewContractProvider from 'contexts/useViewContract';
 import { AELFDProvider, Button, Input } from 'aelf-design';
-import { ConfigProvider } from 'antd';
+import { ConfigProvider, Input as AInput, Form } from 'antd';
 import { AELFD_THEME_CONFIG, ANTD_THEME_CONFIG } from './themTokenConfig';
 
 function ContextProviders({ children }: { children?: ReactNode }) {
@@ -31,22 +31,21 @@ function ContextProviders({ children }: { children?: ReactNode }) {
 ReactDOM.render(
   <ContextProviders>
     <App />
-    {/* <Form>
-      <Form.Item label="test">
-        <Input />
-      </Form.Item>
-    </Form> */}
-    {/* <Input />
-    <AInput /> */}
   </ContextProviders>,
   document.getElementById('root'),
 );
 
 // ReactDOM.render(
-//   <AELFDProvider theme={{ token: { colorPrimary: 'red' } }}>
-//     <Input />
-//     <AInput />
-//     <Button>aelf button</Button>
+//   <AELFDProvider theme={AELFD_THEME_CONFIG}>
+//     <ConfigProvider prefixCls={prefixCls} theme={AELFD_THEME_CONFIG}>
+//       <Input />
+//       <AInput />
+//       <Form layout="vertical">
+//         <Form.Item required label="form">
+//           <Button>aelf button</Button>
+//         </Form.Item>
+//       </Form>
+//     </ConfigProvider>
 //   </AELFDProvider>,
 //   document.getElementById('root'),
 // );

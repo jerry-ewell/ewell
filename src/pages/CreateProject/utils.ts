@@ -3,6 +3,7 @@ import { InstallmentDecimal, ONE, ZERO } from 'constants/misc';
 import { getPriceDecimal } from 'utils';
 import { timesDecimals } from 'utils/calculate';
 import storages from './storages';
+import dayjs, { Dayjs } from 'dayjs';
 
 export function reSetSessionStorage() {
   sessionStorage.setItem(storages.ConfirmTradingPair, JSON.stringify(undefined));
@@ -71,5 +72,26 @@ export function getInfo(confirmTradingPair: any, projectPanel: any, additionalIn
     totalPeriod: ONE.plus(projectPanel.totalPeriod ?? 0).toFixed(),
     periodDuration,
     isBurnRestToken: projectPanel.isBurnRestToken === '1' ? true : false,
+  };
+}
+
+export function disabledDateBefore(current: Dayjs, target?: Dayjs) {
+  const targetDate = target || dayjs();
+  return current && current < targetDate.endOf('day').add(-1, 'd');
+}
+
+export function disabledTimeBefore(current: Dayjs, target?: Dayjs) {
+  if (!current) return {};
+  const targetDate = target || dayjs().add(1, 's');
+  return {
+    disabledHours: () => {
+      return current.isAfter(targetDate, 'd') ? [] : new Array(targetDate.hour()).fill('').map((_, k) => k);
+    },
+    disabledMinutes: () => {
+      return current.isAfter(targetDate, 'h') ? [] : new Array(targetDate.minute()).fill('').map((_, k) => k);
+    },
+    disabledSeconds: () => {
+      return current.isAfter(targetDate, 'm') ? [] : new Array(targetDate.second()).fill('').map((_, k) => k);
+    },
   };
 }

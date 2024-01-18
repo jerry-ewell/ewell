@@ -157,14 +157,24 @@ export const periodDurationValidator = async (_: any, v: any) => {
 };
 
 export const preSalePriceValidator: ValidatorFun = async (form) => {
-  validateFields(form, ['maxSubscription']);
+  // validateFields(form, ['maxSubscription']);
   return Promise.resolve();
 };
 
-export const crowdFundingIssueAmountValidator: ValidatorFun = async (form) => {
-  validateFields(form, ['maxSubscription']);
+// export const crowdFundingIssueAmountValidator: ValidatorFun = async (form) => {
+//   // validateFields(form, ['maxSubscription']);
+//   return Promise.resolve();
+// };
+
+export const crowdFundingIssueAmountValidator: ValidatorFun = async (_: any, v: any) => {
+  // validateFields(form, ['maxSubscription']);
+  console.log('crowdFundingIssueAmountValidator', _, v);
+  const validator = await numberGtZEROValidator(_, v);
+  if (validator) return Promise.reject(validator);
+  // TODO：v <= wallet value
   return Promise.resolve();
 };
+
 export const Validators: any = {
   minSubscription: minSubscriptionValidator,
   maxSubscription: maxSubscriptionValidator,
@@ -175,5 +185,5 @@ export const Validators: any = {
   restDistributeProportion: restDistributeProportionValidator,
   totalPeriod: totalPeriodValidator,
   // preSalePrice: preSalePriceValidator,
-  // crowdFundingIssueAmount: crowdFundingIssueAmountValidator,
+  crowdFundingIssueAmount: crowdFundingIssueAmountValidator,
 };

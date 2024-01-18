@@ -1,15 +1,20 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useLocalStorage } from 'react-use';
-import { Button, Form, InputNumber, Space, Flex, DatePicker } from 'antd';
+import { Button, Form, InputNumber, Space, Flex, DatePickerProps, TimePickerProps } from 'antd';
 import { FormItemProps, FormFields } from 'components/FormItem';
 import CustomMark from '../components/CustomMark';
 import storages from '../storages';
-import { minSubscriptionValidator, maxSubscriptionValidator } from '../validate';
+import { minSubscriptionValidator, maxSubscriptionValidator, Validators } from '../validate';
 import { CreateStepPorps } from '../types';
 import { Input } from 'aelf-design';
+import dayjs from 'dayjs';
 import ButtonGroup from '../components/ButtonGroup';
+import { timePickerProps } from 'components/FormItem/types';
+import { disabledDateBefore, disabledTimeBefore } from '../utils';
+import { integeNumberFormat, formatNumberParser } from 'components/FormItem/utils';
+import BigNumber from 'bignumber.js';
 
-const formList: FormItemProps[] = [
+const formListConfig: FormItemProps[] = [
   {
     type: 'select',
     label: 'IDO Type:',
@@ -44,10 +49,14 @@ const formList: FormItemProps[] = [
         name: 'preSalePrice',
         rules: [{ required: true, message: 'sds' }],
         childrenProps: {
-          precision: 8,
-          min: 0,
+          min: 0.00000001,
           className: 'flex-grow',
           controls: false,
+          formatter: (value) => {
+            if (!value) return value;
+            return new BigNumber(value).toFormat(8).replace(/\.0+$|(?<=\.\d+)0*$/, '');
+          },
+          parser: formatNumberParser,
         },
       },
       {
@@ -67,8 +76,19 @@ const formList: FormItemProps[] = [
       {
         type: 'inputNumber',
         name: 'crowdFundingIssueAmount',
-        rules: [{ required: true, message: '' }],
+        rules: [
+          {
+            required: true,
+            message:
+              'Please enter a number, the maximum value does not exceed the total amount of Token in the wallet.',
+          },
+          {
+            validator: Validators.crowdFundingIssueAmount,
+          },
+        ],
         childrenProps: {
+          formatter: integeNumberFormat,
+          parser: formatNumberParser,
           precision: 0,
           min: 0,
           className: 'flex-grow',
@@ -99,6 +119,8 @@ const formList: FormItemProps[] = [
           }),
         ],
         childrenProps: {
+          formatter: integeNumberFormat,
+          parser: formatNumberParser,
           precision: 0,
           min: 1,
           controls: false,
@@ -126,6 +148,8 @@ const formList: FormItemProps[] = [
           }),
         ],
         childrenProps: {
+          formatter: integeNumberFormat,
+          parser: formatNumberParser,
           precision: 0,
           min: 1,
           controls: false,
@@ -152,6 +176,8 @@ const formList: FormItemProps[] = [
     name: 'startTime',
     childrenProps: {
       showTime: true,
+      disabledDate: disabledDateBefore,
+      disabledTime: (current) => disabledTimeBefore(current),
     },
   },
   {
@@ -193,12 +219,6 @@ const formWhitelist: FormItemProps[] = [
     type: 'textArea',
     label: 'Whitelist Tasks:',
     name: 'whitelistId',
-    rules: [
-      {
-        required: true,
-        message: ' Whitelisting is enabled, whitelisting tasks cannot be empty, please enter an accessible link',
-      },
-    ],
     childrenProps: {
       maxLength: 20,
     },
@@ -207,7 +227,8 @@ const formWhitelist: FormItemProps[] = [
 
 const IDOInfo: React.FC<CreateStepPorps> = ({ onNext }) => {
   const [form] = Form.useForm();
-  const [showWhitelist, setShowWhiteList] = useState();
+  const [formList, setFormList] = useState(formListConfig);
+  const [showWhitelist, setShowWhiteList] = useState(true);
   const [panel, setPannel] = useLocalStorage(storages.ProjectPanel, {});
 
   const onFinish = useCallback(
@@ -224,7 +245,56 @@ const IDOInfo: React.FC<CreateStepPorps> = ({ onNext }) => {
     console.log('allValues', allValues);
     const { isEnableWhitelist } = changedValues;
 
-    isEnableWhitelist !== undefined && setShowWhiteList(isEnableWhitelist);
+    if (Object.hasOwn(changedValues, 'isEnableWhitelist')) {
+      return setShowWhiteList(changedValues.isEnableWhitelist);
+    }
+
+    if (Object.hasOwn(changedValues, 'startTime')) {
+      const endTimeFrom = changedValues.startTime?.add('30', 'm');
+      form.setFieldsValue({ endTime: null, tokenReleaseTime: null });
+      formList.forEach((field) => {
+        if (field.name === 'endTime') {
+          field.childrenProps = {
+            ...field.childrenProps,
+            disabled: !endTimeFrom,
+            disabledDate: (current) => disabledDateBefore(current, endTimeFrom),
+            disabledTime: (current) => disabledTimeBefore(current, endTimeFrom),
+          };
+        }
+        if (field.name === 'tokenReleaseTime') {
+          field.childrenProps = {
+            ...field.childrenProps,
+            disabled: true,
+          };
+        }
+      });
+      console.log('formlist', formList);
+      return setFormList([...formList]);
+    }
+
+    if (Object.hasOwn(changedValues, 'endTime')) {
+      const endTimeFrom = changedValues?.endTime;
+      form.setFieldsValue({ tokenReleaseTime: null });
+      formList.forEach((field) => {
+        if (field.name === 'tokenReleaseTime') {
+          field.childrenProps = {
+            ...field.childrenProps,
+            disabled: !endTimeFrom,
+            disabledDate: (current) => disabledDateBefore(current, endTimeFrom),
+            disabledTime: (current) => disabledTimeBefore(current, endTimeFrom),
+          };
+        }
+      });
+      return setFormList([...formList]);
+    }
+
+    // if (Object.hasOwn(changedValues, 'preSalePrice')) {
+    //   const { preSalePrice } = changedValues;
+    //   console.log('preSalePrice', preSalePrice);
+    //   const bigPreSalePrice = new BigNumber(preSalePrice);
+    //   console.log('bigPreSalePrice', bigPreSalePrice, bigPreSalePrice.toFormat(8));
+    //   form.setFieldsValue({ preSalePrice: bigPreSalePrice.toFormat(8) });
+    // }
   };
 
   return (
@@ -240,14 +310,12 @@ const IDOInfo: React.FC<CreateStepPorps> = ({ onNext }) => {
         requiredMark={CustomMark}>
         {FormFields(formList)}
         {showWhitelist && FormFields(formWhitelist)}
-        <Form.Item label="test">
-          <Input />
-        </Form.Item>
         <Form.Item>
-          <Button htmlType="submit">提交</Button>
+          <Button htmlType="submit">submit</Button>
           {/* <ButtonGroup /> */}
         </Form.Item>
       </Form>
+      {/* {new BigNumber('').toFormat(0)} */}
     </div>
   );
 };

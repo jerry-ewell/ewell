@@ -7,10 +7,10 @@ import {
   TimePicker,
   Flex,
   InputNumber,
-  Upload,
-  Button,
+  // Upload,
+  // Button,
 } from 'antd';
-import { Input, DatePickerForPC, DatePickerForMobile } from 'aelf-design';
+import { Input, DatePickerForPC, DatePickerForMobile, Upload } from 'aelf-design';
 import { memo } from 'react';
 import CityCascader from './components/CityCascader';
 import FormGroup from './components/FormGroup';
@@ -88,20 +88,24 @@ function getChildren(type: FormItemProps['type'], childrenProps: FormItemProps['
     }
     case 'cityCascader':
       return <CityCascader {...(childrenProps as any)} />;
-    case 'datePicker':
-      return <DatePickerForPC style={{ width: '100%' }} {...(childrenProps as datePickerProps['childrenProps'])} />;
+    case 'datePicker': {
+      const customFormat = (value) => `${value.format('YYYY-MM-DD HH:mm:ss [UTC] Z')}`;
+      return (
+        <DatePickerForPC
+          style={{ width: '100%' }}
+          format={customFormat}
+          {...(childrenProps as datePickerProps['childrenProps'])}
+        />
+      );
+    }
     case 'timePicker':
       return <TimePicker style={{ width: '100%' }} {...(childrenProps as timePickerProps['childrenProps'])} />;
     case 'radioInput':
       return <FormRadioAndInput {...(childrenProps as radioInputProps['childrenProps'])} />;
     case 'row':
       return <div {...(childrenProps as rowProps['childrenProps'])} />;
-    // case 'fileUpload':
-    //   return (
-    //     <Upload {...(childrenProps as fileUploadProps['childrenProps'])}>
-    //       <Button>Upload</Button>
-    //     </Upload>
-    //   );
+    case 'fileUpload':
+      return <Upload {...(childrenProps as fileUploadProps['childrenProps'])}></Upload>;
     case 'searchSelect': {
       const { list, ...props } = childrenProps as selectProps['childrenProps'];
       return (

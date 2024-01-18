@@ -14,7 +14,7 @@ import './styles.less';
 const ProjectSteps: React.FC<CreateStepPorps>[] = [ConfirmTradingPair, ProjectInfo, IDOInfo, Transfer];
 
 const CreateProject: React.FC = () => {
-  const [currentStep, setCurrentStep] = useState<TSteps>(TSteps.TWO);
+  const [currentStep, setCurrentStep] = useState<TSteps>(TSteps.ONE);
 
   const onNext = useCallback(() => {
     console.log('onNext');
@@ -25,7 +25,19 @@ const CreateProject: React.FC = () => {
     setCurrentStep(currentStep - 1);
   }, [currentStep]);
 
-  const renderStep = () => ProjectSteps[currentStep]({ onNext, onPre });
+  const renderStep = useMemo(() => {
+    switch (currentStep) {
+      case TSteps.ONE:
+        return <ConfirmTradingPair onNext={onNext} />;
+      case TSteps.TWO:
+        return <ProjectInfo onNext={onNext} onPre={onPre} />;
+      case TSteps.THREE:
+        return <IDOInfo onNext={onNext} onPre={onPre} />;
+      case TSteps.FOURE:
+        return <Transfer />;
+    }
+  }, [currentStep, onNext, onPre]);
+
   return (
     <div className="common-page-1360 cre-project">
       <Breadcrumb
@@ -41,8 +53,8 @@ const CreateProject: React.FC = () => {
         ]}
       />
       <div className="project-wrapper">
-        {currentStep !== TSteps.FOURE && <ESteps current={currentStep} items={stepsItems} />}
-        {renderStep()}
+        <ESteps current={currentStep} items={stepsItems} />
+        {renderStep}
       </div>
     </div>
   );

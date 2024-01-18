@@ -73,3 +73,14 @@ export function getInfo(confirmTradingPair: any, projectPanel: any, additionalIn
     isBurnRestToken: projectPanel.isBurnRestToken === '1' ? true : false,
   };
 }
+
+// const additionInfo = {
+//   projectName: '',
+//   projectSummmary: '',
+//   projectDescription: '',
+//   x: '',
+//   telegram: '',
+//   medium: '',
+//   logoUrl: '',
+//   projectImgs: 'url1,url2',
+// }

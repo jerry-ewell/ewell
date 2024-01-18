@@ -1,6 +1,6 @@
 export interface CreateStepPorps {
-  onNext: () => void;
-  onPre: () => void;
+  onNext?: () => void;
+  onPre?: () => void;
 }
 
 export enum TSteps {
