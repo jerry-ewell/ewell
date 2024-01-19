@@ -4,8 +4,11 @@
 }
 
 /* modal */
-.@{app-prefix}-modal-title {
-  text-align: center;
+.@{app-prefix}-modal-header {
+  margin-bottom: 24px !important;
+  .@{app-prefix}-modal-title {
+    text-align: center;
+  }
 }
 
 /* tooltip */
@@ -30,4 +33,38 @@
       border-bottom-right-radius: 6px;
     }
   }
+}
+
+/** tabs **/
+.@{app-prefix}-tabs-nav {
+  &::before {
+    border: none !important;
+  }
+  .@{app-prefix}-tabs-tab-btn {
+    font-weight: 500;
+  }
+}
+
+/** inputNumber **/
+.@{app-prefix}-input-number-wrapper {
+  &:hover {
+    .@{app-prefix}-input-number,
+    .@{app-prefix}-input-number-group-addon {
+      border-color: #9b5eff;
+    }
+  }
+  .@{app-prefix}-input-number {
+    caret-color: #863dff;
+  }
+  .@{app-prefix}-input-number-focused {
+    border-color: #863dff;
+    & + .@{app-prefix}-input-number-group-addon {
+      border-color: #863dff;
+    }
+  }
+}
+
+/** switch **/
+.@{app-prefix}-switch-small {
+  width: 28px;
 }

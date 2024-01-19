@@ -100,7 +100,7 @@ export default function ProjectList() {
         maxResultCount: maxResultCount,
         ...tool,
       };
-      const list = await request.project.list({ params });
+      const list = await request.project.getProjectList({ params });
       if (Array.isArray(list.items))
         dispatch(basicProjectView.setProjectList.actions(list.items, list.totalCount, add));
     },

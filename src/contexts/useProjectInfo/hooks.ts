@@ -21,7 +21,7 @@ export function useProjectInfoByFetch(timeStamp?: number) {
   const getProjectInfo = useCallback(async () => {
     if (!projectId) return;
     // TODO
-    const res = await request.project.list({
+    const res = await request.project.getProjectList({
       params: {
         chainId: apiChainId,
         hash: projectId,

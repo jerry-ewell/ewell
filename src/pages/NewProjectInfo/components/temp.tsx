@@ -4,8 +4,10 @@ export const tempInfo = {
   isLogin: true,
   logoUrl: '',
   projectName: 'Citizen Conflict',
-  projectStatus: ProjectStatus.ENDED,
+  projectStatus: ProjectStatus.PARTICIPATORY,
+  isCreator: true,
   isEnableWhitelist: true,
+  hasWhitelistTasks: true,
   isFinishWhitelist: true,
   whitelistTasksLink: 'https://www.google.com',
   myAllocation: {

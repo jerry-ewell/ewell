@@ -3,6 +3,8 @@ import { ThemeConfig } from 'antd';
 
 export const AELFD_THEME_CONFIG: IAelfdThemeProviderProps['theme'] = {
   token: {
+    colorTextHeading: '#070A26',
+    colorText: '#070A26',
     colorPrimary: '#070A26',
     colorTextDescription: '#888997',
     colorSplit: '#888997',
@@ -10,6 +12,10 @@ export const AELFD_THEME_CONFIG: IAelfdThemeProviderProps['theme'] = {
     colorPrimaryHover: '#9B5EFF',
     colorPrimaryActive: '#863DFF',
     colorBorder: '#070A26',
+    colorPrimaryBorder: '#070A26',
+    colorError: '#F53F3F',
+    colorErrorBorderHover: '#F53F3F',
+    colorTextDisabled: '#C1C2C9',
   },
   components: {
     Table: {
@@ -20,6 +26,24 @@ export const AELFD_THEME_CONFIG: IAelfdThemeProviderProps['theme'] = {
     },
     Input: {
       activeBorderColor: '#863DFF',
+    },
+    Tabs: {
+      horizontalItemPaddingSM: '13px 0',
+      horizontalMargin: '0 0 24px 0',
+      inkBarColor: '#863DFF',
+      itemActiveColor: '#863DFF',
+      itemHoverColor: '#22253E',
+      itemSelectedColor: '#863DFF',
+    },
+    Button: {
+      fontWeight: 500,
+      colorPrimaryHover: '#22253E',
+      colorPrimaryActive: '#131631',
+      primaryShadow: '',
+      colorPrimary: '#070A26',
+      borderColorDisabled: '#EBEBEE',
+      colorBgContainerDisabled: '#EBEBEE',
+      colorTextDisabled: '#C1C2C9',
     },
   },
 };
@@ -49,6 +73,17 @@ export const ANTD_THEME_CONFIG: ThemeConfig = {
     },
     InputNumber: {
       activeBorderColor: '#863DFF',
+      activeShadow: '',
+      errorActiveShadow: '',
+      warningActiveShadow: '',
+      addonBg: '#ffffff',
+    },
+    Switch: {
+      handleShadow: '',
+      handleSizeSM: 12,
+      trackHeightSM: 16,
+      trackMinWidthSM: 28,
+      colorPrimaryHover: '#070A26',
     },
   },
 };

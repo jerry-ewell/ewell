@@ -122,5 +122,8 @@ export const authToken = async (wallet: IWallet) => {
         console.log('authToken error', error);
       }
     },
+    onCancel: () => {
+      myEvents.RefuseAuth.emit();
+    },
   });
 };

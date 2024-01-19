@@ -1,3 +1,5 @@
+import { ChainId } from '@portkey/types';
+
 const NETWORK_CONFIG_LIST = {
   mainnet: {
     networkType: 'MAIN',
@@ -51,10 +53,10 @@ const NETWORK_CONFIG_LIST = {
     mainChainId: 'AELF',
     sideChainId: 'tDVV',
     webLoginGraphqlUrl: '/AElfIndexer_DApp/PortKeyIndexerCASchema/graphql',
-    webLoginRequestDefaultsUrl: 'http://192.168.66.203:5001',
+    webLoginRequestDefaultsUrl: '/webLoginRequest',
     webLoginConnectUrl: 'http://192.168.66.203:8001',
-    ewellContractAddress: 'C7ZUPUHDwG2q3jR5Mw38YoBHch2XiZdiK6pBYkdhXdGrYcXsb',
-    whitelistContractAddress: '2cGT3RZZy6UJJ3eJPZdWMmuoH2TZBihvMtAtKvLJUaBnvskK2x',
+    ewellContractAddress: 'mhgUyGhd27YaoG8wgXTbwtbAiYx7E59n5GXEkmkTFKKQTvGnB',
+    whitelistContractAddress: 'x4CTSuM8typUbpdfxRZDTqYVa42RdxrwwPkXX7WUJHeRmzE6k',
     mainChainInfo: {
       chainId: 'AELF',
       exploreUrl: 'http://192.168.67.156:8000',
@@ -74,4 +76,4 @@ const NETWORK_CONFIG_LIST = {
 
 export const NETWORK_CONFIG = NETWORK_CONFIG_LIST['test3'];
 
-export const DEFAULT_CHAIN_ID = NETWORK_CONFIG.sideChainId;
+export const DEFAULT_CHAIN_ID = NETWORK_CONFIG.sideChainId as ChainId;

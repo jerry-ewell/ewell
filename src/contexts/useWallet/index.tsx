@@ -10,11 +10,15 @@ import {
   PortkeyProvider,
   useWebLoginContext,
   WebLoginContextType,
+  useWebLogin,
 } from 'aelf-web-login';
 import Wallet from './Wallet';
 import { IWallet } from './Wallet/types';
 import { DEFAULT_CHAIN_ID, NETWORK_CONFIG } from 'constants/network';
 import { authToken, clearLocalJWT } from './utils';
+import myEvents from 'utils/myEvent';
+import { useLocation } from 'react-use';
+import { useNavigate } from 'react-router-dom';
 
 const APPNAME = 'explorer.aelf.io';
 
@@ -84,11 +88,18 @@ function reducer(state: any, { type, payload }: any) {
   }
 }
 
+const LOGOUT_STAY_PATH = ['example'];
 export function WalletProvider({ children }: { children: React.ReactNode }) {
   const [state, dispatch] = useReducer(reducer, INITIAL_STATE);
   const webLoginContext = useWebLoginContext();
   const webLoginContextRef = useRef<WebLoginContextType>(webLoginContext);
   webLoginContextRef.current = webLoginContext;
+  const { logout } = useWebLogin();
+
+  const navigate = useNavigate();
+  const { pathname } = useLocation();
+  const pathnameRef = useRef(pathname);
+  pathnameRef.current = pathname;
 
   const { wallet } = state;
   if (webLoginContext.loginState === WebLoginState.logined && wallet && webLoginContext.callContract) {
@@ -121,12 +132,36 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
       payload: undefined,
     });
     clearLocalJWT();
-  }, []);
+
+    const _pathname = (pathnameRef.current || '').split('/')[1] || '';
+    if (!LOGOUT_STAY_PATH.includes(_pathname)) {
+      navigate('/', { replace: true });
+    }
+  }, [navigate]);
   useWebLoginEvent(WebLoginEvents.LOGOUT, onLogout);
 
   useEffect(() => {
     console.log('state', state);
   }, [state]);
+
+  useEffect(() => {
+    const { remove } = myEvents.AuthorizationExpired.addListener(() => {
+      clearLocalJWT();
+      authToken(wallet);
+    });
+    return () => {
+      remove();
+    };
+  }, [wallet]);
+
+  useEffect(() => {
+    const { remove } = myEvents.RefuseAuth.addListener(() => {
+      logout();
+    });
+    return () => {
+      remove();
+    };
+  }, [logout]);
 
   return (
     <WalletContext.Provider value={useMemo(() => [state, dispatch], [state, dispatch])}>

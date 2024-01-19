@@ -8,7 +8,7 @@ export default function ProjectInfo() {
   const isMobile = useMobile();
 
   return (
-    <div className="common-page1 min-height-container project-info-wrapper">
+    <div className="common-page-1360 min-height-container project-info-wrapper">
       <BaseBreadcrumb />
       <div className="flex project-info-content">
         <InfoWrapper />

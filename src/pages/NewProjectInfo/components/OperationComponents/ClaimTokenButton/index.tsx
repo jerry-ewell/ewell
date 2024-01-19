@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { Button, Modal, Flex } from 'antd';
+import { Modal, Flex } from 'antd';
+import { Button } from 'aelf-design';
 import SuccessModal from '../SuccessModal';
 import './styles.less';
 
@@ -10,6 +11,7 @@ export default function ClaimTokenButtonButton() {
   return (
     <>
       <Button
+        type="primary"
         onClick={() => {
           setIsSubmitModalOpen(true);
         }}>
