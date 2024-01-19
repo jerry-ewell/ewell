@@ -1,4 +1,4 @@
-import { Button, Modal } from 'antd';
+import { Button, Modal, Upload } from 'antd';
 import { useLockCallback } from 'hooks';
 import { useCallback, useEffect, useState } from 'react';
 import './styles.less';
@@ -14,12 +14,18 @@ import { getLog } from 'utils/protoUtils';
 import { mockCreateResult } from './data';
 import { ZERO } from 'constants/misc';
 import { Input } from 'aelf-design';
+import { InboxOutlined } from '@ant-design/icons';
+import { useParseWhiteList } from 'hooks/useParseWhiteList';
+import { filterWhiteListData } from 'hooks/useParseWhiteList/utils';
+
+const { Dragger } = Upload;
 
 export default function Example() {
   const { login, logout, wallet, checkManagerSyncState } = useWallet();
 
   const { getTokenContract, getEwellContract, getWhitelistContract } = useViewContract();
   const [projectId, setProjectId] = useState('15d556a57222ef06ea9a46a6fb9db416bffb98b8de60ccef6bcded8ca851f407');
+  const { updateFile } = useParseWhiteList();
 
   const transfer = useCallback(async () => {
     try {
@@ -293,8 +299,28 @@ export default function Example() {
     }
   }, [projectId, wallet]);
 
+  const onUploadChange = useCallback(
+    async (e: any) => {
+      try {
+        const addressList = await updateFile(e);
+        const originList = ['ELF_2R7QtJp7e1qUcfh2RYYJzti9tKpPheNoAGD7dTVFd4m9NaCh27_tDVV'];
+        const fileResult = filterWhiteListData(originList, addressList);
+        console.log('fileResult', fileResult);
+      } catch (error) {
+        console.log('file error', error);
+      }
+    },
+    [updateFile],
+  );
+
   return (
     <div>
+      <Web3Button
+        onClick={() => {
+          console.log('jump');
+        }}>
+        Launch with EWELL
+      </Web3Button>
       <Input
         value={projectId}
         onChange={(e) => {
@@ -330,6 +356,22 @@ export default function Example() {
         <Button type="primary" onClick={getProjectUserList}>
           getProjectUserList
         </Button>
+      </div>
+      <div>
+        <Dragger
+          accept=".xlsx,.csv"
+          onRemove={() => {
+            console.log('onRemove');
+            // setExcelData([]);
+          }}
+          beforeUpload={(e) => {
+            onUploadChange(e);
+          }}>
+          <p className="ant-upload-drag-icon">
+            <InboxOutlined />
+          </p>
+          <p className="ant-upload-text">Click or drag file to this area to upload</p>
+        </Dragger>
       </div>
 
       <Button
