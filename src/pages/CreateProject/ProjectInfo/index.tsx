@@ -1,8 +1,8 @@
 import React, { useCallback, useState } from 'react';
-import { useLocalStorage, useSessionStorage } from 'react-use';
+import { useLocalStorage } from 'react-use';
 import { FormItemProps, FormFields } from 'components/FormItem';
-import { Form, Button } from 'antd';
-import { getInputOptions } from 'components/FormItem/utils';
+import { Form, Button, GetProp, message } from 'antd';
+import { getInputOptions, normFile } from 'components/FormItem/utils';
 import { urlValidator } from 'pages/CreateProjectOld/validate';
 import CustomMark from '../components/CustomMark';
 import { CreateStepPorps } from '../types';
@@ -11,6 +11,7 @@ import './styles.less';
 import storages from '../storages';
 import { Upload, IUploadProps } from 'aelf-design';
 import { useAWSUploadService } from 'hooks/useAWSUploadService';
+import { emitLoading } from 'utils/events';
 import { UploadFile } from 'antd/lib';
 
 const formList: FormItemProps[] = [
@@ -32,8 +33,8 @@ const formList: FormItemProps[] = [
       { min: 20, message: 'Please enter the necessary information' },
     ],
     childrenProps: {
-      autoSize: true,
       maxLength: 500,
+      autoSize: { minRows: 3, maxRows: 5 },
     },
   },
   {
@@ -41,33 +42,36 @@ const formList: FormItemProps[] = [
     label: 'Project Description (300-20000 character):',
     name: 'projectDescription',
     rules: [
-      { required: true, message: '' },
+      { required: true, message: 'Please enter the necessary information' },
       { min: 300, max: 20000, message: '300-20000' },
     ],
     childrenProps: {
-      autoSize: false,
+      autoSize: { minRows: 3, maxRows: 5 },
     },
   },
   {
     type: 'fileUpload',
     label: 'LogoUrl:',
     name: 'logoUrl',
-    // required: true,
+    valuePropName: 'fileList',
+    getValueFromEvent: normFile,
     childrenProps: {
-      // style: {
-      //   height: 0,
-      // },
+      maxFileCount: 1,
+      fileLimit: '10M',
+      accept: '.jpg,.jpeg.,.png',
     },
   },
   {
     type: 'fileUpload',
     label: 'Project Images:',
     name: 'projectImgs',
-    // required: true,
+    required: true,
+    valuePropName: 'fileList',
+    getValueFromEvent: normFile,
     childrenProps: {
-      // style: {
-      //   height: 0,
-      // },
+      maxFileCount: 5,
+      fileLimit: '10M',
+      accept: '.jpg,.jpeg.,.png',
     },
   },
   getInputOptions({
@@ -81,14 +85,8 @@ const formList: FormItemProps[] = [
     label: 'Other Community',
     fieldsList: [
       getInputOptions({
-        label: 'Facebook:',
-        name: 'facebook',
-        required: false,
-        rules: [{ validator: urlValidator }],
-      }),
-      getInputOptions({
-        label: 'Telegram:',
-        name: 'telegram',
+        label: 'Medium:',
+        name: 'medium',
         required: false,
         rules: [{ validator: urlValidator }],
       }),
@@ -99,20 +97,8 @@ const formList: FormItemProps[] = [
         rules: [{ validator: urlValidator }],
       }),
       getInputOptions({
-        label: 'Github:',
-        name: 'github',
-        required: false,
-        rules: [{ validator: urlValidator }],
-      }),
-      getInputOptions({
-        label: 'Discord:',
-        name: 'discord',
-        required: false,
-        rules: [{ validator: urlValidator }],
-      }),
-      getInputOptions({
-        label: 'Reddit:',
-        name: 'reddit',
+        label: 'Telegram:',
+        name: 'telegram',
         required: false,
         rules: [{ validator: urlValidator }],
       }),
@@ -126,42 +112,23 @@ const ProjectInfo: React.FC<CreateStepPorps> = ({ onNext, onPre }) => {
   const onFinish = useCallback(
     (value: any) => {
       console.log('projectInfo', value);
+      const { projectImgs, logoUrl } = value;
+
+      if (!logoUrl || logoUrl.length <= 0) {
+        message.warning('Please upload logo image.');
+        return;
+      }
+
+      if (!projectImgs || projectImgs.length < 3) {
+        message.warning('Please upload 3 to 5 project images.');
+        return;
+      }
+
       setAdditional(value);
-      // onNext();
+      onNext?.();
     },
     [setAdditional, onNext],
   );
-
-  const onUploadChange: IUploadProps['onChange'] = (info) => {
-    console.log('onUploadChange', info);
-    // eslint-disable-next-line no-debugger
-    // setFilelist(info.fileList.filter((file: UploadFile) => file?.status === 'done'));
-    // if (info.file.status === 'done') {
-    //   setFilelist(info.fileList);
-    // }
-    setFilelist(info.fileList);
-  };
-  const [fileList, setFilelist] = useState<any[]>([]);
-
-  const onCustomRequest: IUploadProps['customRequest'] = async ({ file, onSuccess, onError }) => {
-    try {
-      console.log('customRequest', file);
-      // eslint-disable-next-line no-debugger
-      const uploadFIle = await awsUploadFile(file as File);
-      // eslint-disable-next-line no-debugger
-      console.log('awsUploadFile', uploadFIle);
-      onSuccess?.({ url: uploadFIle });
-    } catch (error) {
-      onError?.(error as Error);
-    }
-  };
-
-  const normFile = (e: any) => {
-    if (Array.isArray(e)) {
-      return e;
-    }
-    return e?.fileList;
-  };
 
   return (
     <div className="project-info">
@@ -174,12 +141,8 @@ const ProjectInfo: React.FC<CreateStepPorps> = ({ onNext, onPre }) => {
         onFinish={onFinish}
         validateTrigger="onSubmit">
         {FormFields(formList)}
-        {/* TODO: 列表回显 */}
-        <Form.Item label="testupload" name="testFile" valuePropName="fileList" getValueFromEvent={normFile}>
-          <Upload name="file" customRequest={onCustomRequest} />
-        </Form.Item>
         <Form.Item>
-          <Button htmlType="submit">提交</Button>
+          <Button htmlType="submit">submit</Button>
         </Form.Item>
       </Form>
       {/* <ButtonGroup /> */}

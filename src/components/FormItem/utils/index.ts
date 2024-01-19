@@ -33,7 +33,7 @@ export function getInputOptions(
     type: 'input',
     label: label,
     name: name || label,
-    rules: required ? [{ required: true, message: `Please enter ${label}!` }] : [],
+    rules: required ? [{ required: true, message: 'Please enter the necessary information' }] : [],
     childrenProps: {
       placeholder: `Please enter`,
       ...childrenProps,
@@ -76,4 +76,11 @@ export function integeNumberFormat(val: string) {
 export function formatNumberParser(val: string) {
   console.log('formatInterNumberParser', val);
   return val.replace(/,*/g, '');
+}
+
+export function normFile(e: any) {
+  if (Array.isArray(e)) {
+    return e;
+  }
+  return e?.fileList;
 }

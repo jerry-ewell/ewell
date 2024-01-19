@@ -6,7 +6,7 @@ import type {
   // RadioProps,
   RowProps,
   SelectProps,
-  UploadProps,
+  // UploadProps,
   InputNumberProps,
   FlexProps,
 } from 'antd';
@@ -15,6 +15,7 @@ import type { IInputProps, InputTextAreaProps, InputPasswordProps, IRadioProps }
 import type { FormTreeProps } from './components/FormTree';
 import type { CommonSelectItem } from 'components/CommonSelect';
 import { FormItemProps } from './index';
+import { IFUploadProps } from './components/FUpload';
 import { ReactHTML, ReactHTMLElement } from 'react';
 
 export type inputProps = {
@@ -65,12 +66,12 @@ export type timePickerProps = {
 };
 export type fileUploadProps = {
   type: 'fileUpload';
-  childrenProps?: UploadProps;
+  childrenProps?: IFUploadProps;
 };
 
 export type idCardUploadProps = {
   type: 'idCardUpload';
-  childrenProps?: UploadProps;
+  childrenProps?: IFUploadProps;
 };
 export type radioInputProps = {
   type: 'radioInput';

@@ -21,6 +21,7 @@ const formListConfig: FormItemProps[] = [
     name: 'crowdFundingType',
     initialValue: 'Sell at the set price',
     required: true,
+    tooltip: 'IDO type is a fixed price sale.',
     childrenProps: {
       disabled: true,
       list: [{ title: 'Sell at the set price', value: 'Sell at the set price' }],
@@ -30,6 +31,7 @@ const formListConfig: FormItemProps[] = [
     type: 'select',
     label: 'Token Unsold:',
     name: 'isBurnRestToken',
+    tooltip: 'Unsold Token returned to the project owner.',
     initialValue: '0',
     required: true,
     childrenProps: {
@@ -42,6 +44,7 @@ const formListConfig: FormItemProps[] = [
   {
     type: 'inlineField',
     label: 'Sale Price:',
+    tooltip: 'The Token you set corresponds to the price of the ELF . How many Token can be purchased for one ELF?',
     required: true,
     inlineFieldList: [
       {
@@ -71,6 +74,7 @@ const formListConfig: FormItemProps[] = [
   {
     type: 'inlineField',
     label: 'Supply:',
+    tooltip: 'The number of Token(s) you provide that are available for sale.',
     required: true,
     inlineFieldList: [
       {
@@ -107,7 +111,7 @@ const formListConfig: FormItemProps[] = [
   {
     type: 'inlineField',
     label: 'Purchase Quantity:',
-    // name: 'auantity',
+    tooltip: 'Range of ELFs available for investors to spend.',
     required: true,
     inlineFieldList: [
       {
@@ -174,6 +178,7 @@ const formListConfig: FormItemProps[] = [
     type: 'datePicker',
     label: 'IDO Starts At:',
     name: 'startTime',
+    tooltip: 'IDO start time, users can start participating in the IDO.',
     childrenProps: {
       showTime: true,
       disabledDate: disabledDateBefore,
@@ -183,6 +188,7 @@ const formListConfig: FormItemProps[] = [
   {
     type: 'datePicker',
     label: 'IDO Ends At:',
+    tooltip: 'DO end time, end of fundraising.',
     name: 'endTime',
     childrenProps: {
       disabled: true,
@@ -193,6 +199,8 @@ const formListConfig: FormItemProps[] = [
     type: 'datePicker',
     label: 'Token Distribution Time:',
     name: 'tokenReleaseTime',
+    tooltip:
+      'Crowdfunded Token will be released to users after this time, and the project owner can also withdraw the fundraising proceeds and unsold Token after this time.',
     childrenProps: {
       disabled: true,
       showTime: true,
@@ -202,6 +210,8 @@ const formListConfig: FormItemProps[] = [
     type: 'group',
     label: 'Enable Whitelist:',
     name: 'isEnableWhitelist',
+    tooltip:
+      'With whitelisting enabled, investors need to be within the whitelist you maintain to participate in crowdfunding.',
     initialValue: true,
     className: 'form-item-width-437',
     required: true,
@@ -219,6 +229,8 @@ const formWhitelist: FormItemProps[] = [
     type: 'textArea',
     label: 'Whitelist Tasks:',
     name: 'whitelistId',
+    tooltip:
+      'Enter an accessible link that the user clicks on and is redirected to a third-party platform to view the whitelisted tasks. We recommend using the official Community.',
     childrenProps: {
       maxLength: 20,
     },

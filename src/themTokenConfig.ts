@@ -1,5 +1,4 @@
 import { IAelfdThemeProviderProps } from 'aelf-design';
-import { IAelfdCustomToken } from 'aelf-design/dist/es/provider';
 import { ThemeConfig } from 'antd';
 
 export const AELFD_THEME_CONFIG: IAelfdThemeProviderProps['theme'] = {
@@ -13,27 +12,12 @@ export const AELFD_THEME_CONFIG: IAelfdThemeProviderProps['theme'] = {
     colorBorder: '#070A26',
   },
   components: {
-    Steps: {
-      iconSize: 40,
-      iconFontSize: 16,
-      titleLineHeight: 40,
-      finishIconBorderColor: '#070A26',
+    Table: {
+      headerBg: '#ffffff',
+      headerSplitColor: '#ffffff',
+      headerColor: '#070A26',
+      borderColor: '#070A26',
     },
-    // Form: {
-    //   itemMarginBottom: 48,
-    //   labelRequiredMarkColor: '#FF703D',
-    //   labelFontSize: 16,
-    //   verticalLabelMargin: '0 0 4px',
-    // },
-    // InputNumber: {
-    //   activeBorderColor: '#863DFF',
-    // },
-    // Form: {
-    //   itemMarginBottom: 48,
-    //   labelRequiredMarkColor: '#FF703D',
-    //   labelFontSize: 16,
-    //   verticalLabelMargin: '0 0 4px',
-    // },
     Input: {
       activeBorderColor: '#863DFF',
     },
@@ -69,11 +53,11 @@ export const ANTD_THEME_CONFIG: ThemeConfig = {
   },
 };
 
-export const AELFD_CUSTOM_TOKEN_CONFIG: IAelfdCustomToken = {
+export const AELFD_CUSTOM_TOKEN_CONFIG: IAelfdThemeProviderProps['customToken'] = {
   customAddress: {
     primaryLinkColor: '#863DFF',
     primaryIconColor: '#070A26',
-    addressHoverColor: '#070A26',
+    addressHoverColor: '#863DFF',
     addressActiveColor: '#863DFF',
   },
 };

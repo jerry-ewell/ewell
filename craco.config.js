@@ -2,6 +2,7 @@
 const CracoLessPlugin = require('craco-less');
 const TerserPlugin = require('terser-webpack-plugin');
 const webpack = require('webpack');
+const path = require('path');
 const { NODE_ENV, REACT_APP_PREFIX } = process.env;
 const activeApi = require('./proxy');
 
@@ -113,6 +114,9 @@ module.exports = {
           },
         ],
       },
+    },
+    alias: {
+      '@assets': path.resolve(__dirname, 'src/assets'),
     },
   },
 };

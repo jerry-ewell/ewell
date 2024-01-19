@@ -14,7 +14,7 @@ import './styles.less';
 const ProjectSteps: React.FC<CreateStepPorps>[] = [ConfirmTradingPair, ProjectInfo, IDOInfo, Transfer];
 
 const CreateProject: React.FC = () => {
-  const [currentStep, setCurrentStep] = useState<TSteps>(TSteps.ONE);
+  const [currentStep, setCurrentStep] = useState<TSteps>(TSteps.THREE);
 
   const onNext = useCallback(() => {
     console.log('onNext');
