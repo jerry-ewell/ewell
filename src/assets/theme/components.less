@@ -4,8 +4,11 @@
 }
 
 /* modal */
-.@{app-prefix}-modal-title {
-  text-align: center;
+.@{app-prefix}-modal-header {
+  margin-bottom: 24px !important;
+  .@{app-prefix}-modal-title {
+    text-align: center;
+  }
 }
 
 /* tooltip */
@@ -51,7 +54,7 @@
     }
   }
   .@{app-prefix}-input-number {
-    caret-color: #863DFF;
+    caret-color: #863dff;
   }
   .@{app-prefix}-input-number-focused {
     border-color: #863dff;
@@ -59,4 +62,9 @@
       border-color: #863dff;
     }
   }
+}
+
+/** switch **/
+.@{app-prefix}-switch-small {
+  width: 28px;
 }

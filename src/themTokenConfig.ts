@@ -14,7 +14,6 @@ export const AELFD_THEME_CONFIG: IAelfdThemeProviderProps['theme'] = {
     colorError: '#F53F3F',
     colorErrorBorderHover: '#F53F3F',
     colorTextDisabled: '#C1C2C9',
-    colorBgContainerDisabled: '#EBEBEE',
   },
   components: {
     Table: {
@@ -28,7 +27,7 @@ export const AELFD_THEME_CONFIG: IAelfdThemeProviderProps['theme'] = {
       horizontalMargin: '0 0 24px 0',
       inkBarColor: '#863DFF',
       itemActiveColor: '#863DFF',
-      itemHoverColor: '#863DFF',
+      itemHoverColor: '#22253E',
       itemSelectedColor: '#863DFF',
     },
     Button: {
@@ -37,6 +36,9 @@ export const AELFD_THEME_CONFIG: IAelfdThemeProviderProps['theme'] = {
       colorPrimaryActive: '#131631',
       primaryShadow: '',
       colorPrimary: '#070A26',
+      borderColorDisabled: '#EBEBEE',
+      colorBgContainerDisabled: '#EBEBEE',
+      colorTextDisabled: '#C1C2C9',
     },
   },
 };
@@ -66,6 +68,13 @@ export const ANTD_THEME_CONFIG: ThemeConfig = {
       errorActiveShadow: '',
       warningActiveShadow: '',
       addonBg: '#ffffff',
+    },
+    Switch: {
+      handleShadow: '',
+      handleSizeSM: 12,
+      trackHeightSM: 16,
+      trackMinWidthSM: 28,
+      colorPrimaryHover: '#070A26',
     },
   },
 };

@@ -1,6 +1,7 @@
 import clsx from 'clsx';
 import { InputNumber, Flex } from 'antd';
 import { Typography, FontWeightEnum, Progress, Button } from 'aelf-design';
+import CommonCard from 'components/CommonCard';
 import PurchaseButton from '../OperationComponents/PurchaseButton';
 import RevokeInvestmentButton from '../OperationComponents/RevokeInvestmentButton';
 import ClaimTokenButtonButton from '../OperationComponents/ClaimTokenButton';
@@ -13,7 +14,7 @@ const { Title, Text } = Typography;
 
 export default function JoinCard({ info }: { info: typeof tempInfo }) {
   return (
-    <div className="join-card-wrapper">
+    <CommonCard className="join-card-wrapper">
       <div className="swap-progress-wrapper">
         <Flex align="center" justify="space-between">
           <Title fontWeight={FontWeightEnum.Medium}>Swap Progress</Title>
@@ -137,6 +138,6 @@ export default function JoinCard({ info }: { info: typeof tempInfo }) {
           </>
         )}
       </Flex>
-    </div>
+    </CommonCard>
   );
 }

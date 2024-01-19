@@ -8,7 +8,7 @@ const { Title } = Typography;
 export interface ICommonCardProps {
   className?: string;
   contentClassName?: string;
-  title: string;
+  title?: string;
   extra?: ReactNode;
   children?: ReactNode;
 }
@@ -16,12 +16,14 @@ export interface ICommonCardProps {
 export default function CommonCard({ className, contentClassName, title, extra, children }: ICommonCardProps) {
   return (
     <div className={clsx('common-card-wrapper', className)}>
-      <div className="title-wrapper flex-row-center">
-        <Title className="title flex-1" level={7} fontWeight={FontWeightEnum.Medium}>
-          {title}
-        </Title>
-        <div className="extra">{extra}</div>
-      </div>
+      {!!title && (
+        <div className="title-wrapper flex-row-center">
+          <Title className="title flex-1" level={7} fontWeight={FontWeightEnum.Medium}>
+            {title}
+          </Title>
+          {!!extra && <div className="extra">{extra}</div>}
+        </div>
+      )}
       <div className={contentClassName}>{children}</div>
     </div>
   );

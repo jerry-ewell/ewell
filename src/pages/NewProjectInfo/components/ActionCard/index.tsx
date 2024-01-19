@@ -18,8 +18,7 @@ export default function ActionCard() {
           Log in to view details
         </Button>
       )}
-      {/* undetermined */}
-      <ProjectManagementCard />
+      {tempInfo.isCreator && <ProjectManagementCard />}
     </Flex>
   );
 }

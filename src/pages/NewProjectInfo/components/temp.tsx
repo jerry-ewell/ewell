@@ -5,6 +5,7 @@ export const tempInfo = {
   logoUrl: '',
   projectName: 'Citizen Conflict',
   projectStatus: ProjectStatus.PARTICIPATORY,
+  isCreator: true,
   isEnableWhitelist: true,
   hasWhitelistTasks: true,
   isFinishWhitelist: true,
