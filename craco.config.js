@@ -53,6 +53,14 @@ module.exports = {
         changeOrigin: true,
         secure: true,
       },
+      '/webLoginRequest/api': {
+        target: activeApi.webLoginApi,
+        changeOrigin: true,
+        secure: true,
+        pathRewrite: {
+          '^/webLoginRequest': '',
+        },
+      },
       '/api': {
         target: activeApi.api,
         changeOrigin: true,

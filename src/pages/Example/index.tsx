@@ -1,42 +1,35 @@
 import { Button, Modal } from 'antd';
 import { useLockCallback } from 'hooks';
 import { useCallback, useEffect, useState } from 'react';
-import { setThemes } from 'utils/themes';
 import './styles.less';
 import { useWallet } from 'contexts/useWallet/hooks';
 import Web3Button from 'components/Web3Button';
-import { NETWORK_CONFIG } from 'constants/network';
+import { DEFAULT_CHAIN_ID, NETWORK_CONFIG } from 'constants/network';
 import { getProtobufTime } from 'utils';
 import { useViewContract } from 'contexts/useViewContract/hooks';
 import { request } from 'api';
 import myEvents from 'utils/myEvent';
 import { WebLoginEvents, useWebLoginEvent } from 'aelf-web-login';
+import { getLog } from 'utils/protoUtils';
+import { mockCreateResult } from './data';
+import { ZERO } from 'constants/misc';
+import { Input } from 'aelf-design';
 
 export default function Example() {
-  const [url, setUrl] = useState('');
-  const submit = useLockCallback(async () => {
-    // console.log('submit strat');
-    // await mockApiRequest();
-    // console.log('submit end', url);
-  }, [url]);
+  const { login, logout, wallet, checkManagerSyncState } = useWallet();
 
-  const { login, logout, wallet } = useWallet();
-
-  const { getTokenContract, getEwellContract } = useViewContract();
+  const { getTokenContract, getEwellContract, getWhitelistContract } = useViewContract();
+  const [projectId, setProjectId] = useState('15d556a57222ef06ea9a46a6fb9db416bffb98b8de60ccef6bcded8ca851f407');
 
   const transfer = useCallback(async () => {
     try {
-      const ewellContract = await getEwellContract();
-      const addressData = await ewellContract.GetPendingProjectAddress.call(wallet?.walletInfo.address);
-      console.log('addressData', addressData);
-
-      const txResult = await wallet?.callContract({
+      const txResult: any = await wallet?.callContract({
         contractAddress: NETWORK_CONFIG.sideChainInfo.tokenContractAddress,
         methodName: 'Transfer',
         args: {
           symbol: 'LINHONG',
-          to: addressData,
-          amount: '10000000000',
+          to: '2R7QtJp7e1qUcfh2RYYJzti9tKpPheNoAGD7dTVFd4m9NaCh27',
+          amount: '100',
           memo: '',
         },
       });
@@ -45,41 +38,75 @@ export default function Example() {
     } catch (error) {
       console.log('error', error);
     }
-  }, [getEwellContract, wallet]);
+  }, [wallet]);
+
+  const preCreate = useCallback(
+    async (amount?: string) => {
+      try {
+        const ewellContract = await getEwellContract();
+        const addressData = await ewellContract.GetPendingProjectAddress.call(wallet?.walletInfo.address);
+        console.log('addressData', addressData);
+
+        const txResult = await wallet?.callContract({
+          contractAddress: NETWORK_CONFIG.sideChainInfo.tokenContractAddress,
+          methodName: 'Transfer',
+          args: {
+            symbol: 'LINHONG',
+            to: addressData,
+            amount: amount || '1000000000',
+            memo: '',
+          },
+        });
+
+        console.log('txResult', txResult);
+      } catch (error) {
+        console.log('error', error);
+      }
+    },
+    [getEwellContract, wallet],
+  );
 
   const create = useCallback(async () => {
     const registerInput = {
       acceptedCurrency: 'ELF',
       projectCurrency: 'LINHONG',
       crowdFundingType: 'Sell at the set price',
-      crowdFundingIssueAmount: '10000000000',
-      preSalePrice: 100000000,
-      startTime: getProtobufTime(Date.now() + 1 * 60 * 60 * 1000),
+      crowdFundingIssueAmount: '1000000000',
+      preSalePrice: '100000000',
+      startTime: getProtobufTime(Date.now() + 60 * 1000),
       endTime: getProtobufTime(Date.now() + 40 * 60 * 60 * 1000),
       minSubscription: 1,
-      maxSubscription: 1000,
-      publicSalePrice: 200000000,
-      listMarketInfo: [],
-      liquidityLockProportion: 50,
-      unlockTime: getProtobufTime(Date.now() + 30 * 60 * 60 * 1000),
+      maxSubscription: '1000000000',
+      publicSalePrice: ZERO.plus('100000000').div(1.05).toFixed(), // preSalePrice / 1.05
+      listMarketInfo: [], // fixed
+      liquidityLockProportion: 0, // fixed
+      unlockTime: getProtobufTime(), // fixed
       isEnableWhitelist: false,
       isBurnRestToken: true,
-      totalPeriod: 1,
-      additionalInfo: {},
-      firstDistributeProportion: '100000000',
-      restDistributeProportion: 0,
-      periodDuration: 0,
+      totalPeriod: 1, // fixed
+      additionalInfo: {
+        data: {
+          name: 'test1',
+          value: 'test2',
+        },
+      },
+      firstDistributeProportion: '100000000', // fixed 100%
+      restDistributeProportion: 0, // fixed
+      periodDuration: 0, // fixed
       tokenReleaseTime: getProtobufTime(Date.now() + 45 * 60 * 60 * 1000),
     };
     console.log('registerInput', registerInput);
 
     try {
-      const createResult = await wallet?.callContract({
+      const createResult = await wallet?.callContract<any, any>({
         contractAddress: NETWORK_CONFIG.ewellContractAddress,
         methodName: 'Register',
         args: registerInput,
       });
       console.log('create', createResult);
+      const projectRegisteredInfo = getLog(createResult.Logs, 'ProjectRegistered');
+      console.log('projectRegisteredInfo', projectRegisteredInfo);
+      console.log('projectId', projectRegisteredInfo.ProjectRegistered.projectId);
     } catch (error) {
       console.log('error', error);
     }
@@ -96,7 +123,9 @@ export default function Example() {
 
   const getList = useCallback(async () => {
     try {
-      const result = await request.project.list({});
+      const result = await request.project.getProjectList({
+        params: { chainId: DEFAULT_CHAIN_ID, types: '3' },
+      });
       console.log('getList', result);
     } catch (error) {
       console.log('error', error);
@@ -122,20 +151,187 @@ export default function Example() {
   }, []);
   useWebLoginEvent(WebLoginEvents.LOGOUT, onLogout);
 
+  const checkSync = useCallback(async () => {
+    const isManagerSynced = await checkManagerSyncState();
+    console.log('isManagerSynced', isManagerSynced);
+  }, [checkManagerSyncState]);
+
+  const getDetail = useCallback(async () => {
+    try {
+      const result = await request.project.getProjectList({
+        params: {
+          chainId: DEFAULT_CHAIN_ID,
+          projectId,
+        },
+      });
+
+      const detail = result?.data?.detail;
+      const creator = detail?.creator;
+      const isCreator = creator === wallet?.walletInfo.address;
+
+      console.log('isCreator', isCreator);
+      console.log('api detail', detail);
+
+      const ewellContract = await getEwellContract();
+      const projectInfo = await ewellContract.GetProjectInfo.call(projectId);
+      console.log('contract detail', projectInfo);
+    } catch (error) {
+      console.log('getDetail error', error);
+    }
+  }, [getEwellContract, projectId, wallet?.walletInfo.address]);
+
+  const invest = useCallback(async () => {
+    const investAmount = '100000000';
+
+    try {
+      const approveResult = await wallet?.callContract({
+        contractAddress: NETWORK_CONFIG.sideChainInfo.tokenContractAddress,
+        methodName: 'Approve',
+        args: {
+          spender: NETWORK_CONFIG.ewellContractAddress,
+          symbol: 'ELF',
+          amount: investAmount,
+        },
+      });
+      console.log('approveResult', approveResult);
+    } catch (error) {
+      console.log('error', error);
+    }
+
+    try {
+      const investResult = await wallet?.callContract<any, any>({
+        contractAddress: NETWORK_CONFIG.ewellContractAddress,
+        methodName: 'Invest',
+        args: {
+          projectId,
+          currency: 'ELF',
+          investAmount,
+        },
+      });
+      console.log('investResult', investResult);
+    } catch (error) {
+      console.log('error', error);
+    }
+  }, [projectId, wallet]);
+
+  const getMockLog = useCallback(async () => {
+    const projectRegisteredLog = getLog(mockCreateResult.Logs, 'ProjectRegistered');
+    console.log('projectRegisteredLog', projectRegisteredLog);
+  }, []);
+
+  const getTokenList = useCallback(async () => {
+    try {
+      const result = await request.project.getTokenList({
+        params: { chainId: DEFAULT_CHAIN_ID },
+      });
+      console.log('getTokenList', result);
+    } catch (error) {
+      console.log('error', error);
+    }
+  }, []);
+
+  const getProjectUserList = useCallback(async () => {
+    try {
+      const result = await request.project.getProjectUserList({
+        params: { chainId: DEFAULT_CHAIN_ID, projectId: projectId },
+      });
+      console.log('getProjectUserList', result);
+    } catch (error) {
+      console.log('error', error);
+    }
+  }, [projectId]);
+
+  const openWhite = useCallback(async () => {
+    try {
+      const ewellContract = await getEwellContract();
+      const whiteListId = await ewellContract.GetWhitelistId.call(projectId);
+      console.log('whiteListId', whiteListId);
+
+      const txResult = await wallet?.callContract({
+        contractAddress: NETWORK_CONFIG.whitelistContractAddress,
+        methodName: 'EnableWhitelist',
+        // methodName: 'DisableWhitelist',
+        args: whiteListId,
+      });
+      console.log('txResult', txResult);
+    } catch (error) {
+      console.log('openWhite', error);
+    }
+  }, [getEwellContract, projectId, wallet]);
+
+  const getWhite = useCallback(async () => {
+    try {
+      const ewellContract = await getEwellContract();
+      const whiteListId = await ewellContract.GetWhitelistId.call(projectId);
+      console.log('whiteListId', whiteListId);
+      const whitelistContract = await getWhitelistContract();
+      const whiteListDetail = await whitelistContract.GetWhitelist.call(whiteListId);
+      console.log('whiteListDetail', whiteListDetail);
+    } catch (error) {
+      console.log('getWhite', error);
+    }
+  }, [getEwellContract, getWhitelistContract, projectId]);
+
+  const updateAddition = useCallback(async () => {
+    try {
+      const result = await wallet?.callContract<any, any>({
+        contractAddress: NETWORK_CONFIG.ewellContractAddress,
+        methodName: 'UpdateAdditionalInfo',
+        args: {
+          projectId: projectId,
+          additionalInfo: {
+            data: {
+              name: `testName${Date.now()}`,
+              value: `testValue${Date.now()}`,
+            },
+          },
+        },
+      });
+      console.log('updateAddition result', result);
+    } catch (error) {
+      console.log('updateAddition error', error);
+    }
+  }, [projectId, wallet]);
+
   return (
     <div>
-      <Web3Button
-        onClick={() => {
-          console.log('111');
-        }}>
-        Continue
-      </Web3Button>
-      <Button onClick={transfer}>transfer</Button>
-      <Button onClick={create}>create</Button>
-      <Button onClick={getList}>getList</Button>
-      <Button type="primary" onClick={getBalance}>
-        balance
-      </Button>
+      <Input
+        value={projectId}
+        onChange={(e) => {
+          setProjectId(e.target.value);
+        }}></Input>
+      <div>
+        <Button
+          onClick={() => {
+            preCreate();
+          }}>
+          preCreate
+        </Button>
+        <Button onClick={create}>create</Button>
+        <Button onClick={getList}>getList</Button>
+        <Button onClick={getDetail}>getDetail</Button>
+        <Button onClick={invest}>invest</Button>
+        <Button onClick={openWhite}>openWhite</Button>
+        <Button onClick={getWhite}>getWhite</Button>
+        <Button onClick={updateAddition}>updateAddition</Button>
+      </div>
+      <div>
+        <Button onClick={transfer}>transfer</Button>
+        <Button onClick={checkSync}>checkSync</Button>
+        <Button type="primary" onClick={getBalance}>
+          balance
+        </Button>
+        <Button type="primary" onClick={getMockLog}>
+          getMockLog
+        </Button>
+        <Button type="primary" onClick={getTokenList}>
+          getTokenList
+        </Button>
+        <Button type="primary" onClick={getProjectUserList}>
+          getProjectUserList
+        </Button>
+      </div>
+
       <Button
         type="primary"
         onClick={() => {
@@ -149,32 +345,6 @@ export default function Example() {
           logout();
         }}>
         logout
-      </Button>
-      <Button type="primary" onClick={() => setThemes('dark')}>
-        dark
-      </Button>
-      <Button type="primary" onClick={() => setThemes('light')}>
-        light
-      </Button>
-      {/* <Network /> */}
-      <div className="dark-box" />
-      <div className="light-box" />
-      {/* {chainId} */}
-      <div className="test-class" />
-
-      <Button
-        type="primary"
-        onClick={() => {
-          // tokenContract?.callSendMethod('Transfer', '', {
-          //   symbol: 'WH',
-          //   amount: 808000000,
-          //   to: ChainConstants.constants.IDO_CONTRACT,
-          // });
-        }}>
-        Transfer
-      </Button>
-      <Button type="primary" onClick={() => submit()}>
-        submit
       </Button>
     </div>
   );

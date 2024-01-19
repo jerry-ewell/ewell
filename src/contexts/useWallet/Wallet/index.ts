@@ -1,9 +1,13 @@
 import { WalletInfo, WalletType, CallContractParams, SignatureData, SignatureParams } from 'aelf-web-login';
 import { CallContractFunc, GetSignatureFunc, IWallet, IWalletProps, TSignatureParams } from './types';
+import { sleep } from 'utils';
+import { getTxResult } from 'utils/aelfUtils';
+import { NETWORK_CONFIG } from 'constants/network';
 
 class Wallet implements IWallet {
   walletInfo: WalletInfo;
   walletType: WalletType;
+
   _getSignature: GetSignatureFunc;
   _callContract: CallContractFunc;
 
@@ -21,22 +25,35 @@ class Wallet implements IWallet {
     this._getSignature = getSignature;
   }
 
-  public callContract<T, R>(params: CallContractParams<T>): Promise<R> {
+  public async callContract<T, R>(params: CallContractParams<T>): Promise<R> {
+    let req: any;
     if (this.walletType !== WalletType.portkey) {
-      return this._callContract(params);
+      req = await this._callContract(params);
+    } else {
+      req = await this._callContract({
+        contractAddress: NETWORK_CONFIG.sideChainInfo.caContractAddress,
+        methodName: 'ManagerForwardCall',
+        args: {
+          caHash: this.walletInfo.portkeyInfo?.caInfo?.caHash || '',
+          contractAddress: params.contractAddress,
+          methodName: params.methodName,
+          args: params.args,
+        },
+      });
     }
 
-    return this._callContract({
-      // TODO: add caContractAddress & caHash
-      contractAddress: '',
-      methodName: 'ManagerForwardCall',
-      args: {
-        caHash: '',
-        contractAddress: params.contractAddress,
-        methodName: params.methodName,
-        args: params.args,
-      },
-    });
+    console.log('callContract req', req);
+    if (req.error) {
+      console.log(req.error, '===req.error');
+      throw {
+        code: req.error.message?.Code || req.error,
+        message: req.errorMessage?.message || req.error.message?.Message,
+      };
+    }
+
+    const { TransactionId } = req.result || req;
+    await sleep(1000);
+    return getTxResult(TransactionId);
   }
 
   getSignature(params: TSignatureParams): Promise<SignatureData> {
