@@ -14,6 +14,7 @@ import ViewContractProvider from 'contexts/useViewContract';
 import { AELFDProvider, HashAddress } from 'aelf-design';
 import { ConfigProvider } from 'antd';
 import { AELFD_CUSTOM_TOKEN_CONFIG, AELFD_THEME_CONFIG, ANTD_THEME_CONFIG } from 'themTokenConfig';
+import { BrowserRouter } from 'react-router-dom';
 import 'aelf-design/css';
 
 ConfigProvider.config({
@@ -22,15 +23,17 @@ ConfigProvider.config({
 
 function ContextProviders({ children }: { children?: ReactNode }) {
   return (
-    <AELFDProvider customToken={AELFD_CUSTOM_TOKEN_CONFIG} prefixCls={prefixCls} theme={AELFD_THEME_CONFIG}>
-      <ConfigProvider prefixCls={prefixCls} theme={ANTD_THEME_CONFIG}>
-        <StoreProvider>
-          <ViewContractProvider>
-            <WalletProvider>{children}</WalletProvider>
-          </ViewContractProvider>
-        </StoreProvider>
-      </ConfigProvider>
-    </AELFDProvider>
+    <BrowserRouter>
+      <AELFDProvider customToken={AELFD_CUSTOM_TOKEN_CONFIG} prefixCls={prefixCls} theme={AELFD_THEME_CONFIG}>
+        <ConfigProvider prefixCls={prefixCls} theme={ANTD_THEME_CONFIG}>
+          <StoreProvider>
+            <ViewContractProvider>
+              <WalletProvider>{children}</WalletProvider>
+            </ViewContractProvider>
+          </StoreProvider>
+        </ConfigProvider>
+      </AELFDProvider>
+    </BrowserRouter>
   );
 }
 ReactDOM.render(

@@ -24,7 +24,9 @@ const AuthList = {
 };
 
 const ProjectApiList = {
-  list: '/api/app/project/list',
+  getProjectList: '/api/app/project/list',
+  getTokenList: '/api/app/token/list',
+  getProjectUserList: '/api/app/project/userList',
 };
 /**
  * api request extension configuration directory
