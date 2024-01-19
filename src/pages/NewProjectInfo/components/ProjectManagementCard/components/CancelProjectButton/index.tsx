@@ -1,9 +1,8 @@
 import { useState } from 'react';
 import { Flex } from 'antd';
 import { Button, Modal, Typography, FontWeightEnum, HashAddress } from 'aelf-design';
-import { success } from 'assets/images';
+import SuccessModal from '../../../OperationComponents/SuccessModal';
 import { emitLoading } from 'utils/events';
-import './styles.less';
 
 const { Text, Title } = Typography;
 
@@ -29,6 +28,7 @@ export default function CancelProjectButton() {
       <Modal
         title="Closure of Project"
         footer={null}
+        centered
         open={isConfirmModalOpen}
         onCancel={() => setIsConfirmModalOpen(false)}>
         <Flex vertical gap={24}>
@@ -54,9 +54,9 @@ export default function CancelProjectButton() {
         </Flex>
       </Modal>
       <Modal
-        className="cancel-project-modal"
         title="Claim Token"
         footer={null}
+        centered
         open={isSubmitModalOpen}
         onCancel={() => setIsSubmitModalOpen(false)}>
         <Flex vertical gap={24}>
@@ -69,10 +69,10 @@ export default function CancelProjectButton() {
             </Title>
             <Title fontWeight={FontWeightEnum.Medium}>PIGE</Title>
           </Flex>
-          <Flex className="box-data-wrapper" justify="space-between" align="center">
-            <Text className="box-data-label">Address</Text>
+          <Flex className="modal-box-data-wrapper" justify="space-between" align="center">
+            <Text className="half-width">Address</Text>
             <HashAddress
-              className="box-data-value"
+              className="half-width hash-address-small"
               preLen={8}
               endLen={9}
               address="ELF_0x00000000000000ADc04C56Bf30aC9d3c0aAF14dC_AELF"
@@ -86,49 +86,37 @@ export default function CancelProjectButton() {
             </Flex>
           </Flex>
           <Flex justify="center">
-            <Button className="submit-button" type="primary" onClick={handleSubmit}>
+            <Button className="modal-single-button" type="primary" onClick={handleSubmit}>
               Submit
             </Button>
           </Flex>
         </Flex>
       </Modal>
-      <Modal
-        className="cancel-project-success-modal"
-        title="Closure and Claim Success"
-        footer={null}
-        open={isSuccessModalOpen}
-        onCancel={() => setIsSuccessModalOpen(false)}>
-        <Flex vertical gap={24}>
-          <Flex vertical gap={8}>
-            <Flex justify="center">
-              <img className="success-icon" src={success} alt="success" />
-            </Flex>
-            <Flex gap={8} justify="center" align="baseline">
-              <Title level={4} fontWeight={FontWeightEnum.Medium}>
-                80
-              </Title>
-              <Title fontWeight={FontWeightEnum.Medium}>PIGE</Title>
-            </Flex>
-            <Text className="text-center" fontWeight={FontWeightEnum.Medium}>
-              Congratulations, transfer success!
-            </Text>
-          </Flex>
-          <Flex className="box-data-wrapper" justify="space-between" align="center">
-            <Text className="box-data-label">Transaction ID</Text>
-            <HashAddress
-              className="box-data-value"
-              preLen={8}
-              endLen={9}
-              address="ELF_0x00000000000000ADc04C56Bf30aC9d3c0aAF14dC_AELF"
-            />
-          </Flex>
-          <Flex justify="center">
-            <Button className="ok-button" type="primary" onClick={() => setIsSuccessModalOpen(false)}>
-              OK
-            </Button>
-          </Flex>
-        </Flex>
-      </Modal>
+      <SuccessModal
+        modalProps={{
+          title: 'Closure and Claim Success',
+          open: isSuccessModalOpen,
+          onCancel: () => {
+            setIsSuccessModalOpen(false);
+          },
+          onOk: () => {
+            setIsSuccessModalOpen(false);
+          },
+        }}
+        data={{
+          amountList: [
+            {
+              amount: '80',
+              symbol: 'PIGE',
+            },
+          ],
+          description: 'Congratulations, transfer success!',
+          boxData: {
+            label: 'Transaction ID',
+            value: 'ELF_0x00000000000000ADc04C56Bf30aC9d3c0aAF14dC_AELF',
+          },
+        }}
+      />
     </>
   );
 }

@@ -4588,10 +4588,10 @@ aelf-bridge@^0.0.10:
     socket.io-client "^2.3.0"
     uuid "^3.3.3"
 
-aelf-design@^0.1.25-alpha.0:
-  version "0.1.25-alpha.0"
-  resolved "https://registry.yarnpkg.com/aelf-design/-/aelf-design-0.1.25-alpha.0.tgz#c9ce06c799a0a3cd5cc0d957be52202c11753d81"
-  integrity sha512-+VNKPIpq3LqPYxuavgRvF2ackxk7HHz27rDWw9hLmeBS0ht2+glrwcEXkxnlMPwbWFDP3h9B9fq0TUVACHaWqw==
+aelf-design@^0.1.31-alpha.0:
+  version "0.1.31-alpha.0"
+  resolved "https://registry.yarnpkg.com/aelf-design/-/aelf-design-0.1.31-alpha.0.tgz#c97496d5288dff5e5c66ad919b88d2d6bccecb28"
+  integrity sha512-anW2ZfRvb91mjEWR/y2ffB12Oc7vNsbi21mpZOcGM33MxsHnnIB5nbUFngZqBjI+82LKznIZPz1+VKqtJKa4BA==
   dependencies:
     "@svgr/babel-plugin-transform-svg-component" "^8.0.0"
     "@svgr/plugin-jsx" "^8.1.0"
