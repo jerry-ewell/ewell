@@ -16,7 +16,7 @@ import { ZERO } from 'constants/misc';
 import { Input } from 'aelf-design';
 import { InboxOutlined } from '@ant-design/icons';
 import { useParseWhiteList } from 'hooks/useParseWhiteList';
-import { filterWhiteListData } from 'hooks/useParseWhiteList/utils';
+import { IdentifyWhiteListDataTypeEnum, identifyWhiteListData } from 'hooks/useParseWhiteList/utils';
 
 const { Dragger } = Upload;
 
@@ -304,7 +304,11 @@ export default function Example() {
       try {
         const addressList = await updateFile(e);
         const originList = ['ELF_2R7QtJp7e1qUcfh2RYYJzti9tKpPheNoAGD7dTVFd4m9NaCh27_tDVV'];
-        const fileResult = filterWhiteListData(originList, addressList);
+        const fileResult = identifyWhiteListData({
+          originData: originList,
+          identifyData: addressList,
+          type: IdentifyWhiteListDataTypeEnum.remove,
+        });
         console.log('fileResult', fileResult);
       } catch (error) {
         console.log('file error', error);

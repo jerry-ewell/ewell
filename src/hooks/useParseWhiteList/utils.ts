@@ -2,7 +2,7 @@ import { isAelfAddress } from 'aelf-web-login';
 import { DEFAULT_CHAIN_ID } from 'constants/network';
 import * as ExcelJS from 'exceljs';
 import { getAddressInfo } from 'utils/aelf';
-import Papa, { ParseConfig } from 'papaparse';
+import Papa from 'papaparse';
 
 export const parseWhiteListExcelFile = async (file: any) => {
   const addressList: string[] = [];
@@ -17,13 +17,6 @@ export const parseWhiteListExcelFile = async (file: any) => {
   });
   return addressList;
 };
-
-interface ParseCSVProps extends ParseConfig {
-  file?: any;
-  worker?: boolean | undefined;
-  chunkSize?: number | undefined;
-  encoding?: string | undefined;
-}
 
 export const parseWhiteListCSVFile = (file: any): Promise<string[]> => {
   return new Promise((resolve, reject) => {
@@ -56,41 +49,61 @@ export const parseWhiteListCSVFile = (file: any): Promise<string[]> => {
 };
 
 export type TWhiteListData = string[];
-export enum WhiteListAddressFilterStatusEnum {
+export enum WhiteListAddressIdentifyStatusEnum {
   active = 1,
   exist,
   matchFail,
   repeat,
+  notExist,
 }
-export type TFilterItem = {
+export type TWhiteListIdentifyItem = {
   address: string;
-  status: WhiteListAddressFilterStatusEnum;
+  status: WhiteListAddressIdentifyStatusEnum;
+};
+export enum IdentifyWhiteListDataTypeEnum {
+  add = 1,
+  remove,
+}
+export type TIdentifyWhiteListDataParams = {
+  originData: TWhiteListData;
+  identifyData: TWhiteListData;
+  type: IdentifyWhiteListDataTypeEnum;
 };
 
-export const filterWhiteListData = (originData: TWhiteListData, filterData: TWhiteListData) => {
+export const identifyWhiteListData = ({ originData, identifyData, type }: TIdentifyWhiteListDataParams) => {
   const originDataMap: Record<string, boolean> = {};
   originData.forEach((address) => {
     originDataMap[address] = true;
   });
 
-  const filterDataMap: Record<string, boolean> = {};
-  const filterList: TFilterItem[] = [];
-  filterData.forEach((address, idx) => {
-    if (originDataMap[address]) {
-      filterList.push({
-        address: address,
-        status: WhiteListAddressFilterStatusEnum.exist,
-      });
-      return;
+  const identifyDataMap: Record<string, boolean> = {};
+  const identifyList: TWhiteListIdentifyItem[] = [];
+  identifyData.forEach((address) => {
+    if (type === IdentifyWhiteListDataTypeEnum.add) {
+      if (originDataMap[address]) {
+        identifyList.push({
+          address: address,
+          status: WhiteListAddressIdentifyStatusEnum.exist,
+        });
+        return;
+      }
+    } else {
+      if (!originDataMap[address]) {
+        identifyList.push({
+          address: address,
+          status: WhiteListAddressIdentifyStatusEnum.notExist,
+        });
+        return;
+      }
     }
 
-    if (filterDataMap[address]) {
-      return filterList.push({
+    if (identifyDataMap[address]) {
+      return identifyList.push({
         address: address,
-        status: WhiteListAddressFilterStatusEnum.repeat,
+        status: WhiteListAddressIdentifyStatusEnum.repeat,
       });
     }
-    filterDataMap[address] = true;
+    identifyDataMap[address] = true;
 
     const addressInfo = getAddressInfo(address);
     if (
@@ -98,18 +111,18 @@ export const filterWhiteListData = (originData: TWhiteListData, filterData: TWhi
       addressInfo.suffix !== DEFAULT_CHAIN_ID ||
       !isAelfAddress(addressInfo.address)
     ) {
-      filterList.push({
+      identifyList.push({
         address: address,
-        status: WhiteListAddressFilterStatusEnum.matchFail,
+        status: WhiteListAddressIdentifyStatusEnum.matchFail,
       });
       return;
     }
 
-    filterList.push({
+    identifyList.push({
       address: address,
-      status: WhiteListAddressFilterStatusEnum.active,
+      status: WhiteListAddressIdentifyStatusEnum.active,
     });
   });
 
-  return filterList;
+  return identifyList;
 };
