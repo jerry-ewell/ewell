@@ -86,4 +86,9 @@ export const AELFD_CUSTOM_TOKEN_CONFIG: IAelfdThemeProviderProps['customToken'] 
     addressHoverColor: '#863DFF',
     addressActiveColor: '#863DFF',
   },
+  customUpload: {
+    borderColor: '#070A26',
+    colorMessageText: '#070A26',
+    containerBg: '#F5F5F6',
+  },
 };

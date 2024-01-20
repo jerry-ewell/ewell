@@ -10,6 +10,9 @@ import sandGlass from './sandGlass.svg';
 import edit from './edit.svg';
 import login from './login.svg';
 import wallet from './wallet.svg';
+import download from './download.svg';
+import add from './add.svg';
+import remove from './remove.svg';
 export {
   metamask,
   walletConnectIcon,
@@ -23,4 +26,7 @@ export {
   edit,
   login,
   wallet,
+  download,
+  add,
+  remove,
 };
