@@ -343,15 +343,15 @@ export default function JoinCard() {
                         Max
                       </Button>
                     }
-                    onChange={(e) =>
-                      setInputVal(
-                        parseInputNumberChange(
-                          e.target.value,
-                          divDecimals(maxInvest, idoInfo?.toRaiseToken?.decimals ?? 8),
-                          idoInfo?.toRaiseToken?.decimals,
-                        ),
-                      )
-                    }
+                    // onChange={(e) =>
+                    //   setInputVal(
+                    //     parseInputNumberChange(
+                    //       e.target.value,
+                    //       divDecimals(maxInvest, idoInfo?.toRaiseToken?.decimals ?? 8),
+                    //       idoInfo?.toRaiseToken?.decimals,
+                    //     ),
+                    //   )
+                    // }
                   />
                 </Input.Group>
                 <div className="flex-between-center balance-wrapper">

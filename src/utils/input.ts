@@ -23,25 +23,8 @@ export function parseInputChange(value: string, min: BigNumber, maxLength?: numb
   return formatDeci(value, pivot, min, maxLength);
 }
 
-export function parseInputNumberChange(value: string, max: number | BigNumber = Infinity, decimal = 8) {
+export function parseInputNumberChange(value: string, decimal = 8) {
   if (!isValidNumber(value)) return '';
-  const pivot = new BigNumber(value);
   const [, dec] = value.split('.');
-  if (pivot.isEqualTo(0)) {
-    return (dec?.length || 0) >= +decimal ? pivot.dp(+decimal, 1).toFixed() : value;
-  }
-  const maxLimit = !new BigNumber(max).isNaN() ? max : Infinity;
-  if (pivot.gt(0)) {
-    return pivot.gt(maxLimit)
-      ? maxLimit === Infinity
-        ? ''
-        : ZERO.plus(maxLimit)
-            .dp(+decimal, 1)
-            .toFixed()
-      : (dec?.length || 0) >= +decimal
-      ? pivot.dp(+decimal, 1).toFixed()
-      : value;
-  } else {
-    return '';
-  }
+  return (dec?.length || 0) >= decimal ? new BigNumber(value).dp(decimal, 1).toFixed() : value;
 }
