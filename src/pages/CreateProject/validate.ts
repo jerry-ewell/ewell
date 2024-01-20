@@ -4,13 +4,22 @@ import { ZERO } from 'constants/misc';
 import dayjs from 'dayjs';
 import { isUrl } from 'utils/reg';
 import { integerGtZEROValidator, integerValidator, numberGtZEROValidator } from 'utils/validate';
+import { timesDecimals } from 'utils/calculate';
+import { getLocalStorage } from 'utils/localstorage';
 import { ltTip } from './utils';
+import storages from './storages';
+import { ITrandingParCard } from './components/TradingPairList';
+
 type ValidatorFun = (form: FormInstance<any>, v: any) => any;
 
 export const validateFields = async (form: FormInstance<any>, nameList?: NamePath[]) => {
   if (!nameList) return;
   const isValidating = !!nameList.map((name) => form.isFieldValidating(name)).filter((i) => i).length;
-  if (!isValidating) form.validateFields(nameList);
+  const nameValues = form.getFieldsValue(nameList);
+  const isNotEmpty = Object.keys(nameValues)
+    .map((key) => nameValues[key])
+    .every((val) => !!val);
+  if (!isValidating && isNotEmpty) form.validateFields(nameList);
   return Promise.resolve();
 };
 
@@ -25,27 +34,40 @@ export const circulationValidator = async (_: any, v: any) => {
 export const minSubscriptionValidator: ValidatorFun = async (form, v) => {
   const bigV = ZERO.plus(v);
   const validator = await integerGtZEROValidator('', v);
-  if (validator) return Promise.reject(validator);
+  if (validator) return Promise.reject('the number must greater than 0');
   const maxSubscription = form.getFieldValue('maxSubscription');
   console.log('maxSubscription', maxSubscription);
-  if (maxSubscription && bigV.gte(maxSubscription))
+
+  if (!maxSubscription) {
+    validateFields(form, ['maxSubscription']);
+    return Promise.resolve();
+  }
+  if (maxSubscription && bigV.gt(maxSubscription))
     return Promise.reject('Minimum allocation should be less than maximum allocation.');
-  validateFields(form, ['maxSubscription']);
+
   return Promise.resolve();
 };
 
 export const maxSubscriptionValidator: ValidatorFun = async (form, v) => {
   const bigV = ZERO.plus(v);
   const validator = await integerGtZEROValidator('', v);
-  if (validator) return Promise.reject(validator);
+  if (validator) return Promise.reject('the number must greater than 0');
   const minSubscription = form.getFieldValue('minSubscription');
-  if (minSubscription && bigV.lte(minSubscription))
+
+  if (!minSubscription) {
+    validateFields(form, ['minSubscription']);
+    return Promise.resolve();
+  }
+
+  if (minSubscription && bigV.lt(minSubscription)) {
     return Promise.reject('Maximum allocation should be greater than minimum allocation.');
+  }
+
   const crowdFundingIssueAmount = form.getFieldValue('crowdFundingIssueAmount');
   const preSalePrice = form.getFieldValue('preSalePrice');
   if (crowdFundingIssueAmount && preSalePrice && ZERO.plus(crowdFundingIssueAmount).div(preSalePrice).lt(v))
-    return Promise.reject('The maximum allocation shall not exceed the total amount of tokens supplied.');
-  validateFields(form, ['minSubscription']);
+    return Promise.reject('Purchase quantiy may not exceed supply.');
+
   return Promise.resolve();
 };
 
@@ -156,8 +178,18 @@ export const periodDurationValidator = async (_: any, v: any) => {
   return Promise.resolve();
 };
 
-export const preSalePriceValidator: ValidatorFun = async (form) => {
-  // validateFields(form, ['maxSubscription']);
+export const preSalePriceValidator = async (rule: any, v: any) => {
+  console.log('preSalePriceValidator', v);
+  const bigV = ZERO.plus(v);
+  const validator = await numberGtZEROValidator('', v);
+  console.log('validated-result', validator);
+  if (validator) return Promise.reject('the number must greater than 0');
+  const { decimals, balance }: ITrandingParCard = getLocalStorage(storages.ConfirmTradingPair);
+  if (!decimals && decimals !== 0 && !balance) {
+    return Promise.reject('please go to select trading pair');
+  }
+  if (timesDecimals(bigV, decimals).gt(balance))
+    return Promise.reject('the maximum value does not exceed the total amount of Token in the wallet');
   return Promise.resolve();
 };
 
@@ -166,12 +198,15 @@ export const preSalePriceValidator: ValidatorFun = async (form) => {
 //   return Promise.resolve();
 // };
 
-export const crowdFundingIssueAmountValidator: ValidatorFun = async (_: any, v: any) => {
-  // validateFields(form, ['maxSubscription']);
-  console.log('crowdFundingIssueAmountValidator', _, v);
-  const validator = await numberGtZEROValidator(_, v);
-  if (validator) return Promise.reject(validator);
-  // TODO：v <= wallet value
+export const crowdFundingIssueAmountValidator: ValidatorFun = async (form: any, v: any) => {
+  const bigV = ZERO.plus(v);
+  const validator = await numberGtZEROValidator('', v);
+  if (validator) return Promise.reject('the number must greater than 0');
+  const projectToken: ITrandingParCard = getLocalStorage(storages.ConfirmTradingPair);
+  if (timesDecimals(bigV, projectToken.decimals).gt(projectToken.balance))
+    return Promise.reject('the maximum value does not exceed the total amount of Token in the wallet');
+
+  validateFields(form, ['maxSubscription']);
   return Promise.resolve();
 };
 
@@ -184,6 +219,6 @@ export const Validators: any = {
   firstDistributeProportion: firstReleaseRateValidator,
   restDistributeProportion: restDistributeProportionValidator,
   totalPeriod: totalPeriodValidator,
-  // preSalePrice: preSalePriceValidator,
+  preSalePrice: preSalePriceValidator,
   crowdFundingIssueAmount: crowdFundingIssueAmountValidator,
 };

@@ -9,7 +9,7 @@ export interface ITrandingParCard {
   tokenName: string;
   imageUrl: string;
   decimals: number;
-  balance: number;
+  balance: string;
 }
 
 interface TrandingParCardProps {

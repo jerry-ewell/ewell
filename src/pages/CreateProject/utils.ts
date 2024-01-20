@@ -8,7 +8,7 @@ import dayjs, { Dayjs } from 'dayjs';
 export function reSetSessionStorage() {
   sessionStorage.setItem(storages.ConfirmTradingPair, JSON.stringify(undefined));
   sessionStorage.setItem(storages.AdditionalInformation, JSON.stringify(undefined));
-  sessionStorage.setItem(storages.ProjectPanel, JSON.stringify(undefined));
+  sessionStorage.setItem(storages.IDOInfo, JSON.stringify(undefined));
 }
 
 export function getInstallments(v: any) {

@@ -57,7 +57,7 @@ const ConfirmTradingPair: React.FC<CreateStepPorps> = ({ onNext }) => {
           There is proper token, go to <span className="link-text">Symbol Market</span> and create a?
         </div>
       </div>
-      <ButtonGroup onNext={onClick} disabledNext={disabledBtn} />
+      <ButtonGroup onNext={onClick} disabledNext={disabledBtn && !select} />
     </div>
   );
 };

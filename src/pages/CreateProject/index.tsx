@@ -32,7 +32,7 @@ const CreateProject: React.FC = () => {
       case TSteps.THREE:
         return <IDOInfo onNext={onNext} onPre={onPre} />;
       case TSteps.FOURE:
-        return <Transfer />;
+        return <Transfer onPre={onPre} />;
     }
   }, [currentStep, onNext, onPre]);
 

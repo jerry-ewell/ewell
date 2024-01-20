@@ -7,12 +7,7 @@ import { urlValidator } from 'pages/CreateProjectOld/validate';
 import CustomMark from '../components/CustomMark';
 import { CreateStepPorps } from '../types';
 import ButtonGroup from '../components/ButtonGroup';
-import './styles.less';
 import storages from '../storages';
-import { Upload, IUploadProps } from 'aelf-design';
-import { useAWSUploadService } from 'hooks/useAWSUploadService';
-import { emitLoading } from 'utils/events';
-import { UploadFile } from 'antd/lib';
 
 const formList: FormItemProps[] = [
   getInputOptions({
@@ -108,7 +103,7 @@ const formList: FormItemProps[] = [
 
 const ProjectInfo: React.FC<CreateStepPorps> = ({ onNext, onPre }) => {
   const [additional, setAdditional] = useLocalStorage(storages.AdditionalInformation, {});
-  const { awsUploadFile } = useAWSUploadService();
+
   const onFinish = useCallback(
     (value: any) => {
       console.log('projectInfo', value);
@@ -131,7 +126,7 @@ const ProjectInfo: React.FC<CreateStepPorps> = ({ onNext, onPre }) => {
   );
 
   return (
-    <div className="project-info">
+    <div className="project-info" style={{ margin: '48px 0 24px' }}>
       <Form
         layout="vertical"
         name="projectInfo"
@@ -142,11 +137,9 @@ const ProjectInfo: React.FC<CreateStepPorps> = ({ onNext, onPre }) => {
         validateTrigger="onSubmit">
         {FormFields(formList)}
         <Form.Item>
-          <Button htmlType="submit">submit</Button>
+          <ButtonGroup onPre={onPre} htmlType="submit" />
         </Form.Item>
       </Form>
-      {/* <ButtonGroup /> */}
-      {/* <Upload name="file" fileList={fileList} customRequest={onCustomRequest} onChange={onUploadChange} /> */}
     </div>
   );
 };

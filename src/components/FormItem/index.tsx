@@ -17,6 +17,7 @@ import FormGroup from './components/FormGroup';
 import FormRadioAndInput from './components/FormRadioAndInput';
 import FormTree from './components/FormTree';
 import Upload from '../Upload';
+import dayjs from 'dayjs';
 import {
   cityCascaderProps,
   datePickerProps,
@@ -90,7 +91,10 @@ function getChildren(type: FormItemProps['type'], childrenProps: FormItemProps['
     case 'cityCascader':
       return <CityCascader {...(childrenProps as any)} />;
     case 'datePicker': {
-      const customFormat = (value) => `${value.format('YYYY-MM-DD HH:mm:ss [UTC] Z')}`;
+      const customFormat = (value) => {
+        // console.log('datepicker-value', dayjs(value));
+        return `${value.format('YYYY-MM-DD HH:mm:ss [UTC] Z')}`;
+      };
       return (
         <DatePickerForPC
           style={{ width: '100%' }}
@@ -153,7 +157,7 @@ export const FormFields = (formJson: FormItemProps[]) => {
     if (field.type === 'fieldsGroup') {
       const { type, fieldsList, ...props } = field;
       return (
-        <Form.Item {...props} key={`${index}-${type}`}>
+        <Form.Item key={`${index}-${type}`} style={{ marginBottom: 0 }} {...props}>
           {fieldsList.map((field, index) => (
             <FormItem key={index} {...field} />
           ))}

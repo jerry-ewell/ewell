@@ -1,18 +1,17 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import { useLocalStorage } from 'react-use';
-import { Button, Form, InputNumber, Space, Flex, DatePickerProps, TimePickerProps } from 'antd';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { useLocalStorage, useEffectOnce } from 'react-use';
+import { Form } from 'antd';
 import { FormItemProps, FormFields } from 'components/FormItem';
 import CustomMark from '../components/CustomMark';
 import storages from '../storages';
 import { minSubscriptionValidator, maxSubscriptionValidator, Validators } from '../validate';
 import { CreateStepPorps } from '../types';
-import { Input } from 'aelf-design';
-import dayjs from 'dayjs';
 import ButtonGroup from '../components/ButtonGroup';
-import { timePickerProps } from 'components/FormItem/types';
 import { disabledDateBefore, disabledTimeBefore } from '../utils';
 import { integeNumberFormat, formatNumberParser } from 'components/FormItem/utils';
 import BigNumber from 'bignumber.js';
+import { urlValidator } from 'pages/CreateProjectOld/validate';
+import dayjs from 'dayjs';
 
 const formListConfig: FormItemProps[] = [
   {
@@ -50,7 +49,7 @@ const formListConfig: FormItemProps[] = [
       {
         type: 'inputNumber',
         name: 'preSalePrice',
-        rules: [{ required: true, message: 'sds' }],
+        rules: [{ validator: Validators.preSalePrice }],
         childrenProps: {
           min: 0.00000001,
           className: 'flex-grow',
@@ -81,14 +80,9 @@ const formListConfig: FormItemProps[] = [
         type: 'inputNumber',
         name: 'crowdFundingIssueAmount',
         rules: [
-          {
-            required: true,
-            message:
-              'Please enter a number, the maximum value does not exceed the total amount of Token in the wallet.',
-          },
-          {
-            validator: Validators.crowdFundingIssueAmount,
-          },
+          (form: any) => ({
+            validator: (_, value) => Validators.crowdFundingIssueAmount(form, value),
+          }),
         ],
         childrenProps: {
           formatter: integeNumberFormat,
@@ -178,6 +172,7 @@ const formListConfig: FormItemProps[] = [
     type: 'datePicker',
     label: 'IDO Starts At:',
     name: 'startTime',
+    required: true,
     tooltip: 'IDO start time, users can start participating in the IDO.',
     childrenProps: {
       showTime: true,
@@ -190,6 +185,7 @@ const formListConfig: FormItemProps[] = [
     label: 'IDO Ends At:',
     tooltip: 'DO end time, end of fundraising.',
     name: 'endTime',
+    required: true,
     childrenProps: {
       disabled: true,
       showTime: true,
@@ -199,6 +195,7 @@ const formListConfig: FormItemProps[] = [
     type: 'datePicker',
     label: 'Token Distribution Time:',
     name: 'tokenReleaseTime',
+    required: true,
     tooltip:
       'Crowdfunded Token will be released to users after this time, and the project owner can also withdraw the fundraising proceeds and unsold Token after this time.',
     childrenProps: {
@@ -228,28 +225,40 @@ const formWhitelist: FormItemProps[] = [
   {
     type: 'textArea',
     label: 'Whitelist Tasks:',
-    name: 'whitelistId',
+    name: 'whitelistUrl',
     tooltip:
       'Enter an accessible link that the user clicks on and is redirected to a third-party platform to view the whitelisted tasks. We recommend using the official Community.',
+    rules: [{ validator: urlValidator }],
     childrenProps: {
       maxLength: 20,
     },
   },
 ];
 
-const IDOInfo: React.FC<CreateStepPorps> = ({ onNext }) => {
+const IDOInfo: React.FC<CreateStepPorps> = ({ onNext, onPre }) => {
   const [form] = Form.useForm();
   const [formList, setFormList] = useState(formListConfig);
   const [showWhitelist, setShowWhiteList] = useState(true);
-  const [panel, setPannel] = useLocalStorage(storages.ProjectPanel, {});
+  const [idoInfo, setIDOInfo] = useLocalStorage(storages.IDOInfo, {});
+
+  const adpterIdoInfo = useMemo(() => {
+    const _idoInfo = { ...idoInfo };
+    Object.keys(_idoInfo).map((key) => {
+      if (key.includes('Time')) {
+        const value = idoInfo?.[key];
+        _idoInfo[key] = dayjs(value);
+      }
+    });
+    return _idoInfo;
+  }, [idoInfo]);
 
   const onFinish = useCallback(
     (values: any) => {
       console.log('values', values);
-      setPannel(values);
-      // onNext();
+      setIDOInfo(values);
+      onNext?.();
     },
-    [onNext, setPannel],
+    [onNext, setIDOInfo],
   );
 
   const onValuesChange = (changedValues: any, allValues: any) => {
@@ -299,14 +308,6 @@ const IDOInfo: React.FC<CreateStepPorps> = ({ onNext }) => {
       });
       return setFormList([...formList]);
     }
-
-    // if (Object.hasOwn(changedValues, 'preSalePrice')) {
-    //   const { preSalePrice } = changedValues;
-    //   console.log('preSalePrice', preSalePrice);
-    //   const bigPreSalePrice = new BigNumber(preSalePrice);
-    //   console.log('bigPreSalePrice', bigPreSalePrice, bigPreSalePrice.toFormat(8));
-    //   form.setFieldsValue({ preSalePrice: bigPreSalePrice.toFormat(8) });
-    // }
   };
 
   return (
@@ -315,7 +316,7 @@ const IDOInfo: React.FC<CreateStepPorps> = ({ onNext }) => {
         form={form}
         layout="vertical"
         name="IDO"
-        initialValues={{}}
+        initialValues={adpterIdoInfo}
         scrollToFirstError
         onFinish={onFinish}
         onValuesChange={onValuesChange}
@@ -323,11 +324,9 @@ const IDOInfo: React.FC<CreateStepPorps> = ({ onNext }) => {
         {FormFields(formList)}
         {showWhitelist && FormFields(formWhitelist)}
         <Form.Item>
-          <Button htmlType="submit">submit</Button>
-          {/* <ButtonGroup /> */}
+          <ButtonGroup onPre={onPre} htmlType="submit" />
         </Form.Item>
       </Form>
-      {/* {new BigNumber('').toFormat(0)} */}
     </div>
   );
 };
