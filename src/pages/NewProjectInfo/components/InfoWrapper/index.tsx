@@ -3,60 +3,48 @@ import { Typography, FontWeightEnum, Carousel } from 'aelf-design';
 import ProjectLogo from 'components/ProjectLogo';
 import ProjectTabs from '../ProjectTabs';
 import communityLogo from 'assets/images/communityLogo';
-import { image1, image2, image3 } from 'assets/images/test';
+import { IProjectInfo } from 'types/project';
 import './styles.less';
 
 const { Title, Text } = Typography;
 
-export default function InfoWrapper() {
+interface IInfoWrapperProps {
+  projectInfo: IProjectInfo;
+}
+
+export default function InfoWrapper({ projectInfo }: IInfoWrapperProps) {
+  const { additionalInfo } = projectInfo;
+  const projectImgs = (additionalInfo?.projectImgs?.split(',') || []).map((item, index) => ({
+    id: index,
+    url: item,
+  }));
   return (
     <div className="project-info-wrapper flex flex-1">
-      <ProjectLogo src="" alt="logo" />
+      <ProjectLogo src={additionalInfo?.logoUrl} alt="logo" />
       <div className="info-wrapper flex-1 flex-column">
         <div className="info-header flex-column">
           <Title level={5} fontWeight={FontWeightEnum.Medium}>
-            Citizen Conflict
+            {additionalInfo?.projectName}
           </Title>
           <Flex gap={12} align="center">
-            {Object.entries({
-              x: 'https://www.google.com',
-              medium: 'https://www.google.com',
-              telegram: 'https://www.google.com',
-            }).map(([key, value], index) => (
-              <img
-                key={index}
-                className="cursor-pointer"
-                src={communityLogo[key]}
-                alt="community"
-                onClick={() => {
-                  window.open(value, '_blank');
-                }}
-              />
-            ))}
+            {Object.entries(additionalInfo || [])
+              .filter(([key]) => Object.keys(communityLogo).find((item) => item === key))
+              .map(([key, value], index) => (
+                <img
+                  key={index}
+                  className="cursor-pointer"
+                  src={communityLogo[key]}
+                  alt="community"
+                  onClick={() => {
+                    window.open(value, '_blank');
+                  }}
+                />
+              ))}
           </Flex>
-          <Text>
-            The mobile game immerses players in a metaverse that bridges the virtual and physical worlds, DEFY fuses
-            hyper casual code-breaking gameplay, with real world exploration and Augmented Reality (AR) adventures.
-          </Text>
+          {!!additionalInfo?.projectSummary && <Text>{additionalInfo?.projectSummary}</Text>}
         </div>
-        <Carousel
-          className="carousel"
-          data={[
-            {
-              id: '1',
-              url: image1,
-            },
-            {
-              id: '2',
-              url: image2,
-            },
-            {
-              id: '3',
-              url: image3,
-            },
-          ]}
-        />
-        <ProjectTabs />
+        <Carousel className="carousel" data={projectImgs} />
+        <ProjectTabs projectInfo={projectInfo} />
       </div>
     </div>
   );

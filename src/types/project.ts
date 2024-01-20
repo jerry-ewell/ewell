@@ -21,6 +21,58 @@ export interface TokenInfo {
   decimals: number;
 }
 
+export interface IProjectInfo {
+  additionalInfo?: {
+    projectName: string;
+    projectSummary: string;
+    projectDescription: string;
+    x: string;
+    telegram: string;
+    medium: string;
+    logoUrl: string;
+    projectImgs: string;
+  };
+  creator?: string;
+  crowdFundingIssueAmount?: number;
+  crowdFundingIssueToken?: TokenInfo & {
+    name: string;
+  };
+  crowdFundingType?: string;
+  currentCrowdfundingTokenAmount?: number;
+  currentPeriod?: number;
+  currentRaisedAmount?: number;
+  endTime?: string;
+  firstDistributeProportion?: number;
+  hash?: string;
+  id?: string;
+  investAmount?: number;
+  isBurnRestToken?: boolean;
+  isCanceled?: boolean;
+  lastModificationTime?: string;
+  liquidityLockProportion?: number;
+  listMarketInfo?: ListMarketInfo[];
+  maxSubscription?: number;
+  minSubscription?: number;
+  participantCount?: number;
+  periodDuration?: number;
+  preSalePrice?: number;
+  publicSalePrice?: number;
+  restDistributeProportion?: number;
+  startTime?: string;
+  toClaimAmount?: number;
+  toRaiseToken?: TokenInfo;
+  toRaisedAmount?: number;
+  totalPeriod?: number;
+  unlockTime?: string;
+  whitelistId?: string;
+  isEnableWhitelist?: boolean;
+  status?: ProjectStatus;
+  cancelTime?: string;
+  whitelistInfo?: {
+    url?: string;
+  };
+}
+
 export interface ProjectItem {
   additionalInfo: { [key: string]: any };
   creator?: string;
