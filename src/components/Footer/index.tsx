@@ -1,21 +1,9 @@
-import { Row } from 'antd';
 import clsx from 'clsx';
-import IconFont from 'components/IconFont';
-import { useCallback, useMemo } from 'react';
-import { useLocation } from 'react-use';
+import { useCallback } from 'react';
 import './styles.less';
 import { COMMUNITY_LIST, TCommunityItem } from 'constants/community';
-const icons = [
-  { type: 'icon-telegram', link: '' },
-  { type: 'icon-discord', link: '' },
-  { type: 'icon-twitter', link: '' },
-];
-export default function Footer() {
-  const { pathname } = useLocation();
-  const isHome = useMemo(() => {
-    return pathname === '/';
-  }, [pathname]);
 
+export default function Footer() {
   const communityJump = useCallback((item: TCommunityItem) => {
     //
   }, []);

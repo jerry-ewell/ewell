@@ -6,13 +6,26 @@
   box-sizing: border-box;
 }
 
+.ewell-ui-root {
+  height: 100vh;
+  position: relative;
+  overflow: auto;
+}
+
 .page-container {
   color: @font-1;
   overflow: auto;
+  // height: calc(100vh - @header-height);
 }
 .page-body {
   background: white;
   min-height: calc(100vh - @footer-height - @header-height);
+}
+
+.mobile-site {
+  .page-body {
+    min-height: calc(100vh - @mobile-footer-height - @header-height);
+  }
 }
 
 // .vertical-form {

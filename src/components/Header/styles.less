@@ -1,9 +1,10 @@
 @import '../../assets/theme/color.less';
 @import '../../assets/theme/constants.less';
 .header {
-  position: relative;
-  // background: @bg-2;
-  // z-index: 999;
+  position: sticky;
+  top: 0;
+  z-index: 1001;
+  background: @bg-9;
 
   .header-body {
     margin: auto;
@@ -198,32 +199,48 @@
 }
 .mobile-site {
   .header {
-    // padding: 0 20px;
-    // background: @bg-7;
-    .header-logo {
-      margin-left: 0;
-      height: 24px;
+    position: sticky;
+    top: 0;
+  }
+  .menu-btn {
+    width: 32px;
+    height: 32px;
+    cursor: pointer;
+  }
+  .mobile-menu-item {
+    height: 56px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 16px;
+
+    .mobile-menu-item-arrow {
+      width: 16px;
+      height: 16px;
+      transform: rotate(180deg);
+      transition: transform 0.5s ease;
+      transform-origin: center center;
     }
-    .btn-row {
-      button {
-        height: 30px;
-        border-radius: 15px;
-        width: 120px;
-        padding: 0 15px;
-        font-size: 12px;
-      }
-      // .@{app-prefix}-btn-primary{
-      //   a {
-      //     color: @font-4;
-      //   }
-      // }
+
+    &:active {
+      background-color: @bg-10;
     }
-    .user-icon {
-      color: @font-4;
-      font-size: 28px;
-    }
-    .close-icon {
-      font-size: 24px;
-    }
+  }
+}
+
+.menu-drawer {
+  display: none;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: @bg-9;
+  z-index: 1001;
+  transform: translate3d(0, 0, 0);
+
+  .ewell-drawer-content-wrapper {
+    box-shadow: none;
   }
 }
