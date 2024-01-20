@@ -16,7 +16,7 @@ import CityCascader from './components/CityCascader';
 import FormGroup from './components/FormGroup';
 import FormRadioAndInput from './components/FormRadioAndInput';
 import FormTree from './components/FormTree';
-import FUpload from './components/FUpload';
+import Upload from '../Upload';
 import {
   cityCascaderProps,
   datePickerProps,
@@ -106,7 +106,7 @@ function getChildren(type: FormItemProps['type'], childrenProps: FormItemProps['
     case 'row':
       return <div {...(childrenProps as rowProps['childrenProps'])} />;
     case 'fileUpload':
-      return <FUpload {...(childrenProps as fileUploadProps['childrenProps'])}></FUpload>;
+      return <Upload {...(childrenProps as fileUploadProps['childrenProps'])}></Upload>;
     case 'searchSelect': {
       const { list, ...props } = childrenProps as selectProps['childrenProps'];
       return (

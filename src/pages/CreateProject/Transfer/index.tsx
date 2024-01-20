@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Button, Steps } from 'antd';
 import { stepsItems } from '../constants';
-import WhiteArrow from 'assets/images/project/whiteArrow.png';
+import { whiteArrow } from 'assets/images/project/index';
 import './styles.less';
 import { useLocalStorage } from 'react-use';
 import storages from '../storages';
@@ -13,7 +13,7 @@ const Transfer: React.FC = () => {
     <div className="transfer-page">
       <div className="common-page-1360 transfer-container">
         <div className="transfer-nav">
-          <img src={WhiteArrow} />
+          <img src={whiteArrow} />
           <span>Previous</span>
         </div>
         <Steps className="transfer-steps" current={4} items={stepsItems} />
@@ -24,7 +24,7 @@ const Transfer: React.FC = () => {
           <Button className="guide-btn">
             <div className="btn-content">
               <span>Transfer Now</span>
-              <img src={WhiteArrow} />
+              <img src={whiteArrow} />
             </div>
           </Button>
         </div>
