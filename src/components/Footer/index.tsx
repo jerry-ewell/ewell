@@ -1,9 +1,10 @@
 import { Row } from 'antd';
 import clsx from 'clsx';
 import IconFont from 'components/IconFont';
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useLocation } from 'react-use';
 import './styles.less';
+import { COMMUNITY_LIST, TCommunityItem } from 'constants/community';
 const icons = [
   { type: 'icon-telegram', link: '' },
   { type: 'icon-discord', link: '' },
@@ -14,17 +15,33 @@ export default function Footer() {
   const isHome = useMemo(() => {
     return pathname === '/';
   }, [pathname]);
+
+  const communityJump = useCallback((item: TCommunityItem) => {
+    //
+  }, []);
+
   return (
-    <footer className={clsx('footer', isHome && 'footer-home')}>
+    <footer className={clsx('footer')}>
       <div className="footer-body common-page">
-        <Row className="footer-row flex-row-center">
-          {isHome ? <div>© 2022 Ewell IDO, Inc. All rights reserved.</div> : <div>Ewell IDO</div>}
-          <Row className="icon-row">
-            {icons.map((i) => (
-              <IconFont key={i.type} type={i.type} />
-            ))}
-          </Row>
-        </Row>
+        <div className="footer-row">
+          <div className="community-warp">
+            <div className="community-title">Community</div>
+            <div className="community-icon-list">
+              {COMMUNITY_LIST.map((item) => (
+                <img
+                  className="community-icon"
+                  src={item.icon}
+                  alt=""
+                  onClick={() => {
+                    communityJump(item);
+                  }}
+                />
+              ))}
+            </div>
+          </div>
+
+          <div className="copyright-wrap">© 2023 Ewell IDO, Inc. All rights reserved</div>
+        </div>
       </div>
     </footer>
   );

@@ -29,6 +29,7 @@ type TMenuItem = {
   content?: string;
   onClick?: () => void;
   children?: TMenuItem[];
+  isActive?: boolean;
 };
 
 export default function Header() {
@@ -41,6 +42,7 @@ export default function Header() {
   }, [pathname]);
 
   const { login, loginState, logout, wallet } = useWallet();
+  const isProjectPage = useCheckRoute('example');
 
   const menuList: TMenuItem[] = useMemo(
     () => [
@@ -49,6 +51,7 @@ export default function Header() {
         onClick: () => {
           //
         },
+        isActive: isProjectPage,
       },
       {
         name: 'Community',
@@ -87,16 +90,14 @@ export default function Header() {
         onClick: () => {
           if (loginState === WebLoginState.logining) return;
           if (loginState === WebLoginState.logined) {
-            console.log('111');
+            //
           }
           if (loginState === WebLoginState.initial) return login();
         },
       },
     ],
-    [login, loginState],
+    [isProjectPage, login, loginState],
   );
-  const isProjectPage = useCheckRoute('example');
-  console.log('isProjectPage', isProjectPage);
 
   const onWalletClick = useCallback(() => {
     console.log('WebLoginState', loginState);
@@ -105,7 +106,7 @@ export default function Header() {
 
   return (
     <header className="header">
-      <div className="header-body flex-row-center">
+      <div className="header-body common-page flex-row-center">
         <img
           className="header-logo cursor-pointer"
           src={logoSvg}
@@ -116,7 +117,10 @@ export default function Header() {
           {!isMobile &&
             menuList.map((menu, menuIdx) => (
               <div className="btn-item-wrap" key={menuIdx}>
-                <Button className="btn-item-box" type="link" onClick={menu.onClick}>
+                <Button
+                  className={clsx('btn-item-box', menu.isActive && 'btn-item-box-active')}
+                  type="link"
+                  onClick={menu.onClick}>
                   {menu.name}
                   {menu.children && <img className="arrow-wrap " src={arrowSvg} alt="" />}
                 </Button>

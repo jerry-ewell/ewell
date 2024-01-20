@@ -7,17 +7,9 @@
 
   .header-body {
     margin: auto;
-    height: 70px;
+    height: @header-height;
     width: 100%;
-    padding: 0 40px;
-    max-width: @page-width-1360;
     justify-content: space-between;
-  }
-
-  @media (max-width: 1024px) {
-    .header-body {
-      padding: 0 20px;
-    }
   }
 
   .header-logo {
@@ -28,12 +20,17 @@
       padding: 0 24px;
       height: 40px;
       > span {
-        color: #070a26;
+        color: @font-1;
         font-weight: 500;
         font-size: 14px;
         line-height: 22px;
         display: inline-flex;
         align-items: center;
+      }
+    }
+    .btn-item-box-active {
+      > span {
+        color: @font-2;
       }
     }
 
@@ -88,7 +85,7 @@
             font-size: 14px;
             font-weight: 500;
             line-height: 22px;
-            color: #070a26;
+            color: @font-1;
             text-align: left;
             word-wrap: break-word;
             white-space: break-spaces;
@@ -96,7 +93,7 @@
           .child-content {
             font-size: 12px;
             line-height: 20px;
-            color: #070a26;
+            color: @font-1;
             text-align: left;
             word-wrap: break-word;
             white-space: break-spaces;
@@ -129,7 +126,7 @@
 
     .my-btn {
       padding: 0 20px;
-      border: 1px solid #070a26;
+      border: 1px solid @border-1;
       border-radius: 6px;
       align-items: center;
       display: flex;
@@ -143,7 +140,7 @@
       font-size: 14px;
       font-weight: 500;
       line-height: 22px;
-      color: #070a26;
+      color: @font-1;
     }
 
     .wallet-drawer {
@@ -186,7 +183,7 @@
             font-weight: 500;
             font-size: 14px;
             line-height: 22px;
-            color: #070a26;
+            color: @font-1;
           }
         }
       }

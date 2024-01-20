@@ -7,15 +7,14 @@
 }
 
 .page-container {
-  height: calc(100vh - @header-height);
   color: @font-1;
   overflow: auto;
 }
 .page-body {
-  margin-top: 10px;
   background: white;
-  padding: 10px;
+  min-height: calc(100vh - @footer-height - @header-height);
 }
+
 // .vertical-form {
 //   .@{app-prefix}-form-item {
 //     .@{app-prefix}-form-item-label,
