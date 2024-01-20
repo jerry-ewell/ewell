@@ -1,15 +1,13 @@
 import React from 'react';
-import Prjects from './components/Projects';
+import Projects from './components/Projects';
 import MyProjects from './components/MyProjects';
+import { useParams } from 'react-router-dom';
 import './styles.less';
 
 const ProjectList: React.FC = () => {
-  return (
-    <div className="common-page-1360 project-list">
-      {/* <Prjects /> */}
-      <MyProjects />
-    </div>
-  );
+  const { type } = useParams();
+  console.log('useparams', type);
+  return <div className="common-page-1360 project-list">{type === 'my' ? <MyProjects /> : <Projects />}</div>;
 };
 
 export default ProjectList;

@@ -24,7 +24,7 @@ export const PageRouter = () =>
       element: <Home />,
     },
     {
-      path: '/project-list',
+      path: '/project-list/:type',
       element: <ProjectList />,
     },
     {

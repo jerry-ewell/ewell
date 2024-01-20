@@ -71,7 +71,8 @@ export default function Header() {
       {
         name: 'Projects',
         onClick: () => {
-          navigate('/project-list', { replace: true });
+          console.log('project');
+          navigate('/project-list/all', { replace: true });
         },
         isActive: isProjectPage,
       },
@@ -199,7 +200,11 @@ export default function Header() {
                         </div>
                       </div>
 
-                      <div className="wallet-item-wrap">
+                      <div
+                        className="wallet-item-wrap"
+                        onClick={() => {
+                          navigate('/project-list/my', { replace: true });
+                        }}>
                         <img src={projectsSvg} alt="" />
                         <div className="wallet-item-body">
                           <span className="wallet-item-title">My Projects</span>
