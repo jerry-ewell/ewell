@@ -5,7 +5,7 @@ import SuccessModal from '../SuccessModal';
 
 const { Title, Text } = Typography;
 
-export default function ClaimTokenButton() {
+export default function CreatorClaimTokenButton() {
   const [isSubmitModalOpen, setIsSubmitModalOpen] = useState(false);
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
 
@@ -16,7 +16,7 @@ export default function ClaimTokenButton() {
         onClick={() => {
           setIsSubmitModalOpen(true);
         }}>
-        Claim Token
+        Claim
       </Button>
       <Modal
         title="Claim Token"
@@ -27,12 +27,26 @@ export default function ClaimTokenButton() {
           setIsSubmitModalOpen(false);
         }}>
         <Flex vertical gap={24}>
-          <Text>After clicking “Submit”, EWELL transfer ELF to the designated account.</Text>
-          <Flex justify="center" align="baseline" gap={8}>
-            <Title fontWeight={FontWeightEnum.Medium} level={4}>
-              300
-            </Title>
-            <Title fontWeight={FontWeightEnum.Medium}>PIGE</Title>
+          <Text>
+            Click to extract ELF from EWELL contract. If you have any token left, it will be withdrawn as well.
+          </Text>
+          <Flex vertical>
+            <Flex align="baseline" gap={8}>
+              <Title className="half-width text-right" fontWeight={FontWeightEnum.Medium} level={4}>
+                3
+              </Title>
+              <Title className="half-width" fontWeight={FontWeightEnum.Medium}>
+                ELF
+              </Title>
+            </Flex>
+            <Flex align="baseline" gap={8}>
+              <Title className="half-width text-right" fontWeight={FontWeightEnum.Medium} level={4}>
+                80
+              </Title>
+              <Title className="half-width" fontWeight={FontWeightEnum.Medium}>
+                PIGE
+              </Title>
+            </Flex>
           </Flex>
           <Flex className="modal-box-data-wrapper" justify="space-between">
             <Text>Address</Text>
@@ -44,17 +58,12 @@ export default function ClaimTokenButton() {
             />
           </Flex>
           <Flex justify="space-between">
-            <Text className="error-text">Estimated Transaction Fee</Text>
+            <Text>Estimated Transaction Fee</Text>
             <Flex gap={8} align="baseline">
-              <Text className="error-text">0.3604 ELF</Text>
-              <Text className="error-text" size="small">
-                $ 0.19
-              </Text>
+              <Text>0.3604 ELF</Text>
+              <Text size="small">$ 0.19</Text>
             </Flex>
           </Flex>
-          <Text className="error-text text-center" fontWeight={FontWeightEnum.Medium}>
-            Not enough token in the wallet
-          </Text>
           <Flex justify="center">
             <Button
               className="modal-single-button"
@@ -70,7 +79,7 @@ export default function ClaimTokenButton() {
       </Modal>
       <SuccessModal
         modalProps={{
-          title: 'Claimed Successfully',
+          title: 'Claim Token Success',
           open: isSuccessModalOpen,
           onCancel: () => {
             setIsSuccessModalOpen(false);
@@ -82,11 +91,15 @@ export default function ClaimTokenButton() {
         data={{
           amountList: [
             {
+              amount: '30',
+              symbol: 'ELF',
+            },
+            {
               amount: '30,000',
               symbol: 'PIGE',
             },
           ],
-          description: 'Congratulations, claimed successfully!',
+          description: 'Congratulations, transfer success!',
           boxData: {
             label: 'Transaction ID',
             value: 'ELF_0x00…14dC_AELF',

@@ -4,10 +4,24 @@
 }
 
 /* modal */
-.@{app-prefix}-modal-header {
-  margin-bottom: 24px !important;
-  .@{app-prefix}-modal-title {
-    text-align: center;
+.@{app-prefix}-modal-content {
+  .@{app-prefix}-modal-close:hover svg path {
+    fill: #070A26 !important;
+  }
+  .@{app-prefix}-modal-header {
+    margin-bottom: 24px !important;
+    .@{app-prefix}-modal-title {
+      padding-left: 16px;
+      text-align: center;
+    }
+  }
+  .modal-box-data-wrapper {
+    padding: 16px;
+    border: 1px solid #070a26;
+    border-radius: 6px;
+  }
+  .modal-single-button {
+    width: 206px;
   }
 }
 
@@ -67,4 +81,18 @@
 /** switch **/
 .@{app-prefix}-switch-small {
   width: 28px;
+}
+
+/** hashAddress **/
+.@{app-prefix}-hash-address {
+  &.hash-address-small {
+    div:nth-child(2) {
+      margin-left: 4px;
+    }
+  }
+}
+
+/** loading **/
+.@{app-prefix}-loading {
+  width: auto !important;
 }

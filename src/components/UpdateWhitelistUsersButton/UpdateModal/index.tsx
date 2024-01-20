@@ -28,6 +28,7 @@ export default function UpdateModal({ modalTitle, modalOpen, onModalCancel, onMo
       width={668}
       title={modalTitle}
       footer={null}
+      centered
       open={modalOpen}
       onCancel={onModalCancel}>
       <Flex vertical gap={24}>

@@ -1,4 +1,4 @@
-import { Button, Drawer, Modal, Row } from 'antd';
+import { Drawer, Modal, Row } from 'antd';
 import clsx from 'clsx';
 import IconFont from 'components/IconFont';
 import { ChainConstants } from 'constants/ChainConstants';
@@ -12,12 +12,16 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import { useLocation } from 'react-use';
 import logoSvg from './images/logo.svg';
 import userSvg from './images/user.svg';
+import walletSvg from './images/wallet.svg';
+import projectsSvg from './images/projects.svg';
+import logoutSvg from './images/logout.svg';
 import arrowSvg from 'assets/images/arrow.svg';
 import './styles.less';
 import { useWallet } from 'contexts/useWallet/hooks';
 import { WebLoginState } from 'aelf-web-login';
 import { NETWORK_CONFIG } from 'constants/network';
-import { HashAddress } from 'aelf-design';
+import { Button, HashAddress } from 'aelf-design';
+import { useCheckRoute } from 'hooks';
 
 type TMenuItem = {
   name: string;
@@ -26,53 +30,6 @@ type TMenuItem = {
   onClick?: () => void;
   children?: TMenuItem[];
 };
-
-const menuList: TMenuItem[] = [
-  {
-    name: 'Projects',
-    onClick: () => {
-      //
-    },
-  },
-  {
-    name: 'Community',
-    children: [
-      {
-        name: 'Medium',
-        icon: arrowSvg,
-        content: 'Join this open space for discussion news, and announcements.',
-        onClick: () => {
-          //
-        },
-      },
-      {
-        name: 'X',
-        icon: arrowSvg,
-        content: "Stay up-to-date with Ewell's new features and projects.",
-        onClick: () => {
-          //
-        },
-      },
-      {
-        name: 'Telegram',
-        content: 'Meet the community and get live support.',
-        icon: arrowSvg,
-        onClick: () => {
-          //
-        },
-      },
-    ],
-    onClick: () => {
-      //
-    },
-  },
-  {
-    name: 'Launch with EWELL',
-    onClick: () => {
-      //
-    },
-  },
-];
 
 export default function Header() {
   const isMobile = useMobile();
@@ -84,6 +41,62 @@ export default function Header() {
   }, [pathname]);
 
   const { login, loginState, logout, wallet } = useWallet();
+
+  const menuList: TMenuItem[] = useMemo(
+    () => [
+      {
+        name: 'Projects',
+        onClick: () => {
+          //
+        },
+      },
+      {
+        name: 'Community',
+        children: [
+          {
+            name: 'Medium',
+            icon: arrowSvg,
+            content: 'Join this open space for discussion news, and announcements.',
+            onClick: () => {
+              //
+            },
+          },
+          {
+            name: 'X',
+            icon: arrowSvg,
+            content: "Stay up-to-date with Ewell's new features and projects.",
+            onClick: () => {
+              //
+            },
+          },
+          {
+            name: 'Telegram',
+            content: 'Meet the community and get live support.',
+            icon: arrowSvg,
+            onClick: () => {
+              //
+            },
+          },
+        ],
+        onClick: () => {
+          //
+        },
+      },
+      {
+        name: 'Launch with EWELL',
+        onClick: () => {
+          if (loginState === WebLoginState.logining) return;
+          if (loginState === WebLoginState.logined) {
+            console.log('111');
+          }
+          if (loginState === WebLoginState.initial) return login();
+        },
+      },
+    ],
+    [login, loginState],
+  );
+  const isProjectPage = useCheckRoute('example');
+  console.log('isProjectPage', isProjectPage);
 
   const onWalletClick = useCallback(() => {
     console.log('WebLoginState', loginState);
@@ -139,7 +152,7 @@ export default function Header() {
                 <div className="wallet-drawer">
                   <div className="wallet-drawer-box">
                     <div className="wallet-item-wrap">
-                      <img src={userSvg} alt="" />
+                      <img src={walletSvg} alt="" />
                       <div className="wallet-item-body">
                         <span className="wallet-item-title">My Address</span>
                         <div className="wallet-item-content">
@@ -149,14 +162,14 @@ export default function Header() {
                             endLen={9}
                             hasCopy
                             chain={NETWORK_CONFIG.sideChainId as any}
-                            // size="small"
+                            size="small"
                           />
                         </div>
                       </div>
                     </div>
 
                     <div className="wallet-item-wrap">
-                      <img src={userSvg} alt="" />
+                      <img src={projectsSvg} alt="" />
                       <div className="wallet-item-body">
                         <span className="wallet-item-title">My Projects</span>
                       </div>
@@ -167,7 +180,7 @@ export default function Header() {
                       onClick={() => {
                         logout();
                       }}>
-                      <img src={userSvg} alt="" />
+                      <img src={logoutSvg} alt="" />
                       <div className="wallet-item-body">
                         <span className="wallet-item-title">Log Out</span>
                       </div>
@@ -176,8 +189,8 @@ export default function Header() {
                 </div>
               </div>
             ) : (
-              <Button className="login-btn" onClick={onWalletClick}>
-                Login
+              <Button type="primary" size="medium" className="login-btn" onClick={onWalletClick}>
+                Log In
               </Button>
             ))}
         </div>

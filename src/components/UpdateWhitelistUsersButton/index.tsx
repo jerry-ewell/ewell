@@ -35,6 +35,7 @@ export default function UpdateWhitelistUsers({ buttonProps, modalTitle }: IUpdat
         wrapClassName="whitelist-users-update-success-modal"
         title={modalTitle}
         footer={null}
+        centered
         open={isUpdateSuccessModalOpen}>
         <Flex vertical gap={24} align="center">
           <Flex vertical gap={8} align="center">

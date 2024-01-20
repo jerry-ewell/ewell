@@ -4,12 +4,13 @@ import { Button, Typography, FontWeightEnum } from 'aelf-design';
 import CommonCard from 'components/CommonCard';
 import WhitelistTasksButton from './components/WhitelistTasksButton';
 import CancelProjectButton from './components/CancelProjectButton';
+import CreatorClaimTokenButton from '../OperationComponents/CreatorClaimTokenButton';
 import './styles.less';
 
 const { Text } = Typography;
 
 export default function ProjectManagementCard() {
-  const [isEnableWhitelist, setIsEnableWhitelist] = useState(true);
+  const [isEnableWhitelist, setIsEnableWhitelist] = useState(false);
 
   return (
     <CommonCard
@@ -42,6 +43,7 @@ export default function ProjectManagementCard() {
       <Flex vertical gap={12}>
         <Text fontWeight={FontWeightEnum.Medium}>Project</Text>
         <CancelProjectButton />
+        <CreatorClaimTokenButton />
       </Flex>
     </CommonCard>
   );

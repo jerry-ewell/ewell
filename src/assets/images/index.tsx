@@ -9,6 +9,7 @@ import tableEmpty from './tableEmpty.svg';
 import sandGlass from './sandGlass.svg';
 import edit from './edit.svg';
 import login from './login.svg';
+import wallet from './wallet.svg';
 export {
   metamask,
   walletConnectIcon,
@@ -21,4 +22,5 @@ export {
   sandGlass,
   edit,
   login,
+  wallet,
 };
