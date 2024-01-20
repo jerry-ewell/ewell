@@ -1,17 +1,10 @@
-.update-modal {
-  .@{app-prefix}-modal-title {
-    text-align: center;
-  }
-  .@{app-prefix}-modal-body {
-    margin-top: 16px;
-  }
+.update-whitelist-users-modal {
   .download-template {
     margin-left: 4px;
-    color: #863dff;
   }
   .update-way-radio-wrapper {
     height: 40px;
-    padding: 2px;
+    padding: 1px;
     border: 1px solid #070a26;
     border-radius: 8px;
     .radio-item {
@@ -23,8 +16,10 @@
         border-radius: 0 6px 6px 0;
       }
       &.radio-item-active {
-        color: #fff;
         background-color: #070a26;
+        .@{app-prefix}-typography {
+          color: #fff;
+        }
       }
     }
   }

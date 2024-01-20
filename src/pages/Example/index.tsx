@@ -318,7 +318,7 @@ export default function Example() {
   );
 
   return (
-    <div>
+    <div className="common-page page-body">
       <Web3Button
         onClick={() => {
           console.log('jump');

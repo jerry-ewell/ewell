@@ -15,7 +15,7 @@ const StoreContext = createContext<any>(INITIAL_STATE);
 const body = window.document.getElementsByTagName('body')[0];
 body.className = 'pc-site';
 
-const mobileWidth = ZERO.plus(720);
+const mobileWidth = ZERO.plus(640);
 declare type StoreState = { mobile?: boolean };
 export function useStore(): [StoreState] {
   return useContext(StoreContext);

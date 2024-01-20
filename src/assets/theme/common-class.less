@@ -67,6 +67,10 @@
   border-bottom: 1px solid #070a26;
 }
 
+.purple-text {
+  color: #863dff;
+}
+
 .error-border {
   border-color: #f53f3f !important;
 }
@@ -108,7 +112,20 @@ body, h1, h2, h3, h4, h5, h6, hr, p, blockquote, /* structural elements */
 
 .common-page {
   max-width: @page-width;
+  padding: 0 40px;
   margin: auto;
+}
+
+@media (max-width: 1024px) {
+  .common-page {
+    padding: 0 20px;
+  }
+}
+
+@media (max-width: 640px) {
+  .common-page {
+    padding: 0 16px;
+  }
 }
 
 .common-page1 {

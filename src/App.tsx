@@ -10,13 +10,15 @@ function App() {
     <>
       {/* <Modals /> */}
       {/* <Suspense fallback={null}> */}
-      <Header />
-      <ScrollToTop />
-      <div className="page-container">
-        <PageRouter />
-        <Footer />
+      <div className="ewell-ui-root">
+        <Header />
+        <ScrollToTop />
+        <div className="page-container">
+          <PageRouter />
+          <Footer />
+        </div>
+        <PageLoading />
       </div>
-      <PageLoading />
       {/* </Suspense> */}
     </>
   );

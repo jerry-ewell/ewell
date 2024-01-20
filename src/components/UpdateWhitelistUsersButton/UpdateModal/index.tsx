@@ -1,14 +1,16 @@
 import { useState } from 'react';
 import clsx from 'clsx';
 import { Flex, Space } from 'antd';
-import { DownloadOutlined } from '@ant-design/icons';
-import { Button, Modal, IModalProps, Upload, Input } from 'aelf-design';
+import { Button, Modal, Upload, Input, Typography, FontWeightEnum } from 'aelf-design';
+import { download } from 'assets/images';
+import { UpdateType } from '../types';
 import './styles.less';
 
 const { TextArea } = Input;
+const { Text } = Typography;
 
 interface IUpdateModalProps {
-  modalTitle: string;
+  updateType: UpdateType;
   modalOpen: boolean;
   onModalCancel: () => void;
   onModalSubmit: () => void;
@@ -19,37 +21,42 @@ enum UpdateWay {
   PASTE = 'paste',
 }
 
-export default function UpdateModal({ modalTitle, modalOpen, onModalCancel, onModalSubmit }: IUpdateModalProps) {
-  const [currentUpdateWay, setCurrentUpdateWay] = useState<UpdateWay>(UpdateWay.UPLOAD);
+export default function UpdateModal({ updateType, modalOpen, onModalCancel, onModalSubmit }: IUpdateModalProps) {
+  const [currentUpdateWay, setCurrentUpdateWay] = useState<UpdateWay>(UpdateWay.PASTE);
+  const [fileList, setFileList] = useState<any[]>([]);
+
+  const handleUpload = (info) => {
+    console.log('info: ', info);
+    setFileList(info.fileList);
+  };
 
   return (
     <Modal
-      className="update-modal"
+      className="update-whitelist-users-modal"
       width={668}
-      title={modalTitle}
+      title={`${updateType === UpdateType.ADD ? 'Add Allowlist' : 'Remove Whitelisted'} Users`}
       footer={null}
       centered
       open={modalOpen}
       onCancel={onModalCancel}>
       <Flex vertical gap={24}>
-        <div>
-          <span>
-            Please enter the user's address, support batch user input separate addressed with special characters. If
-            your list exists CSV or EXCEL, please click the corresponding button in the upper right corner to upload the
-            file.
-          </span>
+        <Text>
+          Please enter the user's address, support batch user input separate addressed with special characters. If your
+          list exists CSV or EXCEL, please click the corresponding button in the upper right corner to upload the file.
           <Space className="download-template cursor-pointer" size={8} align="center">
-            <DownloadOutlined />
-            <span>Download the template</span>
+            <img src={download} alt="download" />
+            <Text className="purple-text" fontWeight={FontWeightEnum.Medium}>
+              Download the template
+            </Text>
           </Space>
-        </div>
+        </Text>
         <Flex className="update-way-radio-wrapper cursor-pointer">
           <Flex
             className={clsx('radio-item', { 'radio-item-active': currentUpdateWay === UpdateWay.UPLOAD })}
             justify="center"
             align="center"
             onClick={() => setCurrentUpdateWay(UpdateWay.UPLOAD)}>
-            Upload CSV/EXCEL
+            <Text>Upload CSV/EXCEL</Text>
           </Flex>
           <Flex
             className={clsx('radio-item', {
@@ -58,16 +65,20 @@ export default function UpdateModal({ modalTitle, modalOpen, onModalCancel, onMo
             justify="center"
             align="center"
             onClick={() => setCurrentUpdateWay(UpdateWay.PASTE)}>
-            Paste Address
+            <Text>Paste Address</Text>
           </Flex>
         </Flex>
-        {currentUpdateWay === UpdateWay.UPLOAD && <Upload className="address-upload" tips="Browse your file here" />}
-        {currentUpdateWay === UpdateWay.PASTE && <TextArea className="paste-address-textarea" />}
+        {currentUpdateWay === UpdateWay.UPLOAD && (
+          <Upload className="address-upload" tips="Browse your file here" fileList={fileList} onChange={handleUpload} />
+        )}
+        {currentUpdateWay === UpdateWay.PASTE && (
+          <TextArea className="paste-address-textarea" placeholder="placeholder" />
+        )}
         <Flex gap={16} justify="center">
           <Button className="modal-footer-button" onClick={onModalCancel}>
             Cancel
           </Button>
-          <Button className="modal-footer-button" onClick={onModalSubmit}>
+          <Button className="modal-footer-button" type="primary" onClick={onModalSubmit}>
             Submit
           </Button>
         </Flex>

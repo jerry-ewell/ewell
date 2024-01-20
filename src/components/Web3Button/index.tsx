@@ -1,9 +1,9 @@
-import { Button, ButtonProps } from 'antd';
 import { useWallet } from 'contexts/useWallet/hooks';
 import { useCallback } from 'react';
 import { WebLoginState } from 'aelf-web-login';
+import { Button, IButtonProps } from 'aelf-design';
 
-interface IWeb3ButtonProps extends ButtonProps {}
+interface IWeb3ButtonProps extends IButtonProps {}
 
 export default function Web3Button(props: IWeb3ButtonProps) {
   const { loginState, login } = useWallet();

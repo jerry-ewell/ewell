@@ -6,16 +6,28 @@
   box-sizing: border-box;
 }
 
-.page-container {
-  height: calc(100vh - @header-height);
-  color: @font-1;
+.ewell-ui-root {
+  height: 100vh;
+  position: relative;
   overflow: auto;
 }
-.page-body {
-  margin-top: 10px;
-  background: white;
-  padding: 10px;
+
+.page-container {
+  color: @font-1;
+  overflow: auto;
+  // height: calc(100vh - @header-height);
 }
+.page-body {
+  background: white;
+  min-height: calc(100vh - @footer-height - @header-height);
+}
+
+.mobile-site {
+  .page-body {
+    min-height: calc(100vh - @mobile-footer-height - @header-height);
+  }
+}
+
 // .vertical-form {
 //   .@{app-prefix}-form-item {
 //     .@{app-prefix}-form-item-label,

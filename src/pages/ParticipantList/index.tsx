@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import { Flex } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
-import { HashAddress, Search, Pagination } from 'aelf-design';
+import { HashAddress, Search, Pagination, Typography, FontWeightEnum } from 'aelf-design';
 import BaseBreadcrumb from 'components/BaseBreadcrumb';
 import CommonTable from 'components/CommonTable';
 import './styles.less';
+
+const { Title, Text } = Typography;
 
 const columns: ColumnsType<any> = [
   {
@@ -62,9 +64,11 @@ export default function ParticipantList() {
       <BaseBreadcrumb />
       <Flex className="header" justify="space-between">
         <Flex vertical>
-          <span className="title">Participants Users</span>
+          <Title level={5} fontWeight={FontWeightEnum.Medium}>
+            Participants Users
+          </Title>
           <Flex gap={8}>
-            <span className="address-label">Contract Address: </span>
+            <Text>Contract Address: </Text>
             <HashAddress address="ELF_0x00000000000000ADc04C56Bf30aC9d3c0aAF14dC_AELF" />
           </Flex>
         </Flex>
@@ -73,8 +77,18 @@ export default function ParticipantList() {
       <CommonTable className="table" loading={isTableLoading} columns={columns} dataSource={data} />
       <Flex justify="space-between" align="center">
         <Flex gap={16}>
-          <span>Number of Participants Users: 23</span>
-          <span>Total ELF: 120,000,000,000</span>
+          <Text size="small">
+            Number of Participants Users:{' '}
+            <Text size="small" fontWeight={FontWeightEnum.Medium}>
+              23
+            </Text>
+          </Text>
+          <Text size="small">
+            Total ELF:{' '}
+            <Text size="small" fontWeight={FontWeightEnum.Medium}>
+              120,000,000,000
+            </Text>
+          </Text>
         </Flex>
         <Pagination current={1} total={90} showSizeChanger={false} />
       </Flex>
