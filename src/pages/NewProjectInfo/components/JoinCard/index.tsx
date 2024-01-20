@@ -1,10 +1,11 @@
 import clsx from 'clsx';
 import { InputNumber, Flex } from 'antd';
-import { Typography, FontWeightEnum, Progress, Button } from 'aelf-design';
+import { Typography, FontWeightEnum, Progress } from 'aelf-design';
 import CommonCard from 'components/CommonCard';
 import PurchaseButton from '../OperationComponents/PurchaseButton';
 import RevokeInvestmentButton from '../OperationComponents/RevokeInvestmentButton';
-import ClaimTokenButtonButton from '../OperationComponents/ClaimTokenButton';
+import ClaimTokenButton from '../OperationComponents/ClaimTokenButton';
+import RevokeFineButton from '../OperationComponents/RevokeFineButton';
 import { ProjectStatus } from 'types/project';
 import { PROJECT_STATUS_TEXT_MAP } from 'constants/project';
 import { tempInfo } from '../temp';
@@ -130,11 +131,9 @@ export default function JoinCard({ info }: { info: typeof tempInfo }) {
               </Text>
             )}
             {info.projectStatus === ProjectStatus.ENDED && info.myAllocation.amount > 0 && !info.hasClaimedToken && (
-              <ClaimTokenButtonButton />
+              <ClaimTokenButton />
             )}
-            {info.projectStatus === ProjectStatus.CANCELED && info.hasNotRedeemedDefault && (
-              <Button type="primary">Revoke Token</Button>
-            )}
+            {info.projectStatus === ProjectStatus.CANCELED && info.hasNotRedeemedDefault && <RevokeFineButton />}
           </>
         )}
       </Flex>

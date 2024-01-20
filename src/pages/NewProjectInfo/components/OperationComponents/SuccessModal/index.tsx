@@ -1,9 +1,13 @@
-import { Modal, ModalProps, Flex, Button } from 'antd';
+import clsx from 'clsx';
+import { Flex } from 'antd';
+import { Modal, IModalProps, Button, Typography, FontWeightEnum, HashAddress } from 'aelf-design';
 import { success } from 'assets/images';
 import './styles.less';
 
+const { Title, Text } = Typography;
+
 interface ISuccessModalProps {
-  modalProps: ModalProps;
+  modalProps: IModalProps;
   data: {
     amountList: {
       amount: string;
@@ -21,26 +25,35 @@ export default function SuccessModal({ modalProps, data: { amountList, descripti
   return (
     <Modal
       {...modalProps}
-      wrapClassName={`project-info-success-modal-wrapper ${modalProps.wrapClassName}`}
-      footer={null}>
+      wrapClassName={clsx('project-info-success-modal-wrapper', modalProps.wrapClassName)}
+      footer={null}
+      centered>
       <Flex vertical gap={24}>
-        <Flex vertical align="center">
+        <Flex vertical gap={8} align="center">
           <img className="success-icon" src={success} alt="success" />
-          <Flex gap={2}>
+          <Flex vertical>
             {amountList.map((item, index) => (
-              <Flex key={index} gap={8} align="baseline">
-                <span className="amount">{item.amount}</span>
-                <span className="symbol">{item.symbol}</span>
+              <Flex key={index} gap={8} align="baseline" justify="center">
+                <Title fontWeight={FontWeightEnum.Medium} level={4}>
+                  {item.amount}
+                </Title>
+                <Title fontWeight={FontWeightEnum.Medium}>{item.symbol}</Title>
               </Flex>
             ))}
           </Flex>
-          <span className="description">{description}</span>
+          <Text className="text-center" fontWeight={FontWeightEnum.Medium}>
+            {description}
+          </Text>
         </Flex>
-        <Flex className="box-data" justify="space-between">
-          <span>{boxData.label}</span>
-          <span>{boxData.value}</span>
+        <Flex className="modal-box-data-wrapper" justify="space-between">
+          <Text>{boxData.label}</Text>
+          <HashAddress className="hash-address-small" preLen={8} endLen={9} address={boxData.value} />
         </Flex>
-        <Button onClick={modalProps.onOk}>OK</Button>
+        <Flex justify="center">
+          <Button className="modal-single-button" type="primary" onClick={modalProps.onOk}>
+            OK
+          </Button>
+        </Flex>
       </Flex>
     </Modal>
   );

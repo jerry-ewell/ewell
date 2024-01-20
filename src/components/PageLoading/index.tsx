@@ -1,6 +1,7 @@
 import { useState, useCallback, useEffect } from 'react';
 import { eventBus } from 'aelf-web-login';
-import { Modal } from 'antd';
+import { Flex } from 'antd';
+import { Loading } from 'aelf-design';
 import SandGlassLoading from 'components/SandGlassLoading';
 import { SET_GLOBAL_LOADING } from 'constants/events';
 
@@ -32,9 +33,13 @@ export default function PageLoading() {
   }, [setLoadingHandler]);
 
   return (
-    <Modal open={loadingInfo.isLoading} footer={null} centered maskClosable={false}>
-      <SandGlassLoading />
-      {loadingInfo.text}
-    </Modal>
+    <Loading
+      open={loadingInfo.isLoading}
+      content={
+        <Flex gap={8}>
+          <SandGlassLoading />
+          {!!loadingInfo.text && <span>{loadingInfo.text}</span>}
+        </Flex>
+      }></Loading>
   );
 }

@@ -28,6 +28,7 @@ export default function WhitelistTasksButton({ isEdit, whitelistTasksUrl }: IWhi
       <Modal
         title={`${isEdit ? 'Edit' : 'Open'} Whitelist Tasks`}
         footer={null}
+        centered
         open={isWhitelistTasksModalOpen}
         onCancel={() => setIsWhitelistTasksModalOpen(false)}>
         <Flex vertical gap={24}>
@@ -57,6 +58,7 @@ export default function WhitelistTasksButton({ isEdit, whitelistTasksUrl }: IWhi
       <Modal
         title={`${isEdit ? 'Edited' : 'Opened'} Successfully`}
         footer={null}
+        centered
         open={isSuccessModalOpen}
         onCancel={() => setIsSuccessModalOpen(false)}>
         <Flex vertical gap={24} align="center">
