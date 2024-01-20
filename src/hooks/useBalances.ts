@@ -1,43 +1,43 @@
 import BigNumber from 'bignumber.js';
 import { ZERO } from 'constants/misc';
-import { getELFChainBalance } from 'contracts/elf';
-import { getBalance } from 'contracts/ethereum';
-import { useCallback, useMemo, useState } from 'react';
-import { useTokenContract } from './useContract';
+import { useViewContract } from 'contexts/useViewContract/hooks';
+import { useWallet } from 'contexts/useWallet/hooks';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import useInterval from './useInterval';
-import { useActiveWeb3React } from './web3';
+
 export const useBalances = (
   // address || symbol
   tokens?: string | Array<string | undefined>,
   delay: null | number = 10000,
   targetAddress?: string,
 ): [BigNumber[], () => void] => {
+  const { getTokenContract } = useViewContract();
+  const { wallet, checkManagerSyncState } = useWallet();
   const deArr = useMemo(() => (Array.isArray(tokens) ? tokens.map(() => ZERO) : [ZERO]), [tokens]);
   const [balances, setBalances] = useState<BigNumber[]>(deArr);
-  const { library, chainId, account: owner } = useActiveWeb3React();
-  const account = useMemo(() => targetAddress || owner, [targetAddress, owner]);
-  const tokenContract = useTokenContract();
+  const account = useMemo(
+    () => targetAddress || wallet?.walletInfo?.address,
+    [targetAddress, wallet?.walletInfo?.address],
+  );
+  const interval = useRef<any>();
   const onGetBalance = useCallback(async () => {
+    const isManagerSynced = await checkManagerSyncState();
+    if (!isManagerSynced) {
+      clearInterval(interval.current);
+      return;
+    }
+    const tokenContract = await getTokenContract();
     const tokensList = Array.isArray(tokens) ? tokens : [tokens];
     if (!account) return setBalances(tokensList.map(() => ZERO));
     let promise;
-    if (typeof chainId === 'string') {
-      // elf chain
-      const contract = tokenContract;
-      if (!contract) return;
-      promise = tokensList.map((symbol) => {
-        if (symbol) return getELFChainBalance(contract, symbol, account);
-      });
-    } else {
-      // erc20 chain
-      promise = tokensList.map((i) => {
-        if (i && library) return getBalance(library, i, account);
-      });
-    }
+    if (!tokenContract) return;
+    promise = tokensList.map((symbol) => {
+      if (symbol) return tokenContract.GetBalance.call({ symbol, owner: account });
+    });
     const bs = await Promise.all(promise);
-    setBalances(bs?.map((i) => new BigNumber(i ?? '')));
-  }, [tokens, account, chainId, tokenContract, library]);
+    setBalances(bs?.map((i) => new BigNumber(i?.balance ?? '')));
+  }, [checkManagerSyncState, getTokenContract, tokens, account]);
 
-  useInterval(onGetBalance, delay, [account, tokens, chainId, tokenContract]);
+  interval.current = useInterval(onGetBalance, delay, [account, tokens]);
   return [balances, onGetBalance];
 };

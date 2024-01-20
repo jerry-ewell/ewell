@@ -8,6 +8,7 @@ import { useWallet } from 'contexts/useWallet/hooks';
 import { useViewContract } from 'contexts/useViewContract/hooks';
 import { DEFAULT_CHAIN_ID, NETWORK_CONFIG } from 'constants/network';
 import { IProjectInfo } from 'types/project';
+import { mockDetail, mockWhitelistInfo } from './mock';
 import './styles.less';
 
 interface IProjectInfoProps {
@@ -43,11 +44,11 @@ export default function ProjectInfo({ previewData }: IProjectInfoProps) {
 
       console.log('whitelistInfo', whitelistInfo);
       const newProjectInfo = {
-        ...detail,
-        additionalInfo: JSON.parse(detail.additionalInfo),
-        listMarketInfo: JSON.parse(detail.listMarketInfo),
+        ...mockDetail,
+        additionalInfo: JSON.parse(mockDetail.additionalInfo),
+        listMarketInfo: JSON.parse(mockDetail.listMarketInfo),
         isCreator,
-        whitelistInfo,
+        whitelistInfo: mockWhitelistInfo,
       };
       setProjectInfo(newProjectInfo);
     } catch (error) {
