@@ -35,12 +35,12 @@ export default function ProjectInfo({ previewData }: IProjectInfoProps) {
       const detail = result?.data?.detail;
       const creator = detail?.creator;
       const isCreator = creator === wallet?.walletInfo.address;
-      const whiteListId = detail?.whitelistId;
+      const whitelistId = detail?.whitelistId;
 
       console.log('isCreator', isCreator);
       console.log('api detail', detail);
       const whitelistContract = await getWhitelistContract();
-      const whitelistInfo = await whitelistContract.GetWhitelist.call(whiteListId);
+      const whitelistInfo = await whitelistContract.GetWhitelist.call(whitelistId);
 
       console.log('whitelistInfo', whitelistInfo);
       const newProjectInfo = {

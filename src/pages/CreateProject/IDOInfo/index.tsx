@@ -238,7 +238,7 @@ const formWhitelist: FormItemProps[] = [
 const IDOInfo: React.FC<CreateStepPorps> = ({ onNext, onPre }) => {
   const [form] = Form.useForm();
   const [formList, setFormList] = useState(formListConfig);
-  const [showWhitelist, setShowWhiteList] = useState(true);
+  const [showWhitelist, setShowWhitelist] = useState(true);
   const [idoInfo, setIDOInfo] = useLocalStorage(storages.IDOInfo, {});
 
   const adpterIdoInfo = useMemo(() => {
@@ -267,7 +267,7 @@ const IDOInfo: React.FC<CreateStepPorps> = ({ onNext, onPre }) => {
     const { isEnableWhitelist } = changedValues;
 
     if (Object.hasOwn(changedValues, 'isEnableWhitelist')) {
-      return setShowWhiteList(changedValues.isEnableWhitelist);
+      return setShowWhitelist(changedValues.isEnableWhitelist);
     }
 
     if (Object.hasOwn(changedValues, 'startTime')) {

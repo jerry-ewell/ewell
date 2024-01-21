@@ -60,7 +60,7 @@ export default function ParticipantList() {
   const [isTableLoading, setIsTableLoading] = useState(false);
 
   return (
-    <div className="common-page1 min-height-container participant-list-wrapper">
+    <div className="common-page page-body participant-list-wrapper">
       <BaseBreadcrumb />
       <Flex className="header" justify="space-between">
         <Flex vertical>

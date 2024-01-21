@@ -85,7 +85,7 @@ export default function WhitelistUsers() {
   const [isTableLoading, setIsTableLoading] = useState(false);
 
   return (
-    <div className="common-page1 min-height-container whitelist-users-wrapper">
+    <div className="common-page page-body whitelist-users-wrapper">
       <BaseBreadcrumb />
       <Flex vertical gap={24}>
         <Title level={5} fontWeight={FontWeightEnum.Medium}>

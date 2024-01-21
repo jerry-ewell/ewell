@@ -15,8 +15,8 @@ import { mockCreateResult } from './data';
 import { ZERO } from 'constants/misc';
 import { Input } from 'aelf-design';
 import { InboxOutlined } from '@ant-design/icons';
-import { useParseWhiteList } from 'hooks/useParseWhiteList';
-import { IdentifyWhiteListDataTypeEnum, identifyWhiteListData } from 'hooks/useParseWhiteList/utils';
+import { useParseWhitelist } from 'hooks/useParseWhitelist';
+import { IdentifyWhitelistDataTypeEnum, identifyWhitelistData } from 'hooks/useParseWhitelist/utils';
 
 const { Dragger } = Upload;
 
@@ -25,7 +25,7 @@ export default function Example() {
 
   const { getTokenContract, getEwellContract, getWhitelistContract } = useViewContract();
   const [projectId, setProjectId] = useState('15d556a57222ef06ea9a46a6fb9db416bffb98b8de60ccef6bcded8ca851f407');
-  const { updateFile } = useParseWhiteList();
+  const { updateFile } = useParseWhitelist();
 
   const transfer = useCallback(async () => {
     try {
@@ -304,10 +304,10 @@ export default function Example() {
       try {
         const addressList = await updateFile(e);
         const originList = ['ELF_2R7QtJp7e1qUcfh2RYYJzti9tKpPheNoAGD7dTVFd4m9NaCh27_tDVV'];
-        const fileResult = identifyWhiteListData({
+        const fileResult = identifyWhitelistData({
           originData: originList,
           identifyData: addressList,
-          type: IdentifyWhiteListDataTypeEnum.remove,
+          type: IdentifyWhitelistDataTypeEnum.remove,
         });
         console.log('fileResult', fileResult);
       } catch (error) {
@@ -316,6 +316,19 @@ export default function Example() {
     },
     [updateFile],
   );
+
+  const addWhitelist = useCallback(async () => {
+    const ewellContract = await getEwellContract();
+    const whiteListId = await ewellContract.GetWhitelistId.call(projectId);
+    const txResult = await wallet?.callContract({
+      contractAddress: NETWORK_CONFIG.whitelistContractAddress,
+      methodName: 'AddAddressInfoListToWhitelist',
+      args: {
+        // whitelistId:
+      },
+    });
+    console.log('txResult', txResult);
+  }, [getEwellContract, projectId, wallet]);
 
   return (
     <div className="common-page page-body">
