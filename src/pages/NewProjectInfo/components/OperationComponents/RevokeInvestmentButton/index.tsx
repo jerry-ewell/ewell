@@ -77,6 +77,7 @@ export default function RevokeInvestmentButton({ projectInfo }: IRevokeInvestmen
         },
       });
       console.log('unInvestResult', unInvestResult);
+      // TODO: polling get Transaction ID
       emitLoading(false);
       setIsSuccessModalOpen(true);
     } catch (error) {

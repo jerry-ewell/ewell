@@ -5,12 +5,44 @@ import CommonCard from 'components/CommonCard';
 import WhitelistTasksButton from './components/WhitelistTasksButton';
 import CancelProjectButton from './components/CancelProjectButton';
 import CreatorClaimTokenButton from '../OperationComponents/CreatorClaimTokenButton';
+import { useWallet } from 'contexts/useWallet/hooks';
+import { IProjectInfo } from 'types/project';
+import { NETWORK_CONFIG } from 'constants/network';
 import './styles.less';
 
 const { Text } = Typography;
 
-export default function ProjectManagementCard() {
-  const [isEnableWhitelist, setIsEnableWhitelist] = useState(false);
+interface IProjectManagementCardProps {
+  projectInfo?: IProjectInfo;
+}
+
+export default function ProjectManagementCard({ projectInfo }: IProjectManagementCardProps) {
+  const { wallet, checkManagerSyncState } = useWallet();
+
+  const [isWhitelistSwitchLoading, setIsWhitelistSwitchLoading] = useState(false);
+
+  const handleWhitelistSwitchChange = async (checked: boolean) => {
+    setIsWhitelistSwitchLoading(true);
+    const isManagerSynced = await checkManagerSyncState();
+    if (!isManagerSynced) {
+      setIsWhitelistSwitchLoading(false);
+      // TODO: show tips modal
+      return;
+    }
+    try {
+      const txResult = await wallet?.callContract({
+        contractAddress: NETWORK_CONFIG.whitelistContractAddress,
+        methodName: projectInfo?.isEnableWhitelist ? 'DisableWhitelist' : 'EnableWhitelist',
+        args: projectInfo?.whitelistId,
+      });
+      console.log('txResult', txResult);
+      // TODO: refresh isEnableWhitelist
+    } catch (error) {
+      console.log('error', error);
+    } finally {
+      setIsWhitelistSwitchLoading(false);
+    }
+  };
 
   return (
     <CommonCard
@@ -26,13 +58,21 @@ export default function ProjectManagementCard() {
         <Flex gap={8} justify="space-between">
           <Text fontWeight={FontWeightEnum.Medium}>Whitelist</Text>
           <Flex gap={8} align="center">
-            <Text>{isEnableWhitelist ? 'Enable' : 'Disable'}</Text>
-            <Switch size="small" checked={isEnableWhitelist} onChange={(checked) => setIsEnableWhitelist(checked)} />
+            <Text>{projectInfo?.isEnableWhitelist ? 'Enable' : 'Disable'}</Text>
+            <Switch
+              size="small"
+              loading={isWhitelistSwitchLoading}
+              checked={projectInfo?.isEnableWhitelist}
+              onChange={handleWhitelistSwitchChange}
+            />
           </Flex>
         </Flex>
-        {isEnableWhitelist && (
+        {projectInfo?.isEnableWhitelist && (
           <>
-            <WhitelistTasksButton />
+            <WhitelistTasksButton
+              whitelistId={projectInfo?.whitelistId}
+              whitelistTasksUrl={projectInfo?.whitelistInfo?.url}
+            />
             <Button>Whitelist Users</Button>
             <Button>Add Whitelisted Users</Button>
             <Button>Remove Whitelisted Users</Button>
@@ -42,8 +82,8 @@ export default function ProjectManagementCard() {
       <div className="divider" />
       <Flex vertical gap={12}>
         <Text fontWeight={FontWeightEnum.Medium}>Project</Text>
-        <CancelProjectButton />
-        <CreatorClaimTokenButton />
+        <CancelProjectButton projectInfo={projectInfo} />
+        <CreatorClaimTokenButton projectInfo={projectInfo} />
       </Flex>
     </CommonCard>
   );

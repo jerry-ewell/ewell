@@ -59,7 +59,7 @@ export interface IProjectInfo {
   publicSalePrice?: string;
   restDistributeProportion?: number;
   startTime?: string;
-  toClaimAmount?: number;
+  toClaimAmount?: string;
   toRaiseToken?: TokenInfo;
   toRaisedAmount?: string;
   totalPeriod?: number;

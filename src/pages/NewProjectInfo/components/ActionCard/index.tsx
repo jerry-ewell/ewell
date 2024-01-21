@@ -31,7 +31,7 @@ export default function ActionCard({ projectInfo }: IActionCardProps) {
           Log in to view details
         </Button>
       )}
-      {!!isLogin && tempInfo.isCreator && <ProjectManagementCard />}
+      {!!isLogin && tempInfo.isCreator && <ProjectManagementCard projectInfo={projectInfo} />}
     </Flex>
   );
 }
