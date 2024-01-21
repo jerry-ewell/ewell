@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react';
+import { forwardRef, useCallback, useImperativeHandle, useMemo, useState } from 'react';
 import clsx from 'clsx';
 import { Flex, Space } from 'antd';
 import { Button, Modal, Upload, Input, Typography, FontWeightEnum } from 'aelf-design';
@@ -23,7 +23,16 @@ enum UpdateWay {
   PASTE = 'paste',
 }
 
-export default function UpdateModal({ updateType, modalOpen, onModalCancel, onModalSubmit }: IUpdateModalProps) {
+export type UpdateModalInterface = {
+  reset: () => void;
+  lockInput: () => void;
+  unLockInput: () => void;
+};
+
+const UpdateModal = forwardRef(function (
+  { updateType, modalOpen, onModalCancel, onModalSubmit }: IUpdateModalProps,
+  ref,
+) {
   const [currentUpdateWay, setCurrentUpdateWay] = useState<UpdateWay>(UpdateWay.PASTE);
   const [file, setFile] = useState<RcFile>();
   const [addressInput, setAddressInput] = useState<string>('');
@@ -34,14 +43,19 @@ export default function UpdateModal({ updateType, modalOpen, onModalCancel, onMo
   }, []);
 
   const onSubmit = useCallback(async () => {
-    if (currentUpdateWay === UpdateWay.UPLOAD) {
-      if (!file) return;
-      const _uploadAddressList = await parseWhitelistFile(file);
+    try {
+      if (currentUpdateWay === UpdateWay.UPLOAD) {
+        if (!file) return;
+        const _uploadAddressList = await parseWhitelistFile(file);
+        onModalSubmit(_uploadAddressList);
+        return;
+      }
+      const _uploadAddressList = parseWhitelistInput(addressInput);
       onModalSubmit(_uploadAddressList);
-      return;
+    } catch (error) {
+      // toast error
+      console.log('UpdateModal error: ', error);
     }
-    const _uploadAddressList = parseWhitelistInput(addressInput);
-    onModalSubmit(_uploadAddressList);
   }, [addressInput, currentUpdateWay, file, onModalSubmit]);
 
   const isSubmitDisabled = useMemo(() => {
@@ -52,6 +66,11 @@ export default function UpdateModal({ updateType, modalOpen, onModalCancel, onMo
   const handleAddressInputChange = useCallback((e) => {
     setAddressInput(e.target.value);
   }, []);
+
+  const reset = useCallback(() => {
+    setFile(undefined);
+  }, []);
+  useImperativeHandle(ref, () => ({ reset }));
 
   return (
     <Modal
@@ -108,4 +127,6 @@ export default function UpdateModal({ updateType, modalOpen, onModalCancel, onMo
       </Flex>
     </Modal>
   );
-}
+});
+
+export default UpdateModal;

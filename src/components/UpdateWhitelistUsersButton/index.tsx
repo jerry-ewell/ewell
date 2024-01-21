@@ -1,7 +1,7 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import { Flex } from 'antd';
 import { Button, IButtonProps, Modal, Typography } from 'aelf-design';
-import UpdateModal from './UpdateModal';
+import UpdateModal, { UpdateModalInterface } from './UpdateModal';
 import AddressValidationModal from './AddressValidationModal';
 import { emitLoading } from 'utils/events';
 import { success } from 'assets/images';
@@ -32,6 +32,8 @@ export default function UpdateWhitelistUsers({
   whitelistId,
   onSuccess,
 }: IUpdateWhitelistUsersButtonProps) {
+  const updateModalRef = useRef<UpdateModalInterface>();
+
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [isAddressValidationModalOpen, setIsAddressValidationModalOpen] = useState(false);
   const [isUpdateSuccessModalOpen, setIsUpdateSuccessModalOpen] = useState(false);
@@ -62,6 +64,7 @@ export default function UpdateWhitelistUsers({
         console.log('onUpdateSubmit', userAddressList, uploadAddressList, _validationData);
         setValidationData(_validationData);
       } catch (error) {
+        // TODO: toast error
         console.log('onUpdateSubmit error', error);
       }
       emitLoading(false);
@@ -97,15 +100,23 @@ export default function UpdateWhitelistUsers({
       setIsUpdateSuccessModalOpen(true);
       onSuccess?.();
     } catch (error) {
+      // TODO: toast error
       console.log('onValidationConfirm error', error);
     }
     emitLoading(false);
   }, [activeAddressList, onSuccess, updateType, wallet, whitelistId]);
 
+  const init = useCallback(() => {
+    updateModalRef.current?.reset();
+    setValidationData([]);
+    setIsUpdateModalOpen(true);
+  }, []);
+
   return (
     <>
-      <Web3Button {...buttonProps} onClick={() => setIsUpdateModalOpen(true)} />
+      <Web3Button {...buttonProps} onClick={init} />
       <UpdateModal
+        ref={updateModalRef}
         updateType={updateType}
         modalOpen={isUpdateModalOpen}
         onModalCancel={() => setIsUpdateModalOpen(false)}
