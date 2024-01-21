@@ -1,10 +1,12 @@
-import { useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import clsx from 'clsx';
 import { Flex, Space } from 'antd';
 import { Button, Modal, Upload, Input, Typography, FontWeightEnum } from 'aelf-design';
 import { download } from 'assets/images';
 import { UpdateType } from '../types';
 import './styles.less';
+import type { RcFile } from 'antd/es/upload';
+import { parseWhitelistFile, parseWhitelistInput } from 'hooks/useParseWhitelist/utils';
 
 const { TextArea } = Input;
 const { Text } = Typography;
@@ -13,7 +15,7 @@ interface IUpdateModalProps {
   updateType: UpdateType;
   modalOpen: boolean;
   onModalCancel: () => void;
-  onModalSubmit: () => void;
+  onModalSubmit: (params: string[]) => void;
 }
 
 enum UpdateWay {
@@ -23,12 +25,33 @@ enum UpdateWay {
 
 export default function UpdateModal({ updateType, modalOpen, onModalCancel, onModalSubmit }: IUpdateModalProps) {
   const [currentUpdateWay, setCurrentUpdateWay] = useState<UpdateWay>(UpdateWay.PASTE);
-  const [fileList, setFileList] = useState<any[]>([]);
+  const [file, setFile] = useState<RcFile>();
+  const [addressInput, setAddressInput] = useState<string>('');
 
-  const handleUpload = (info) => {
-    console.log('info: ', info);
-    setFileList(info.fileList);
-  };
+  const handleUpload = useCallback((file: RcFile) => {
+    console.log('file: ', file);
+    setFile(file);
+  }, []);
+
+  const onSubmit = useCallback(async () => {
+    if (currentUpdateWay === UpdateWay.UPLOAD) {
+      if (!file) return;
+      const _uploadAddressList = await parseWhitelistFile(file);
+      onModalSubmit(_uploadAddressList);
+      return;
+    }
+    const _uploadAddressList = parseWhitelistInput(addressInput);
+    onModalSubmit(_uploadAddressList);
+  }, [addressInput, currentUpdateWay, file, onModalSubmit]);
+
+  const isSubmitDisabled = useMemo(() => {
+    if (currentUpdateWay === UpdateWay.UPLOAD) return !file;
+    return addressInput.trim().length === 0;
+  }, [addressInput, currentUpdateWay, file]);
+
+  const handleAddressInputChange = useCallback((e) => {
+    setAddressInput(e.target.value);
+  }, []);
 
   return (
     <Modal
@@ -69,16 +92,16 @@ export default function UpdateModal({ updateType, modalOpen, onModalCancel, onMo
           </Flex>
         </Flex>
         {currentUpdateWay === UpdateWay.UPLOAD && (
-          <Upload className="address-upload" tips="Browse your file here" fileList={fileList} onChange={handleUpload} />
+          <Upload className="address-upload" tips="Browse your file here" beforeUpload={handleUpload} />
         )}
         {currentUpdateWay === UpdateWay.PASTE && (
-          <TextArea className="paste-address-textarea" placeholder="placeholder" />
+          <TextArea className="paste-address-textarea" placeholder="placeholder" onChange={handleAddressInputChange} />
         )}
         <Flex gap={16} justify="center">
           <Button className="modal-footer-button" onClick={onModalCancel}>
             Cancel
           </Button>
-          <Button className="modal-footer-button" type="primary" onClick={onModalSubmit}>
+          <Button disabled={isSubmitDisabled} className="modal-footer-button" type="primary" onClick={onSubmit}>
             Submit
           </Button>
         </Flex>

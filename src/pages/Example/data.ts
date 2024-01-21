@@ -53,3 +53,26 @@ export const mockCreateResult = {
   Error: null,
   TransactionSize: 294,
 };
+
+export const walletAddressList = [
+  'ELF_2ntSnB2EKcbr1sknAuxXqHfKrRYfmijxy1c9YhB7WvPdvsZKHw_tDVV',
+  'ELF_26jzMiz4z4oX7NYH41pGbRBvhzyEtJQJTmnApEnRryjKB1FiXF_tDVV',
+  'ELF_29QPGYZWwLGqHf6MQhGTduqmSkJ43FDYDUE5rr4cWfaYR7ohTe_tDVV',
+  'ELF_sHtffHPhGUgwWdbWBhBcW8cdypRns7FsGNuYsQR11DrAK5miL_tDVV',
+  'ELF_hsRLL92JGu9Yq1zg5gtJU2tKmxkN2ewKXWyCAY4fcvFG6cS5q_tDVV',
+  'ELF_294yB86pqYHEvusDqKjfZRa185y8LQphdMGCkZ3gCzHs8MvCzR_tDVV',
+  'ELF_RPDPJa5QGdSv3uuW2CCf3KCu86SqGPNBQcPNDGACHNDY1NeaW_tDVV',
+  'ELF_rtUGY7XpQHxFxvzZNtvkLauRyyYycG9g3EnkerMrSa5q93XPY_tDVV',
+  'ELF_j6Zyzqwc6kAeksgBGJ3EZ3dQ4be8xWqQmsobuQrZ2V6z4K8Fm_tDVV',
+  'ELF_2Wkq2wwkKnvU6gdLGUyWkEoexkdfMR1s3VFkU1qQqAgiUQXnAM_tDVV',
+  'ELF_jsdZq49ZDYBYNxrQekZBxKdkhfaKTet56vm13hqTtcvsv9TS4_tDVV',
+  'ELF_hGGcHrSzdQ3heM54hj8zVWyKri89DLPn4pEaepZkn1PzMBrbu_tDVV',
+  'ELF_2H12UuMDHpFQYWEoj7tMHZw4xom6G6vdWMpk3522BPxqJjzgC3_tDVV',
+  'ELF_2k56NtKusad1WwozupE3ZgndgsWS182i87UQZbuL2EFraJiocG_tDVV',
+  'ELF_mouEbaY6UdhcC5eFeGJtgiu2nHSddcSQALvUpMCZ2XW7qcY88_tDVV',
+  'ELF_zioCaqHXoFaZvwwCeQA5kVBvFDZLgWQj4pJst9pTTPS244iHu_tDVV',
+  'ELF_bgYUYcbChZXiLCPdktTbCQtS2WD4E3bmUMVMYdztrrTG3BkHT_tDVV',
+  'ELF_6BoYEWQpYtUc7xsWWi7gtXndYccGRZjC7W5QF1TMqgqgMG7dJ_tDVV',
+  'ELF_2FpDiTzBSKzKWp47dw4JdpvuxkTKLdiyXjfgDk6ZJixveKSBem_tDVV',
+  'ELF_wCSyjHt4Lc8fJUH1dJi4F2mh1eLwMN9tQybeyPwUE6our3zry_tDVV',
+];

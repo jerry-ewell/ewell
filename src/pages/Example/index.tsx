@@ -1,5 +1,4 @@
 import { Button, Modal, Upload } from 'antd';
-import { useLockCallback } from 'hooks';
 import { useCallback, useEffect, useState } from 'react';
 import './styles.less';
 import { useWallet } from 'contexts/useWallet/hooks';
@@ -11,12 +10,13 @@ import { request } from 'api';
 import myEvents from 'utils/myEvent';
 import { WebLoginEvents, useWebLoginEvent } from 'aelf-web-login';
 import { getLog } from 'utils/protoUtils';
-import { mockCreateResult } from './data';
+import { mockCreateResult, walletAddressList } from './data';
 import { ZERO } from 'constants/misc';
 import { Input } from 'aelf-design';
 import { InboxOutlined } from '@ant-design/icons';
 import { useParseWhitelist } from 'hooks/useParseWhitelist';
-import { IdentifyWhitelistDataTypeEnum, identifyWhitelistData } from 'hooks/useParseWhitelist/utils';
+import { identifyWhitelistData } from 'hooks/useParseWhitelist/utils';
+import { UpdateType } from 'components/UpdateWhitelistUsersButton/types';
 
 const { Dragger } = Upload;
 
@@ -307,7 +307,7 @@ export default function Example() {
         const fileResult = identifyWhitelistData({
           originData: originList,
           identifyData: addressList,
-          type: IdentifyWhitelistDataTypeEnum.remove,
+          type: UpdateType.REMOVE,
         });
         console.log('fileResult', fileResult);
       } catch (error) {
@@ -324,11 +324,29 @@ export default function Example() {
       contractAddress: NETWORK_CONFIG.whitelistContractAddress,
       methodName: 'AddAddressInfoListToWhitelist',
       args: {
-        // whitelistId:
+        whitelistId,
+        extraInfoIdList: {
+          value: [
+            {
+              addressList: {
+                value: ['ELF_2R7QtJp7e1qUcfh2RYYJzti9tKpPheNoAGD7dTVFd4m9NaCh27_tDVV', ...walletAddressList],
+              },
+            },
+          ],
+        },
       },
     });
     console.log('txResult', txResult);
   }, [getEwellContract, projectId, wallet]);
+
+  const getWhitelistDetail = useCallback(async () => {
+    const ewellContract = await getEwellContract();
+    const whitelistId = await ewellContract.GetWhitelistId.call(projectId);
+    console.log('whitelistId', whitelistId);
+    const whitelistContract = await getWhitelistContract();
+    const whitelistDetail = await whitelistContract.GetWhitelistDetail.call(whitelistId);
+    console.log('getWhitelistDetail ', whitelistDetail);
+  }, [getEwellContract, getWhitelistContract, projectId]);
 
   return (
     <div className="common-page page-body">
@@ -373,6 +391,10 @@ export default function Example() {
         <Button type="primary" onClick={getProjectUserList}>
           getProjectUserList
         </Button>
+      </div>
+      <div>
+        <Button onClick={addWhitelist}>addWhitelist</Button>
+        <Button onClick={getWhitelistDetail}>getWhitelistDetail</Button>
       </div>
       <div>
         <Dragger

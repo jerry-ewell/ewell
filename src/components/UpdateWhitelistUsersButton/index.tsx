@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { Flex } from 'antd';
 import { Button, IButtonProps, Modal, Typography } from 'aelf-design';
 import UpdateModal from './UpdateModal';
@@ -7,43 +7,116 @@ import { emitLoading } from 'utils/events';
 import { success } from 'assets/images';
 import { UpdateType } from './types';
 import './styles.less';
+import Web3Button from 'components/Web3Button';
+import { useViewContract } from 'contexts/useViewContract/hooks';
+import {
+  TWhitelistIdentifyItem,
+  WhitelistAddressIdentifyStatusEnum,
+  identifyWhitelistData,
+} from 'hooks/useParseWhitelist/utils';
+import { useWallet } from 'contexts/useWallet/hooks';
+import { NETWORK_CONFIG } from 'constants/network';
 
 const { Text } = Typography;
 
 interface IUpdateWhitelistUsersButtonProps {
   buttonProps: IButtonProps;
   updateType: UpdateType;
+  whitelistId?: string;
+  onSuccess?: () => void;
 }
 
-export default function UpdateWhitelistUsers({ buttonProps, updateType }: IUpdateWhitelistUsersButtonProps) {
+export default function UpdateWhitelistUsers({
+  buttonProps,
+  updateType,
+  whitelistId,
+  onSuccess,
+}: IUpdateWhitelistUsersButtonProps) {
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [isAddressValidationModalOpen, setIsAddressValidationModalOpen] = useState(false);
   const [isUpdateSuccessModalOpen, setIsUpdateSuccessModalOpen] = useState(false);
+  const [validationData, setValidationData] = useState<TWhitelistIdentifyItem[]>([]);
+  const { wallet } = useWallet();
+  const activeAddressList = useMemo(
+    () =>
+      validationData
+        .filter((item) => item.status === WhitelistAddressIdentifyStatusEnum.active)
+        .map((item) => item.address),
+    [validationData],
+  );
+
+  const { getWhitelistUserAddressList } = useViewContract();
+  const onUpdateSubmit = useCallback(
+    async (uploadAddressList: string[]) => {
+      setIsUpdateModalOpen(false);
+
+      emitLoading(true);
+      try {
+        const userAddressList = await getWhitelistUserAddressList(whitelistId || '');
+
+        const _validationData = await identifyWhitelistData({
+          originData: userAddressList,
+          identifyData: uploadAddressList,
+          type: updateType,
+        });
+        console.log('onUpdateSubmit', userAddressList, uploadAddressList, _validationData);
+        setValidationData(_validationData);
+      } catch (error) {
+        console.log('onUpdateSubmit error', error);
+      }
+      emitLoading(false);
+
+      setIsAddressValidationModalOpen(true);
+    },
+    [getWhitelistUserAddressList, updateType, whitelistId],
+  );
+
+  const onValidationConfirm = useCallback(async () => {
+    setIsAddressValidationModalOpen(false);
+    emitLoading(true);
+    try {
+      const txResult = await wallet?.callContract({
+        contractAddress: NETWORK_CONFIG.whitelistContractAddress,
+        methodName:
+          updateType === UpdateType.ADD ? 'AddAddressInfoListToWhitelist' : 'RemoveAddressInfoListFromWhitelist',
+        args: {
+          whitelistId,
+          extraInfoIdList: {
+            value: [
+              {
+                addressList: {
+                  value: activeAddressList,
+                },
+              },
+            ],
+          },
+        },
+      });
+      console.log('txResult', txResult);
+
+      setIsUpdateSuccessModalOpen(true);
+      onSuccess?.();
+    } catch (error) {
+      console.log('onValidationConfirm error', error);
+    }
+    emitLoading(false);
+  }, [activeAddressList, onSuccess, updateType, wallet, whitelistId]);
 
   return (
     <>
-      <Button {...buttonProps} onClick={() => setIsUpdateModalOpen(true)} />
+      <Web3Button {...buttonProps} onClick={() => setIsUpdateModalOpen(true)} />
       <UpdateModal
         updateType={updateType}
         modalOpen={isUpdateModalOpen}
         onModalCancel={() => setIsUpdateModalOpen(false)}
-        onModalSubmit={() => {
-          setIsUpdateModalOpen(false);
-          emitLoading(true);
-          setTimeout(() => {
-            emitLoading(false);
-            setIsAddressValidationModalOpen(true);
-          }, 1000);
-        }}
+        onModalSubmit={onUpdateSubmit}
       />
       <AddressValidationModal
         updateType={updateType}
         modalOpen={isAddressValidationModalOpen}
+        validationData={validationData}
         onModalCancel={() => setIsAddressValidationModalOpen(false)}
-        onModalConfirm={() => {
-          setIsAddressValidationModalOpen(false);
-          setIsUpdateSuccessModalOpen(true);
-        }}
+        onModalConfirm={onValidationConfirm}
       />
       <Modal
         wrapClassName="whitelist-users-update-success-modal"
@@ -55,7 +128,8 @@ export default function UpdateWhitelistUsers({ buttonProps, updateType }: IUpdat
           <Flex vertical gap={8} align="center">
             <img className="success-icon" src={success} alt="success" />
             <Text className="text-center">
-              Successfully {updateType === UpdateType.ADD ? 'added' : 'removed'} 90 users to the whitelist
+              Successfully {updateType === UpdateType.ADD ? 'added' : 'removed'} {activeAddressList.length} users to the
+              whitelist
             </Text>
           </Flex>
           <Button className="modal-single-button" type="primary" onClick={() => setIsUpdateSuccessModalOpen(false)}>

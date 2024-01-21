@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { Flex } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import { HashAddress, Search, Pagination, Typography, FontWeightEnum } from 'aelf-design';
@@ -8,6 +8,11 @@ import UpdateWhitelistUsersButton from 'components/UpdateWhitelistUsersButton';
 import { UpdateType } from 'components/UpdateWhitelistUsersButton/types';
 import { add, remove } from 'assets/images';
 import './styles.less';
+import { useParams } from 'react-router-dom';
+import { useEffectOnce } from 'react-use';
+import { useWallet } from 'contexts/useWallet/hooks';
+import { useViewContract } from 'contexts/useViewContract/hooks';
+import { DEFAULT_CHAIN_ID } from 'constants/network';
 
 const { Title, Text } = Typography;
 
@@ -21,7 +26,7 @@ const columns: ColumnsType<any> = [
     title: 'Address',
     dataIndex: 'address',
     key: 'address',
-    render: (address) => <HashAddress address={address} />,
+    render: (address) => <HashAddress address={address} chain={DEFAULT_CHAIN_ID} />,
   },
   {
     title: 'Add Time',
@@ -30,59 +35,57 @@ const columns: ColumnsType<any> = [
   },
 ];
 
-const data: any[] = [
-  {
-    key: '1',
-    order: '1',
-    address: 'ELF_0x00000000000000ADc04C56Bf30aC9d3c0aAF14dC_AELF',
-    time: '03:06:32  28/07/2023',
-  },
-  {
-    key: '2',
-    order: '2',
-    address: 'ELF_0x00000000000000ADc04C56Bf30aC9d3c0aAF14dC_AELF',
-    time: '03:06:32  28/07/2023',
-  },
-  {
-    key: '3',
-    order: '3',
-    address: 'ELF_0x00000000000000ADc04C56Bf30aC9d3c0aAF14dC_AELF',
-    time: '03:06:32  28/07/2023',
-  },
-  {
-    key: '4',
-    order: '4',
-    address: 'ELF_0x00000000000000ADc04C56Bf30aC9d3c0aAF14dC_AELF',
-    time: '03:06:32  28/07/2023',
-  },
-  {
-    key: '5',
-    order: '5',
-    address: 'ELF_0x00000000000000ADc04C56Bf30aC9d3c0aAF14dC_AELF',
-    time: '03:06:32  28/07/2023',
-  },
-  {
-    key: '6',
-    order: '6',
-    address: 'ELF_0x00000000000000ADc04C56Bf30aC9d3c0aAF14dC_AELF',
-    time: '03:06:32  28/07/2023',
-  },
-  {
-    key: '7',
-    order: '7',
-    address: 'ELF_0x00000000000000ADc04C56Bf30aC9d3c0aAF14dC_AELF',
-    time: '03:06:32  28/07/2023',
-  },
-  {
-    key: '8',
-    order: '8',
-    address: 'ELF_0x00000000000000ADc04C56Bf30aC9d3c0aAF14dC_AELF',
-    time: '03:06:32  28/07/2023',
-  },
-];
-
+const DEFAULT_PAGE_SIZE = 10;
+type TAddressItem = {
+  key: string;
+  order: string;
+  address: string;
+  time: string;
+};
 export default function WhitelistUsers() {
-  const [isTableLoading, setIsTableLoading] = useState(false);
+  const [isTableLoading, setIsTableLoading] = useState(true);
+  const { whitelistId = '' } = useParams();
+  const { wallet } = useWallet();
+  const { getWhitelistUserAddressList } = useViewContract();
+  const [pager, setPager] = useState({
+    page: 1,
+    total: 0,
+  });
+  const onPageChange = useCallback((page) => setPager((v) => ({ ...v, page })), []);
+  const [totalAddressList, setTotalAddressList] = useState<TAddressItem[]>();
+  const [userAddressList, setUserAddressList] = useState<string[]>();
+
+  const curAddressList = useMemo(
+    () => totalAddressList?.slice((pager.page - 1) * DEFAULT_PAGE_SIZE, pager.page * DEFAULT_PAGE_SIZE) || [],
+    [pager.page, totalAddressList],
+  );
+
+  const getWhitelistInfo = useCallback(async () => {
+    setIsTableLoading(true);
+    try {
+      const addressList = await getWhitelistUserAddressList(whitelistId);
+      const userList: TAddressItem[] = addressList.map((address, idx) => ({
+        key: `${idx + 1}`,
+        order: `${idx + 1}`,
+        address,
+        time: '03:06:32  28/07/2023',
+      }));
+
+      setUserAddressList(addressList);
+      setTotalAddressList(userList);
+      setPager({
+        page: 1,
+        total: addressList.length,
+      });
+    } catch (error) {
+      console.log('getWhitelistInfo error', error);
+    }
+    setIsTableLoading(false);
+  }, [getWhitelistUserAddressList, whitelistId]);
+
+  useEffectOnce(() => {
+    getWhitelistInfo();
+  });
 
   return (
     <div className="common-page page-body whitelist-users-wrapper">
@@ -100,6 +103,8 @@ export default function WhitelistUsers() {
                 children: 'Add',
               }}
               updateType={UpdateType.ADD}
+              whitelistId={whitelistId}
+              onSuccess={getWhitelistInfo}
             />
             <UpdateWhitelistUsersButton
               buttonProps={{
@@ -108,22 +113,32 @@ export default function WhitelistUsers() {
                 children: 'Remove',
               }}
               updateType={UpdateType.REMOVE}
+              whitelistId={whitelistId}
+              onSuccess={getWhitelistInfo}
             />
           </Flex>
           <Search inputClassName="address-search" placeholder="Address" />
         </Flex>
-        <Flex vertical gap={16}>
-          <CommonTable loading={isTableLoading} columns={columns} dataSource={data} />
-          <Flex justify="space-between" align="center">
-            <Text size="small">
-              Number of Participants Users:{' '}
-              <Text size="small" fontWeight={FontWeightEnum.Medium}>
-                23
+        {!!pager.total && (
+          <Flex vertical gap={16}>
+            <CommonTable loading={isTableLoading} columns={columns} dataSource={curAddressList} />
+            <Flex justify="space-between" align="center">
+              <Text size="small">
+                Number of Participants Users:{' '}
+                <Text size="small" fontWeight={FontWeightEnum.Medium}>
+                  {pager.total}
+                </Text>
               </Text>
-            </Text>
-            <Pagination current={1} total={90} showSizeChanger={false} />
+              <Pagination
+                current={pager.page}
+                total={pager.total}
+                showSizeChanger={false}
+                pageChange={onPageChange}
+                pageSize={DEFAULT_PAGE_SIZE}
+              />
+            </Flex>
           </Flex>
-        </Flex>
+        )}
       </Flex>
     </div>
   );
