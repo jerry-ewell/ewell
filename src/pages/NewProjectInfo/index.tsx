@@ -25,29 +25,29 @@ export default function ProjectInfo({ previewData }: IProjectInfoProps) {
 
   const getProjectInfo = useCallback(async () => {
     try {
-      const result = await request.project.getProjectList({
-        params: {
-          chainId: DEFAULT_CHAIN_ID,
-          projectId,
-        },
-      });
+      // const result = await request.project.getProjectList({
+      //   params: {
+      //     chainId: DEFAULT_CHAIN_ID,
+      //     projectId,
+      //   },
+      // });
 
-      const detail = result?.data?.detail;
-      const creator = detail?.creator;
-      const isCreator = creator === wallet?.walletInfo.address;
-      const whitelistId = detail?.whitelistId;
+      // const detail = result?.data?.detail;
+      // const creator = detail?.creator;
+      // const isCreator = creator === wallet?.walletInfo.address;
+      // const whitelistId = detail?.whitelistId;
 
-      console.log('isCreator', isCreator);
-      console.log('api detail', detail);
-      const whitelistContract = await getWhitelistContract();
-      const whitelistInfo = await whitelistContract.GetWhitelist.call(whitelistId);
+      // console.log('isCreator', isCreator);
+      // console.log('api detail', detail);
+      // const whitelistContract = await getWhitelistContract();
+      // const whitelistInfo = await whitelistContract.GetWhitelist.call(whitelistId);
 
-      console.log('whitelistInfo', whitelistInfo);
+      // console.log('whitelistInfo', whitelistInfo);
       const newProjectInfo = {
         ...mockDetail,
         additionalInfo: JSON.parse(mockDetail.additionalInfo),
         listMarketInfo: JSON.parse(mockDetail.listMarketInfo),
-        isCreator,
+        isCreator: true,
         whitelistInfo: mockWhitelistInfo,
       };
       setProjectInfo(newProjectInfo);

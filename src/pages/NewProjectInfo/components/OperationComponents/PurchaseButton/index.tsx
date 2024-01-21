@@ -14,6 +14,7 @@ import { getPriceDecimal } from 'utils';
 import { useBalances } from 'hooks/useBalances';
 import { useWallet } from 'contexts/useWallet/hooks';
 import { emitLoading } from 'utils/events';
+import { timesDecimals } from 'utils/calculate';
 import './styles.less';
 
 const { Title, Text } = Typography;
@@ -30,14 +31,14 @@ export default function PurchaseButton({ buttonDisabled, projectInfo, purchaseAm
   const { additionalInfo } = projectInfo || {};
   const { wallet, checkManagerSyncState } = useWallet();
   const [balances] = useBalances(projectInfo?.toRaiseToken?.symbol);
+  console.log('balances: ', balances?.[0].toNumber());
 
-  const [isSubmitModalOpen, setIsSubmitModalOpen] = useState(true);
+  const [isSubmitModalOpen, setIsSubmitModalOpen] = useState(false);
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
 
   // TODO: get estimatedTransactionFee
-  const estimatedTransactionFee = '0.3604';
+  const estimatedTransactionFee = '3604';
 
-  console.log('projectInfo?.investAmount: ', projectInfo?.investAmount);
   const handleSubmit = async () => {
     setIsSubmitModalOpen(false);
     const isManagerSynced = await checkManagerSyncState();
@@ -46,9 +47,7 @@ export default function PurchaseButton({ buttonDisabled, projectInfo, purchaseAm
       return;
     }
     emitLoading(true, { text: 'Processing on the blockchain...' });
-    const amount = new BigNumber(purchaseAmount || '')
-      .multipliedBy(new BigNumber(10).pow(projectInfo?.toRaiseToken?.symbol ?? 8))
-      .toFixed();
+    const amount = timesDecimals(purchaseAmount, projectInfo?.toRaiseToken?.decimals).toFixed();
 
     try {
       const approveResult = await wallet?.callContract({
@@ -63,6 +62,7 @@ export default function PurchaseButton({ buttonDisabled, projectInfo, purchaseAm
       console.log('approveResult', approveResult);
     } catch (error) {
       console.log('error', error);
+      emitLoading(false);
     }
 
     try {
@@ -76,13 +76,13 @@ export default function PurchaseButton({ buttonDisabled, projectInfo, purchaseAm
         },
       });
       console.log('investResult', investResult);
+      // TODO: polling get Transaction ID
+      setIsSuccessModalOpen(true);
     } catch (error) {
       console.log('error', error);
+    } finally {
+      emitLoading(false);
     }
-
-    // TODO: polling get Transaction ID
-
-    setIsSuccessModalOpen(true);
   };
 
   return (
@@ -139,7 +139,7 @@ export default function PurchaseButton({ buttonDisabled, projectInfo, purchaseAm
                           getPriceDecimal(projectInfo?.crowdFundingIssueToken, projectInfo?.toRaiseToken),
                         ),
                       )
-                      .toFixed()
+                      .toFormat()
                   : 0}{' '}
                 {projectInfo?.crowdFundingIssueToken?.symbol ?? '--'}
               </Text>
@@ -151,9 +151,7 @@ export default function PurchaseButton({ buttonDisabled, projectInfo, purchaseAm
               <Text fontWeight={FontWeightEnum.Medium}>Balance</Text>
             </Flex>
             <Text fontWeight={FontWeightEnum.Medium}>
-              {new BigNumber(balances?.[0])
-                .dividedBy(new BigNumber(10).pow(projectInfo?.toRaiseToken?.decimals || 8))
-                .toFixed()}{' '}
+              {divDecimalsStr(balances?.[0], projectInfo?.toRaiseToken?.decimals ?? 8)}{' '}
               {projectInfo?.toRaiseToken?.symbol ?? '--'}
             </Text>
           </Flex>
@@ -172,7 +170,8 @@ export default function PurchaseButton({ buttonDisabled, projectInfo, purchaseAm
               <Text>Estimated Transaction Fee</Text>
               <Flex gap={8} align="baseline">
                 <Text>
-                  {estimatedTransactionFee} {projectInfo?.toRaiseToken?.symbol ?? '--'}
+                  {divDecimalsStr(estimatedTransactionFee, projectInfo?.toRaiseToken?.decimals ?? 8)}{' '}
+                  {projectInfo?.toRaiseToken?.symbol ?? '--'}
                 </Text>
                 <Text size="small">$ 0.19</Text>
               </Flex>
@@ -180,8 +179,10 @@ export default function PurchaseButton({ buttonDisabled, projectInfo, purchaseAm
             <Flex justify="space-between">
               <Text>Total</Text>
               <Flex gap={8} align="baseline">
-                <Text fontWeight={FontWeightEnum.Medium}>
-                  {new BigNumber(purchaseAmount ?? '').plus(estimatedTransactionFee).toFixed()}{' '}
+                <Text>
+                  {new BigNumber(purchaseAmount || 0)
+                    .plus(divDecimals(estimatedTransactionFee, projectInfo?.toRaiseToken?.decimals ?? 8))
+                    .toFormat()}{' '}
                   {projectInfo?.toRaiseToken?.symbol ?? '--'}
                 </Text>
                 <Text fontWeight={FontWeightEnum.Medium} size="small">
@@ -211,7 +212,9 @@ export default function PurchaseButton({ buttonDisabled, projectInfo, purchaseAm
         data={{
           amountList: [
             {
-              amount: new BigNumber(purchaseAmount ?? '').plus(estimatedTransactionFee).toFixed(),
+              amount: new BigNumber(purchaseAmount || 0)
+                .plus(divDecimals(estimatedTransactionFee, projectInfo?.toRaiseToken?.decimals ?? 8))
+                .toFormat(),
               symbol: projectInfo?.toRaiseToken?.symbol ?? '--',
             },
           ],
