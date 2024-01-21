@@ -267,9 +267,11 @@ export default function JoinCard({ projectInfo }: IJoinCardProps) {
               </Text>
             )}
             {projectInfo?.status === ProjectStatus.ENDED && info.myAllocation.amount > 0 && !info.hasClaimedToken && (
-              <ClaimTokenButton />
+              <ClaimTokenButton projectInfo={projectInfo} />
             )}
-            {projectInfo?.status === ProjectStatus.CANCELED && info.hasNotRedeemedDefault && <RevokeFineButton />}
+            {projectInfo?.status === ProjectStatus.CANCELED && info.hasNotRedeemedDefault && (
+              <RevokeFineButton projectInfo={projectInfo} />
+            )}
           </>
         )}
       </Flex>
