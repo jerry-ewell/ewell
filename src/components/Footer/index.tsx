@@ -17,6 +17,7 @@ export default function Footer() {
             <div className="community-icon-list">
               {COMMUNITY_LIST.map((item) => (
                 <img
+                  key={item.name}
                   className="community-icon"
                   src={item.icon}
                   alt=""

@@ -14,7 +14,7 @@ export default function Web3Button(props: IWeb3ButtonProps) {
       if (!_onClick) return;
       console.log('loginState', loginState);
       if (loginState === WebLoginState.logining) return;
-      if (loginState === WebLoginState.logined) _onClick(e);
+      if (loginState === WebLoginState.logined) return _onClick(e);
       return login();
     },
     [_onClick, loginState, login],

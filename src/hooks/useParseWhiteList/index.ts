@@ -1,10 +1,10 @@
 import { useCallback, useState } from 'react';
 
 import { RcFile } from 'antd/es/upload';
-import { parseWhiteListCSVFile, parseWhiteListExcelFile } from './utils';
+import { parseWhitelistCSVFile, parseWhitelistExcelFile } from './utils';
 
-export const useParseWhiteList = () => {
-  const [whiteListData, setWhiteListData] = useState<string[]>([]);
+export const useParseWhitelist = () => {
+  const [whitelistData, setWhitelistData] = useState<string[]>([]);
 
   const updateFile = useCallback(async (file: RcFile): Promise<string[]> => {
     if (!file) throw new Error('file is required');
@@ -12,23 +12,23 @@ export const useParseWhiteList = () => {
     const isExcel = file.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
 
     try {
-      let _whiteListData: string[];
+      let _whitelistData: string[];
       if (isExcel) {
-        _whiteListData = await parseWhiteListExcelFile(file);
+        _whitelistData = await parseWhitelistExcelFile(file);
       } else {
-        _whiteListData = await parseWhiteListCSVFile(file);
+        _whitelistData = await parseWhitelistCSVFile(file);
       }
-      setWhiteListData(_whiteListData);
-      return _whiteListData;
+      setWhitelistData(_whitelistData);
+      return _whitelistData;
     } catch (error) {
-      setWhiteListData([]);
+      setWhitelistData([]);
       throw error;
     }
   }, []);
 
   return {
-    whiteListData,
-    setWhiteListData,
+    whitelistData,
+    setWhitelistData,
     updateFile,
   };
 };

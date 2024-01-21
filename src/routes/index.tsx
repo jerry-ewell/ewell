@@ -40,7 +40,7 @@ export const PageRouter = () =>
       element: <ParticipantList />,
     },
     {
-      path: '/whitelist-users/:projectId',
+      path: '/whitelist-users/:whitelistId',
       element: <WhitelistUsers />,
     },
     {

@@ -1,7 +1,8 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import clsx from 'clsx';
 import dayjs from 'dayjs';
-import { InputNumber, Flex } from 'antd';
+import BigNumber from 'bignumber.js';
+import { InputNumber, Flex, Form } from 'antd';
 import { Typography, FontWeightEnum, Progress } from 'aelf-design';
 import CommonCard from 'components/CommonCard';
 import NewBaseCountdown from 'components/NewBaseCountdown';
@@ -15,6 +16,8 @@ import { useWallet } from 'contexts/useWallet/hooks';
 import { ZERO } from 'constants/misc';
 import { divDecimals, divDecimalsStr } from 'utils/calculate';
 import { getPriceDecimal } from 'utils';
+import { parseInputNumberChange } from 'utils/input';
+import { useBalances } from 'hooks/useBalances';
 import { tempInfo } from '../temp';
 import './styles.less';
 
@@ -28,14 +31,26 @@ export default function JoinCard({ projectInfo }: IJoinCardProps) {
   const info = tempInfo;
   const { wallet } = useWallet();
   const isLogin = !!wallet;
+
+  const [balances] = useBalances(projectInfo?.toRaiseToken?.symbol);
+  console.log('balance: ', balances[0].toNumber());
+
+  const [purchaseInputValue, setPurchaseInputValue] = useState('1');
+  const [purchaseInputErrorMessage, setPurchaseInputErrorMessage] = useState('');
+
+  const maxCanInvestAmount = useMemo(() => {
+    const maxInvest = ZERO.plus(projectInfo?.toRaisedAmount ?? 0).minus(projectInfo?.currentRaisedAmount ?? 0);
+    const canInput = ZERO.plus(projectInfo?.maxSubscription ?? 0).minus(projectInfo?.investAmount ?? 0);
+    const arr = [maxInvest, canInput, balances?.[0]];
+    return BigNumber.min.apply(null, arr);
+  }, [projectInfo, balances]);
+
   const progressPercent = useMemo(() => {
     const percent = ZERO.plus(projectInfo?.currentRaisedAmount ?? 0)
       .div(projectInfo?.toRaisedAmount ?? 0)
       .times(1e2);
     return percent.isNaN() ? ZERO : percent;
   }, [projectInfo?.currentRaisedAmount, projectInfo?.toRaisedAmount]);
-
-  console.log('progressPercent.toNumber(): ', dayjs(projectInfo?.endTime).valueOf());
 
   const renderRemainder = () => {
     if (projectInfo?.status === ProjectStatus.ENDED) {
@@ -210,23 +225,41 @@ export default function JoinCard({ projectInfo }: IJoinCardProps) {
             )}
             {projectInfo?.status === ProjectStatus.PARTICIPATORY && (
               <>
-                <InputNumber
-                  className="purchase-input-number"
-                  placeholder="placeholder"
-                  controls={false}
-                  addonAfter={
-                    <div className="max-operation-wrapper">
-                      <Title className="max-operation purple-text cursor-pointer" fontWeight={FontWeightEnum.Medium}>
-                        MAX
-                      </Title>
-                    </div>
-                  }
+                <Form.Item
+                  className="purchase-input-number-wrapper"
+                  validateStatus={purchaseInputErrorMessage && 'error'}
+                  help={purchaseInputErrorMessage}>
+                  <InputNumber
+                    className="purchase-input-number"
+                    placeholder="placeholder"
+                    controls={false}
+                    stringMode
+                    addonAfter={
+                      <div className="max-operation-wrapper">
+                        <Title className="max-operation purple-text cursor-pointer" fontWeight={FontWeightEnum.Medium}>
+                          MAX
+                        </Title>
+                      </div>
+                    }
+                    value={purchaseInputValue}
+                    onChange={(value) => {
+                      setPurchaseInputValue(parseInputNumberChange(value || '', projectInfo?.toRaiseToken?.decimals));
+                    }}
+                    onBlur={() => {
+                      // TODO: validate
+                    }}
+                  />
+                </Form.Item>
+                <PurchaseButton
+                  buttonDisabled={!!purchaseInputErrorMessage}
+                  projectInfo={projectInfo}
+                  purchaseAmount={purchaseInputValue}
+                  info={info}
                 />
-                <PurchaseButton info={info} />
               </>
             )}
             {projectInfo?.status === ProjectStatus.PARTICIPATORY && info.myAllocation.amount > 0 && (
-              <RevokeInvestmentButton />
+              <RevokeInvestmentButton projectInfo={projectInfo} />
             )}
             {projectInfo?.status === ProjectStatus.UNLOCKED && info.myAllocation.amount > 0 && (
               <Text className="text-center" fontWeight={FontWeightEnum.Medium}>

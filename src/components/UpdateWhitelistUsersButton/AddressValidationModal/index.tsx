@@ -3,16 +3,21 @@ import type { ColumnsType } from 'antd/es/table';
 import { Modal, Button, Typography, FontWeightEnum, Table, HashAddress } from 'aelf-design';
 import { UpdateType } from '../types';
 import './styles.less';
+import { TWhitelistIdentifyItem, WhitelistAddressIdentifyStatusEnum } from 'hooks/useParseWhitelist/utils';
+import { useMemo } from 'react';
+import { DEFAULT_CHAIN_ID } from 'constants/network';
+import clsx from 'clsx';
 
 interface IAddressValidationModalProps {
   updateType: UpdateType;
   modalOpen: boolean;
   onModalCancel: () => void;
   onModalConfirm: () => void;
+  validationData: TWhitelistIdentifyItem[];
 }
 
 const { Text, Title } = Typography;
-
+const ACTIVE_LABEL = 'Addable';
 const columns: ColumnsType<any> = [
   {
     title: 'No.',
@@ -25,14 +30,16 @@ const columns: ColumnsType<any> = [
     dataIndex: 'address',
     key: 'address',
     width: 236,
-    render: (address) => <HashAddress preLen={8} endLen={9} hasCopy={false} address={address} />,
+    render: (address) => (
+      <HashAddress preLen={8} endLen={9} hasCopy={false} chain={DEFAULT_CHAIN_ID} address={address} />
+    ),
   },
   {
     title: 'Results',
     dataIndex: 'result',
     key: 'result',
     width: 151,
-    render: (result) => <Text className="error-text">{result || '-'}</Text>,
+    render: (result) => <Text className={clsx(result !== ACTIVE_LABEL && 'error-text')}>{result || '-'}</Text>,
   },
   {
     title: 'Reason',
@@ -43,113 +50,39 @@ const columns: ColumnsType<any> = [
   },
 ];
 
-const data: any[] = [
-  {
-    key: '1',
-    order: '1',
-    address: 'ELF_0x00000000000000ADc04C56Bf30aC9d3c0aAF14dC_AELF',
-    result: 'Addable',
-    reason: '',
-  },
-  {
-    key: '2',
-    order: '2',
-    address: 'ELF_0x00000000000000ADc04C56Bf30aC9d3c0aAF14dC_AELF',
-    result: 'Not Addable',
-    reason: 'Already Exists',
-  },
-  {
-    key: '3',
-    order: '3',
-    address: 'ELF_0x00000000000000ADc04C56Bf30aC9d3c0aAF14dC_AELF',
-    result: 'Not Addable',
-    reason: 'Already Exists',
-  },
-  {
-    key: '3',
-    order: '3',
-    address: 'ELF_0x00000000000000ADc04C56Bf30aC9d3c0aAF14dC_AELF',
-    result: 'Not Addable',
-    reason: 'Already Exists',
-  },
-  {
-    key: '3',
-    order: '3',
-    address: 'ELF_0x00000000000000ADc04C56Bf30aC9d3c0aAF14dC_AELF',
-    result: 'Not Addable',
-    reason: 'Already Exists',
-  },
-  {
-    key: '3',
-    order: '3',
-    address: 'ELF_0x00000000000000ADc04C56Bf30aC9d3c0aAF14dC_AELF',
-    result: 'Not Addable',
-    reason: 'Already Exists',
-  },
-  {
-    key: '3',
-    order: '3',
-    address: 'ELF_0x00000000000000ADc04C56Bf30aC9d3c0aAF14dC_AELF',
-    result: 'Not Addable',
-    reason: 'Already Exists',
-  },
-  {
-    key: '3',
-    order: '3',
-    address: 'ELF_0x00000000000000ADc04C56Bf30aC9d3c0aAF14dC_AELF',
-    result: 'Not Addable',
-    reason: 'Already Exists',
-  },
-  {
-    key: '3',
-    order: '3',
-    address: 'ELF_0x00000000000000ADc04C56Bf30aC9d3c0aAF14dC_AELF',
-    result: 'Not Addable',
-    reason: 'Already Exists',
-  },
-  {
-    key: '3',
-    order: '3',
-    address: 'ELF_0x00000000000000ADc04C56Bf30aC9d3c0aAF14dC_AELF',
-    result: 'Not Addable',
-    reason: 'Already Exists',
-  },
-  {
-    key: '3',
-    order: '3',
-    address: 'ELF_0x00000000000000ADc04C56Bf30aC9d3c0aAF14dC_AELF',
-    result: 'Not Addable',
-    reason: 'Already Exists',
-  },
-  {
-    key: '3',
-    order: '3',
-    address: 'ELF_0x00000000000000ADc04C56Bf30aC9d3c0aAF14dC_AELF',
-    result: 'Not Addable',
-    reason: 'Already Exists',
-  },
-  {
-    key: '3',
-    order: '3',
-    address: 'ELF_0x00000000000000ADc04C56Bf30aC9d3c0aAF14dC_AELF',
-    result: 'Not Addable',
-    reason: 'Already Exists',
-  },
-  {
-    key: '3',
-    order: '3',
-    address: 'ELF_0x00000000000000ADc04C56Bf30aC9d3c0aAF14dC_AELF',
-    result: 'Not Addable',
-    reason: 'Already Exists',
-  },
-];
-
+const VALIDATION_STATUS_REASON_MAP = {
+  [WhitelistAddressIdentifyStatusEnum.active]: '-',
+  [WhitelistAddressIdentifyStatusEnum.exist]: 'Already Exist',
+  [WhitelistAddressIdentifyStatusEnum.matchFail]: 'Match Fail',
+  [WhitelistAddressIdentifyStatusEnum.notExist]: 'Not Exist',
+  [WhitelistAddressIdentifyStatusEnum.repeat]: 'Duplicate Address',
+};
 export default function AddressValidationModal({
   updateType,
   modalOpen,
   onModalCancel,
   onModalConfirm,
+  validationData,
 }: IAddressValidationModalProps) {
+  const data = useMemo(
+    () =>
+      validationData.map((item, idx) => ({
+        key: `${idx + 1}`,
+        order: `${idx + 1}`,
+        address: item.address,
+        result: item.status === WhitelistAddressIdentifyStatusEnum.active ? 'Addable' : 'Not Addable',
+        reason: VALIDATION_STATUS_REASON_MAP[item.status],
+      })),
+    [validationData],
+  );
+
+  const attemptsNum = useMemo(() => validationData.length, [validationData]);
+  const addableNum = useMemo(
+    () => validationData.filter((item) => item.status === WhitelistAddressIdentifyStatusEnum.active).length,
+    [validationData],
+  );
+  const nonAddableNum = useMemo(() => attemptsNum - addableNum, [attemptsNum, addableNum]);
+
   return (
     <Modal
       className="whitelist-users-address-validation-modal"
@@ -165,20 +98,20 @@ export default function AddressValidationModal({
           <Flex className="info-wrapper" vertical>
             <Flex className="info-row" justify="space-between" align="center">
               <Text>Total number of attempts to whitelist</Text>
-              <Text fontWeight={FontWeightEnum.Medium}>100</Text>
+              <Text fontWeight={FontWeightEnum.Medium}>{attemptsNum}</Text>
             </Flex>
             <Flex className="info-row" justify="space-between" align="center">
               <Text>
                 Total number of whitelist users that can be {updateType === UpdateType.ADD ? 'added' : 'removed'}
               </Text>
-              <Text fontWeight={FontWeightEnum.Medium}>90</Text>
+              <Text fontWeight={FontWeightEnum.Medium}>{addableNum}</Text>
             </Flex>
             <Flex className="info-row" justify="space-between" align="center">
               <Text>
                 Total number of non-{updateType === UpdateType.ADD ? 'addable' : 'removable'} whitelisted users
               </Text>
               <Text className="error-text" fontWeight={FontWeightEnum.Medium}>
-                10
+                {nonAddableNum}
               </Text>
             </Flex>
           </Flex>
@@ -186,7 +119,7 @@ export default function AddressValidationModal({
         <Table scroll={{ y: 400 - 55 - 20 }} dataSource={data} columns={columns} />
         <Flex className="footer-wrapper" gap={16} justify="center">
           <Button onClick={onModalCancel}>Back</Button>
-          <Button type="primary" onClick={onModalConfirm}>
+          <Button disabled={addableNum === 0} type="primary" onClick={onModalConfirm}>
             Confirmation
           </Button>
         </Flex>

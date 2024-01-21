@@ -3,22 +3,53 @@ import { DEFAULT_CHAIN_ID } from 'constants/network';
 import * as ExcelJS from 'exceljs';
 import { getAddressInfo } from 'utils/aelf';
 import Papa from 'papaparse';
+import { UpdateType } from 'components/UpdateWhitelistUsersButton/types';
 
-export const parseWhiteListExcelFile = async (file: any) => {
+export const parseWhitelistFile = async (file: any) => {
+  const isExcel = file.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+  let _whitelistData: string[];
+  try {
+    if (isExcel) {
+      _whitelistData = await parseWhitelistExcelFile(file);
+    } else {
+      _whitelistData = await parseWhitelistCSVFile(file);
+    }
+  } catch (error) {
+    return [];
+  }
+  return _whitelistData;
+};
+
+const SPLIT_SYMBOL_LIST = ['\r\n', '\r', ',', '、', '\\|'];
+export const parseWhitelistInput = (input: string) => {
+  const addressList: string[] = [];
+  SPLIT_SYMBOL_LIST.map((symbol) => {
+    input = input.replace(new RegExp(symbol, 'g'), '\n');
+  });
+  input.split('\n').map((line) => {
+    line = line.trim();
+    if (line) {
+      addressList.push(line);
+    }
+  });
+  return addressList;
+};
+
+export const parseWhitelistExcelFile = async (file: any) => {
   const addressList: string[] = [];
   const workbook = new ExcelJS.Workbook();
   await workbook.xlsx.load(file);
   workbook.worksheets.forEach((worksheet) => {
     worksheet.eachRow((row) => {
       row.eachCell((cell) => {
-        addressList.push(cell.value as string);
+        addressList.push(String(cell.value) as string);
       });
     });
   });
   return addressList;
 };
 
-export const parseWhiteListCSVFile = (file: any): Promise<string[]> => {
+export const parseWhitelistCSVFile = (file: any): Promise<string[]> => {
   return new Promise((resolve, reject) => {
     Papa.parse(file, {
       skipEmptyLines: true,
@@ -33,7 +64,7 @@ export const parseWhiteListCSVFile = (file: any): Promise<string[]> => {
             if (line instanceof Array) {
               line.map((row) => {
                 if (row) {
-                  list.push(row);
+                  list.push(String(row));
                 }
               });
             }
@@ -48,42 +79,39 @@ export const parseWhiteListCSVFile = (file: any): Promise<string[]> => {
   });
 };
 
-export type TWhiteListData = string[];
-export enum WhiteListAddressIdentifyStatusEnum {
+export type TWhitelistData = string[];
+export enum WhitelistAddressIdentifyStatusEnum {
   active = 1,
   exist,
   matchFail,
   repeat,
   notExist,
 }
-export type TWhiteListIdentifyItem = {
+export type TWhitelistIdentifyItem = {
   address: string;
-  status: WhiteListAddressIdentifyStatusEnum;
-};
-export enum IdentifyWhiteListDataTypeEnum {
-  add = 1,
-  remove,
-}
-export type TIdentifyWhiteListDataParams = {
-  originData: TWhiteListData;
-  identifyData: TWhiteListData;
-  type: IdentifyWhiteListDataTypeEnum;
+  status: WhitelistAddressIdentifyStatusEnum;
 };
 
-export const identifyWhiteListData = ({ originData, identifyData, type }: TIdentifyWhiteListDataParams) => {
+export type TIdentifyWhitelistDataParams = {
+  originData: TWhitelistData;
+  identifyData: TWhitelistData;
+  type: UpdateType;
+};
+
+export const identifyWhitelistData = ({ originData, identifyData, type }: TIdentifyWhitelistDataParams) => {
   const originDataMap: Record<string, boolean> = {};
   originData.forEach((address) => {
     originDataMap[address] = true;
   });
 
   const identifyDataMap: Record<string, boolean> = {};
-  const identifyList: TWhiteListIdentifyItem[] = [];
+  const identifyList: TWhitelistIdentifyItem[] = [];
   identifyData.forEach((address) => {
-    if (type === IdentifyWhiteListDataTypeEnum.add) {
+    if (type === UpdateType.ADD) {
       if (originDataMap[address]) {
         identifyList.push({
           address: address,
-          status: WhiteListAddressIdentifyStatusEnum.exist,
+          status: WhitelistAddressIdentifyStatusEnum.exist,
         });
         return;
       }
@@ -91,7 +119,7 @@ export const identifyWhiteListData = ({ originData, identifyData, type }: TIdent
       if (!originDataMap[address]) {
         identifyList.push({
           address: address,
-          status: WhiteListAddressIdentifyStatusEnum.notExist,
+          status: WhitelistAddressIdentifyStatusEnum.notExist,
         });
         return;
       }
@@ -100,7 +128,7 @@ export const identifyWhiteListData = ({ originData, identifyData, type }: TIdent
     if (identifyDataMap[address]) {
       return identifyList.push({
         address: address,
-        status: WhiteListAddressIdentifyStatusEnum.repeat,
+        status: WhitelistAddressIdentifyStatusEnum.repeat,
       });
     }
     identifyDataMap[address] = true;
@@ -113,14 +141,14 @@ export const identifyWhiteListData = ({ originData, identifyData, type }: TIdent
     ) {
       identifyList.push({
         address: address,
-        status: WhiteListAddressIdentifyStatusEnum.matchFail,
+        status: WhitelistAddressIdentifyStatusEnum.matchFail,
       });
       return;
     }
 
     identifyList.push({
       address: address,
-      status: WhiteListAddressIdentifyStatusEnum.active,
+      status: WhitelistAddressIdentifyStatusEnum.active,
     });
   });
 

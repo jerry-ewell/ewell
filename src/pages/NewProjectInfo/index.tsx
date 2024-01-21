@@ -8,6 +8,7 @@ import { useWallet } from 'contexts/useWallet/hooks';
 import { useViewContract } from 'contexts/useViewContract/hooks';
 import { DEFAULT_CHAIN_ID, NETWORK_CONFIG } from 'constants/network';
 import { IProjectInfo } from 'types/project';
+import { mockDetail, mockWhitelistInfo } from './mock';
 import './styles.less';
 
 interface IProjectInfoProps {
@@ -24,30 +25,30 @@ export default function ProjectInfo({ previewData }: IProjectInfoProps) {
 
   const getProjectInfo = useCallback(async () => {
     try {
-      const result = await request.project.getProjectList({
-        params: {
-          chainId: DEFAULT_CHAIN_ID,
-          projectId,
-        },
-      });
+      // const result = await request.project.getProjectList({
+      //   params: {
+      //     chainId: DEFAULT_CHAIN_ID,
+      //     projectId,
+      //   },
+      // });
 
-      const detail = result?.data?.detail;
-      const creator = detail?.creator;
-      const isCreator = creator === wallet?.walletInfo.address;
-      const whiteListId = detail?.whitelistId;
+      // const detail = result?.data?.detail;
+      // const creator = detail?.creator;
+      // const isCreator = creator === wallet?.walletInfo.address;
+      // const whitelistId = detail?.whitelistId;
 
-      console.log('isCreator', isCreator);
-      console.log('api detail', detail);
-      const whitelistContract = await getWhitelistContract();
-      const whitelistInfo = await whitelistContract.GetWhitelist.call(whiteListId);
+      // console.log('isCreator', isCreator);
+      // console.log('api detail', detail);
+      // const whitelistContract = await getWhitelistContract();
+      // const whitelistInfo = await whitelistContract.GetWhitelist.call(whitelistId);
 
-      console.log('whitelistInfo', whitelistInfo);
+      // console.log('whitelistInfo', whitelistInfo);
       const newProjectInfo = {
-        ...detail,
-        additionalInfo: JSON.parse(detail.additionalInfo),
-        listMarketInfo: JSON.parse(detail.listMarketInfo),
-        isCreator,
-        whitelistInfo,
+        ...mockDetail,
+        additionalInfo: JSON.parse(mockDetail.additionalInfo),
+        listMarketInfo: JSON.parse(mockDetail.listMarketInfo),
+        isCreator: true,
+        whitelistInfo: mockWhitelistInfo,
       };
       setProjectInfo(newProjectInfo);
     } catch (error) {

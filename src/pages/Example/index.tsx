@@ -1,5 +1,4 @@
 import { Button, Modal, Upload } from 'antd';
-import { useLockCallback } from 'hooks';
 import { useCallback, useEffect, useState } from 'react';
 import './styles.less';
 import { useWallet } from 'contexts/useWallet/hooks';
@@ -11,12 +10,13 @@ import { request } from 'api';
 import myEvents from 'utils/myEvent';
 import { WebLoginEvents, useWebLoginEvent } from 'aelf-web-login';
 import { getLog } from 'utils/protoUtils';
-import { mockCreateResult } from './data';
+import { mockCreateResult, walletAddressList } from './data';
 import { ZERO } from 'constants/misc';
 import { Input } from 'aelf-design';
 import { InboxOutlined } from '@ant-design/icons';
-import { useParseWhiteList } from 'hooks/useParseWhiteList';
-import { IdentifyWhiteListDataTypeEnum, identifyWhiteListData } from 'hooks/useParseWhiteList/utils';
+import { useParseWhitelist } from 'hooks/useParseWhitelist';
+import { identifyWhitelistData } from 'hooks/useParseWhitelist/utils';
+import { UpdateType } from 'components/UpdateWhitelistUsersButton/types';
 
 const { Dragger } = Upload;
 
@@ -25,7 +25,7 @@ export default function Example() {
 
   const { getTokenContract, getEwellContract, getWhitelistContract } = useViewContract();
   const [projectId, setProjectId] = useState('15d556a57222ef06ea9a46a6fb9db416bffb98b8de60ccef6bcded8ca851f407');
-  const { updateFile } = useParseWhiteList();
+  const { updateFile } = useParseWhitelist();
 
   const transfer = useCallback(async () => {
     try {
@@ -187,7 +187,7 @@ export default function Example() {
   }, [getEwellContract, projectId, wallet?.walletInfo.address]);
 
   const invest = useCallback(async () => {
-    const investAmount = '100000000';
+    const investAmount = '10000000';
 
     try {
       const approveResult = await wallet?.callContract({
@@ -204,19 +204,22 @@ export default function Example() {
       console.log('error', error);
     }
 
-    try {
-      const investResult = await wallet?.callContract<any, any>({
-        contractAddress: NETWORK_CONFIG.ewellContractAddress,
-        methodName: 'Invest',
-        args: {
-          projectId,
-          currency: 'ELF',
-          investAmount,
-        },
-      });
-      console.log('investResult', investResult);
-    } catch (error) {
-      console.log('error', error);
+    const times = 1;
+    for (let i = 0; i < times; i++) {
+      try {
+        const investResult = await wallet?.callContract<any, any>({
+          contractAddress: NETWORK_CONFIG.ewellContractAddress,
+          methodName: 'Invest',
+          args: {
+            projectId,
+            currency: 'ELF',
+            investAmount: ZERO.plus(investAmount).div(times).toFixed(),
+          },
+        });
+        console.log('investResult', investResult);
+      } catch (error) {
+        console.log('error', error);
+      }
     }
   }, [projectId, wallet]);
 
@@ -250,14 +253,14 @@ export default function Example() {
   const openWhite = useCallback(async () => {
     try {
       const ewellContract = await getEwellContract();
-      const whiteListId = await ewellContract.GetWhitelistId.call(projectId);
-      console.log('whiteListId', whiteListId);
+      const whitelistId = await ewellContract.GetWhitelistId.call(projectId);
+      console.log('whitelistId', whitelistId);
 
       const txResult = await wallet?.callContract({
         contractAddress: NETWORK_CONFIG.whitelistContractAddress,
         methodName: 'EnableWhitelist',
         // methodName: 'DisableWhitelist',
-        args: whiteListId,
+        args: whitelistId,
       });
       console.log('txResult', txResult);
     } catch (error) {
@@ -268,11 +271,11 @@ export default function Example() {
   const getWhite = useCallback(async () => {
     try {
       const ewellContract = await getEwellContract();
-      const whiteListId = await ewellContract.GetWhitelistId.call(projectId);
-      console.log('whiteListId', whiteListId);
+      const whitelistId = await ewellContract.GetWhitelistId.call(projectId);
+      console.log('whitelistId', whitelistId);
       const whitelistContract = await getWhitelistContract();
-      const whiteListDetail = await whitelistContract.GetWhitelist.call(whiteListId);
-      console.log('whiteListDetail', whiteListDetail);
+      const whitelistDetail = await whitelistContract.GetWhitelist.call(whitelistId);
+      console.log('whitelistDetail', whitelistDetail);
     } catch (error) {
       console.log('getWhite', error);
     }
@@ -304,10 +307,10 @@ export default function Example() {
       try {
         const addressList = await updateFile(e);
         const originList = ['ELF_2R7QtJp7e1qUcfh2RYYJzti9tKpPheNoAGD7dTVFd4m9NaCh27_tDVV'];
-        const fileResult = identifyWhiteListData({
+        const fileResult = identifyWhitelistData({
           originData: originList,
           identifyData: addressList,
-          type: IdentifyWhiteListDataTypeEnum.remove,
+          type: UpdateType.REMOVE,
         });
         console.log('fileResult', fileResult);
       } catch (error) {
@@ -316,6 +319,37 @@ export default function Example() {
     },
     [updateFile],
   );
+
+  const addWhitelist = useCallback(async () => {
+    const ewellContract = await getEwellContract();
+    const whitelistId = await ewellContract.GetWhitelistId.call(projectId);
+    const txResult = await wallet?.callContract({
+      contractAddress: NETWORK_CONFIG.whitelistContractAddress,
+      methodName: 'AddAddressInfoListToWhitelist',
+      args: {
+        whitelistId,
+        extraInfoIdList: {
+          value: [
+            {
+              addressList: {
+                value: ['ELF_2R7QtJp7e1qUcfh2RYYJzti9tKpPheNoAGD7dTVFd4m9NaCh27_tDVV', ...walletAddressList],
+              },
+            },
+          ],
+        },
+      },
+    });
+    console.log('txResult', txResult);
+  }, [getEwellContract, projectId, wallet]);
+
+  const getWhitelistDetail = useCallback(async () => {
+    const ewellContract = await getEwellContract();
+    const whitelistId = await ewellContract.GetWhitelistId.call(projectId);
+    console.log('whitelistId', whitelistId);
+    const whitelistContract = await getWhitelistContract();
+    const whitelistDetail = await whitelistContract.GetWhitelistDetail.call(whitelistId);
+    console.log('getWhitelistDetail ', whitelistDetail);
+  }, [getEwellContract, getWhitelistContract, projectId]);
 
   return (
     <div>
@@ -360,6 +394,10 @@ export default function Example() {
         <Button type="primary" onClick={getProjectUserList}>
           getProjectUserList
         </Button>
+      </div>
+      <div>
+        <Button onClick={addWhitelist}>addWhitelist</Button>
+        <Button onClick={getWhitelistDetail}>getWhitelistDetail</Button>
       </div>
       <div>
         <Dragger
