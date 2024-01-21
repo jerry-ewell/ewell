@@ -259,7 +259,7 @@ export default function JoinCard({ projectInfo }: IJoinCardProps) {
               </>
             )}
             {projectInfo?.status === ProjectStatus.PARTICIPATORY && info.myAllocation.amount > 0 && (
-              <RevokeInvestmentButton />
+              <RevokeInvestmentButton projectInfo={projectInfo} />
             )}
             {projectInfo?.status === ProjectStatus.UNLOCKED && info.myAllocation.amount > 0 && (
               <Text className="text-center" fontWeight={FontWeightEnum.Medium}>

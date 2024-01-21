@@ -1,15 +1,89 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
+import BigNumber from 'bignumber.js';
+import clsx from 'clsx';
+import { useParams } from 'react-router-dom';
 import { Flex } from 'antd';
 import { Button, Typography, FontWeightEnum, Modal, HashAddress } from 'aelf-design';
 import SuccessModal from '../SuccessModal';
+import { useWallet } from 'contexts/useWallet/hooks';
+import { useBalances } from 'hooks/useBalances';
+import { IProjectInfo } from 'types/project';
+import { divDecimalsStr } from 'utils/calculate';
+import { ZERO } from 'constants/misc';
+import { emitLoading } from 'utils/events';
+import { NETWORK_CONFIG } from 'constants/network';
+
 import './styles.less';
 
 const { Text } = Typography;
 
-export default function RevokeInvestmentButton() {
+interface IRevokeInvestmentButtonProps {
+  projectInfo?: IProjectInfo;
+}
+// TODO: get estimatedTransactionFee
+const estimatedTransactionFee = '0';
+
+// TODO: convert to USD
+
+export default function RevokeInvestmentButton({ projectInfo }: IRevokeInvestmentButtonProps) {
+  const { wallet, checkManagerSyncState } = useWallet();
+
+  const [balances] = useBalances(projectInfo?.toRaiseToken?.symbol);
+
+  const { projectId } = useParams();
+
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [isSubmitModalOpen, setIsSubmitModalOpen] = useState(false);
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
+
+  const revokeAmount = useMemo(() => {
+    return new BigNumber(projectInfo?.investAmount ?? 0).times(0.9);
+  }, [projectInfo?.investAmount]);
+
+  const finalAmount = useMemo(() => {
+    const amount = revokeAmount.minus(estimatedTransactionFee);
+    if (amount.lt(0)) {
+      return ZERO;
+    } else {
+      return amount;
+    }
+  }, [revokeAmount]);
+
+  const notEnoughTokens = useMemo(() => {
+    // TODO: check logic
+    const isRevokeNotEnough = revokeAmount.lt(estimatedTransactionFee);
+    return isRevokeNotEnough;
+    // const isBalanceNotEnough = new BigNumber(balances?.[0] ?? 0).lt(estimatedTransactionFee);
+    // return isRevokeNotEnough || isBalanceNotEnough;
+  }, [revokeAmount]);
+
+  const handleSubmit = async () => {
+    setIsSubmitModalOpen(false);
+    emitLoading(true, { text: 'Processing on the blockchain...' });
+    const isManagerSynced = await checkManagerSyncState();
+    if (!isManagerSynced) {
+      emitLoading(false);
+      // TODO: show tips modal
+      return;
+    }
+
+    try {
+      const unInvestResult = await wallet?.callContract<any, any>({
+        contractAddress: NETWORK_CONFIG.ewellContractAddress,
+        methodName: 'UnInvest',
+        args: {
+          // TODO: check args
+          projectId,
+        },
+      });
+      console.log('unInvestResult', unInvestResult);
+      emitLoading(false);
+      setIsSuccessModalOpen(true);
+    } catch (error) {
+      console.log('error', error);
+      emitLoading(false);
+    }
+  };
 
   return (
     <>
@@ -64,18 +138,24 @@ export default function RevokeInvestmentButton() {
               className="hash-address-small"
               preLen={8}
               endLen={9}
-              address="ELF_0x00000000000000ADc04C56Bf30aC9d3c0aAF14dC_AELF"
+              address={wallet?.walletInfo.address || ''}
             />
           </Flex>
-          <Flex className="modal-box-data-wrapper error-border" justify="space-between">
-            <Text className="error-text" fontWeight={FontWeightEnum.Medium}>
+          <Flex
+            className={clsx('modal-box-data-wrapper', { ['error-border']: notEnoughTokens })}
+            justify="space-between">
+            <Text className={clsx({ ['error-text']: notEnoughTokens })} fontWeight={FontWeightEnum.Medium}>
               Revoke
             </Text>
             <Flex gap={8} align="baseline">
-              <Text className="error-text" fontWeight={FontWeightEnum.Medium}>
-                3 ELF
+              <Text className={clsx({ ['error-text']: notEnoughTokens })} fontWeight={FontWeightEnum.Medium}>
+                {divDecimalsStr(revokeAmount, projectInfo?.toRaiseToken?.decimals)}{' '}
+                {projectInfo?.toRaiseToken?.symbol ?? '--'}
               </Text>
-              <Text className="error-text" fontWeight={FontWeightEnum.Medium} size="small">
+              <Text
+                className={clsx({ ['error-text']: notEnoughTokens })}
+                fontWeight={FontWeightEnum.Medium}
+                size="small">
                 $ 1.86
               </Text>
             </Flex>
@@ -84,36 +164,31 @@ export default function RevokeInvestmentButton() {
             <Flex justify="space-between">
               <Text>Estimated Transaction Fee</Text>
               <Flex gap={8} align="baseline">
-                <Text>0.3604 ELF</Text>
-                <Text size="small">$ 0.19</Text>
-              </Flex>
-            </Flex>
-            <Flex justify="space-between">
-              <Text>Purchase Quantity</Text>
-              <Flex gap={8} align="baseline">
-                <Text>0.3604 ELF</Text>
+                <Text>
+                  {divDecimalsStr(estimatedTransactionFee, projectInfo?.toRaiseToken?.decimals)}{' '}
+                  {projectInfo?.toRaiseToken?.symbol ?? '--'}
+                </Text>
                 <Text size="small">$ 0.19</Text>
               </Flex>
             </Flex>
             <Flex justify="space-between">
               <Text>Final</Text>
               <Flex gap={8} align="baseline">
-                <Text>3.3604 ELF</Text>
+                <Text>
+                  {divDecimalsStr(finalAmount, projectInfo?.toRaiseToken?.decimals)}{' '}
+                  {projectInfo?.toRaiseToken?.symbol ?? '--'}
+                </Text>
                 <Text size="small">$ 2.04</Text>
               </Flex>
             </Flex>
           </Flex>
-          <Text className="error-text text-center" fontWeight={FontWeightEnum.Medium}>
+          <Text
+            className={clsx('error-text', 'text-center', { ['display-none']: !notEnoughTokens })}
+            fontWeight={FontWeightEnum.Medium}>
             Not enough tokens to pay for the Gas!
           </Text>
           <Flex justify="center">
-            <Button
-              className="modal-single-button"
-              type="primary"
-              onClick={() => {
-                setIsSubmitModalOpen(false);
-                setIsSuccessModalOpen(true);
-              }}>
+            <Button className="modal-single-button" type="primary" disabled={notEnoughTokens} onClick={handleSubmit}>
               Submit
             </Button>
           </Flex>
@@ -133,8 +208,8 @@ export default function RevokeInvestmentButton() {
         data={{
           amountList: [
             {
-              amount: '3.3604',
-              symbol: 'ELF',
+              amount: divDecimalsStr(finalAmount, projectInfo?.toRaiseToken?.decimals),
+              symbol: projectInfo?.toRaiseToken?.symbol || '--',
             },
           ],
           description: 'Congratulations, your token has been revoked successfully!',
