@@ -59,7 +59,7 @@ export const mockDetail = {
     id: 'tDVV-LINHONG',
   },
   investAmount: '1000',
-  toClaimAmount: 0,
+  toClaimAmount: '1000',
   investCreateTime: '0001-01-01T00:00:00',
   createTime: '2024-01-18T11:52:04.6347416Z',
   cancelTime: undefined,

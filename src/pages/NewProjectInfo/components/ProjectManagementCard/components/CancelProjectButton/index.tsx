@@ -1,23 +1,59 @@
 import { useState } from 'react';
+import { useParams } from 'react-router-dom';
 import { Flex } from 'antd';
 import { Button, Modal, Typography, FontWeightEnum, HashAddress } from 'aelf-design';
 import SuccessModal from '../../../OperationComponents/SuccessModal';
 import { emitLoading } from 'utils/events';
+import { useWallet } from 'contexts/useWallet/hooks';
+import { IProjectInfo } from 'types/project';
+import { divDecimalsStr } from 'utils/calculate';
+import { NETWORK_CONFIG } from 'constants/network';
 
 const { Text, Title } = Typography;
 
-export default function CancelProjectButton() {
+interface ICancelProjectButtonProps {
+  projectInfo?: IProjectInfo;
+}
+
+// TODO: get estimatedTransactionFee
+const estimatedTransactionFee = '366';
+
+// TODO: convert to USD
+
+export default function CancelProjectButton({ projectInfo }: ICancelProjectButtonProps) {
+  const { wallet, checkManagerSyncState } = useWallet();
+
+  const { projectId } = useParams();
+
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [isSubmitModalOpen, setIsSubmitModalOpen] = useState(false);
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     setIsSubmitModalOpen(false);
     emitLoading(true, { text: 'Processing on the blockchain...' });
-    setTimeout(() => {
+    const isManagerSynced = await checkManagerSyncState();
+    if (!isManagerSynced) {
+      emitLoading(false);
+      // TODO: show tips modal
+      return;
+    }
+
+    try {
+      const result = await wallet?.callContract<any, any>({
+        contractAddress: NETWORK_CONFIG.ewellContractAddress,
+        methodName: 'Cancel',
+        // TODO: check args
+        args: projectId,
+      });
+      console.log('result', result);
+      // TODO: polling get Transaction ID
       emitLoading(false);
       setIsSuccessModalOpen(true);
-    }, 1000);
+    } catch (error) {
+      console.log('error', error);
+      emitLoading(false);
+    }
   };
 
   return (
@@ -33,7 +69,8 @@ export default function CancelProjectButton() {
         onCancel={() => setIsConfirmModalOpen(false)}>
         <Flex vertical gap={24}>
           <Text className="text-center">
-            You are closing project <Text fontWeight={FontWeightEnum.Medium}>“Citizen Conflict”</Text>. After the
+            You are closing project{' '}
+            <Text fontWeight={FontWeightEnum.Medium}>“{projectInfo?.additionalInfo?.projectName}”</Text>. After the
             project is closed, you will not receive the funds raised, but only the full amount of Token.
           </Text>
           <Flex gap={16}>
@@ -65,9 +102,9 @@ export default function CancelProjectButton() {
           </Text>
           <Flex gap={8} justify="center" align="baseline">
             <Title level={4} fontWeight={FontWeightEnum.Medium}>
-              80
+              {divDecimalsStr(projectInfo?.crowdFundingIssueAmount, projectInfo?.crowdFundingIssueToken?.decimals)}
             </Title>
-            <Title fontWeight={FontWeightEnum.Medium}>PIGE</Title>
+            <Title fontWeight={FontWeightEnum.Medium}>{projectInfo?.crowdFundingIssueToken?.symbol || '--'}</Title>
           </Flex>
           <Flex className="modal-box-data-wrapper" justify="space-between" align="center">
             <Text className="half-width">Address</Text>
@@ -75,13 +112,16 @@ export default function CancelProjectButton() {
               className="half-width hash-address-small"
               preLen={8}
               endLen={9}
-              address="ELF_0x00000000000000ADc04C56Bf30aC9d3c0aAF14dC_AELF"
+              address={wallet?.walletInfo.address || ''}
             />
           </Flex>
           <Flex justify="space-between" align="center">
             <Text>Estimated Transaction Fee</Text>
             <Flex gap={8} justify="flex-end" align="baseline">
-              <Text>0.3604 ELF</Text>
+              <Text>
+                {divDecimalsStr(estimatedTransactionFee, projectInfo?.toRaiseToken?.decimals)}{' '}
+                {projectInfo?.toRaiseToken?.symbol ?? '--'}
+              </Text>
               <Text size="small">$ 0.19</Text>
             </Flex>
           </Flex>
@@ -106,8 +146,11 @@ export default function CancelProjectButton() {
         data={{
           amountList: [
             {
-              amount: '80',
-              symbol: 'PIGE',
+              amount: divDecimalsStr(
+                projectInfo?.crowdFundingIssueAmount,
+                projectInfo?.crowdFundingIssueToken?.decimals,
+              ),
+              symbol: projectInfo?.crowdFundingIssueToken?.symbol || '--',
             },
           ],
           description: 'Congratulations, transfer success!',
