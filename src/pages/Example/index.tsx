@@ -250,14 +250,14 @@ export default function Example() {
   const openWhite = useCallback(async () => {
     try {
       const ewellContract = await getEwellContract();
-      const whiteListId = await ewellContract.GetWhitelistId.call(projectId);
-      console.log('whiteListId', whiteListId);
+      const whitelistId = await ewellContract.GetWhitelistId.call(projectId);
+      console.log('whitelistId', whitelistId);
 
       const txResult = await wallet?.callContract({
         contractAddress: NETWORK_CONFIG.whitelistContractAddress,
         methodName: 'EnableWhitelist',
         // methodName: 'DisableWhitelist',
-        args: whiteListId,
+        args: whitelistId,
       });
       console.log('txResult', txResult);
     } catch (error) {
@@ -268,11 +268,11 @@ export default function Example() {
   const getWhite = useCallback(async () => {
     try {
       const ewellContract = await getEwellContract();
-      const whiteListId = await ewellContract.GetWhitelistId.call(projectId);
-      console.log('whiteListId', whiteListId);
+      const whitelistId = await ewellContract.GetWhitelistId.call(projectId);
+      console.log('whitelistId', whitelistId);
       const whitelistContract = await getWhitelistContract();
-      const whiteListDetail = await whitelistContract.GetWhitelist.call(whiteListId);
-      console.log('whiteListDetail', whiteListDetail);
+      const whitelistDetail = await whitelistContract.GetWhitelist.call(whitelistId);
+      console.log('whitelistDetail', whitelistDetail);
     } catch (error) {
       console.log('getWhite', error);
     }
@@ -319,7 +319,7 @@ export default function Example() {
 
   const addWhitelist = useCallback(async () => {
     const ewellContract = await getEwellContract();
-    const whiteListId = await ewellContract.GetWhitelistId.call(projectId);
+    const whitelistId = await ewellContract.GetWhitelistId.call(projectId);
     const txResult = await wallet?.callContract({
       contractAddress: NETWORK_CONFIG.whitelistContractAddress,
       methodName: 'AddAddressInfoListToWhitelist',
