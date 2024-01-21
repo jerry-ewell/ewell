@@ -86,7 +86,7 @@ export default function Example() {
       publicSalePrice: ZERO.plus('100000000').div(1.05).toFixed(), // preSalePrice / 1.05
       listMarketInfo: [], // fixed
       liquidityLockProportion: 0, // fixed
-      unlockTime: getProtobufTime(), // fixed
+      unlockTime: getProtobufTime(Date.now() + 45 * 60 * 60 * 1000), // fixed
       isEnableWhitelist: false,
       isBurnRestToken: true,
       totalPeriod: 1, // fixed
@@ -318,7 +318,7 @@ export default function Example() {
   );
 
   return (
-    <div className="common-page page-body">
+    <div>
       <Web3Button
         onClick={() => {
           console.log('jump');

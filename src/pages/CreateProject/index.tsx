@@ -12,7 +12,7 @@ import { stepsItems } from './constants';
 import './styles.less';
 
 const CreateProject: React.FC = () => {
-  const [currentStep, setCurrentStep] = useState<TSteps>(TSteps.ONE);
+  const [currentStep, setCurrentStep] = useState<TSteps>(TSteps.FOURE);
 
   const onNext = useCallback(() => {
     console.log('onNext');
