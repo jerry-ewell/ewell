@@ -86,7 +86,7 @@ export default function Example() {
       publicSalePrice: ZERO.plus('100000000').div(1.05).toFixed(), // preSalePrice / 1.05
       listMarketInfo: [], // fixed
       liquidityLockProportion: 0, // fixed
-      unlockTime: getProtobufTime(), // fixed
+      unlockTime: getProtobufTime(Date.now() + 45 * 60 * 60 * 1000), // fixed
       isEnableWhitelist: false,
       isBurnRestToken: true,
       totalPeriod: 1, // fixed
@@ -187,7 +187,7 @@ export default function Example() {
   }, [getEwellContract, projectId, wallet?.walletInfo.address]);
 
   const invest = useCallback(async () => {
-    const investAmount = '100000000';
+    const investAmount = '10000000';
 
     try {
       const approveResult = await wallet?.callContract({
@@ -204,19 +204,22 @@ export default function Example() {
       console.log('error', error);
     }
 
-    try {
-      const investResult = await wallet?.callContract<any, any>({
-        contractAddress: NETWORK_CONFIG.ewellContractAddress,
-        methodName: 'Invest',
-        args: {
-          projectId,
-          currency: 'ELF',
-          investAmount,
-        },
-      });
-      console.log('investResult', investResult);
-    } catch (error) {
-      console.log('error', error);
+    const times = 1;
+    for (let i = 0; i < times; i++) {
+      try {
+        const investResult = await wallet?.callContract<any, any>({
+          contractAddress: NETWORK_CONFIG.ewellContractAddress,
+          methodName: 'Invest',
+          args: {
+            projectId,
+            currency: 'ELF',
+            investAmount: ZERO.plus(investAmount).div(times).toFixed(),
+          },
+        });
+        console.log('investResult', investResult);
+      } catch (error) {
+        console.log('error', error);
+      }
     }
   }, [projectId, wallet]);
 

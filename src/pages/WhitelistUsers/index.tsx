@@ -10,7 +10,6 @@ import { add, remove } from 'assets/images';
 import './styles.less';
 import { useParams } from 'react-router-dom';
 import { useEffectOnce } from 'react-use';
-import { useWallet } from 'contexts/useWallet/hooks';
 import { useViewContract } from 'contexts/useViewContract/hooks';
 import { DEFAULT_CHAIN_ID } from 'constants/network';
 
@@ -45,20 +44,23 @@ type TAddressItem = {
 export default function WhitelistUsers() {
   const [isTableLoading, setIsTableLoading] = useState(true);
   const { whitelistId = '' } = useParams();
-  const { wallet } = useWallet();
   const { getWhitelistUserAddressList } = useViewContract();
+  const [totalParticipants, setTotalParticipants] = useState<number>(0);
+
   const [pager, setPager] = useState({
     page: 1,
     total: 0,
   });
   const onPageChange = useCallback((page) => setPager((v) => ({ ...v, page })), []);
   const [totalAddressList, setTotalAddressList] = useState<TAddressItem[]>();
-  const [userAddressList, setUserAddressList] = useState<string[]>();
 
-  const curAddressList = useMemo(
-    () => totalAddressList?.slice((pager.page - 1) * DEFAULT_PAGE_SIZE, pager.page * DEFAULT_PAGE_SIZE) || [],
-    [pager.page, totalAddressList],
-  );
+  const [searchAddress, setSearchAddress] = useState<string>('');
+  const curAddressList = useMemo(() => {
+    if (searchAddress) {
+      return totalAddressList?.filter((item) => item.address === searchAddress) || [];
+    }
+    return totalAddressList?.slice((pager.page - 1) * DEFAULT_PAGE_SIZE, pager.page * DEFAULT_PAGE_SIZE) || [];
+  }, [pager.page, searchAddress, totalAddressList]);
 
   const getWhitelistInfo = useCallback(async () => {
     setIsTableLoading(true);
@@ -71,8 +73,8 @@ export default function WhitelistUsers() {
         time: '03:06:32  28/07/2023',
       }));
 
-      setUserAddressList(addressList);
       setTotalAddressList(userList);
+      setTotalParticipants(addressList.length);
       setPager({
         page: 1,
         total: addressList.length,
@@ -86,6 +88,20 @@ export default function WhitelistUsers() {
   useEffectOnce(() => {
     getWhitelistInfo();
   });
+
+  const onSearch = useCallback((e: any) => {
+    const address = e.target.value.trim();
+    if (address) {
+      setSearchAddress(address);
+      // setPager((v) => ({ ...v, page: 1 }));
+    } else {
+      setSearchAddress('');
+    }
+  }, []);
+
+  const onClear = useCallback(() => {
+    setSearchAddress('');
+  }, []);
 
   return (
     <div className="common-page page-body whitelist-users-wrapper">
@@ -117,28 +133,31 @@ export default function WhitelistUsers() {
               onSuccess={getWhitelistInfo}
             />
           </Flex>
-          <Search inputClassName="address-search" placeholder="Address" />
+          <Search inputClassName="address-search" placeholder="Address" onBlur={onSearch} onClear={onClear} />
         </Flex>
-        {!!pager.total && (
-          <Flex vertical gap={16}>
-            <CommonTable loading={isTableLoading} columns={columns} dataSource={curAddressList} />
+
+        <Flex vertical gap={16}>
+          <CommonTable loading={isTableLoading} columns={columns} dataSource={curAddressList} />
+          {!!pager.total && (
             <Flex justify="space-between" align="center">
               <Text size="small">
                 Number of Participants Users:{' '}
                 <Text size="small" fontWeight={FontWeightEnum.Medium}>
-                  {pager.total}
+                  {totalParticipants}
                 </Text>
               </Text>
-              <Pagination
-                current={pager.page}
-                total={pager.total}
-                showSizeChanger={false}
-                pageChange={onPageChange}
-                pageSize={DEFAULT_PAGE_SIZE}
-              />
+              {!searchAddress && (
+                <Pagination
+                  current={pager.page}
+                  total={pager.total}
+                  showSizeChanger={false}
+                  pageChange={onPageChange}
+                  pageSize={DEFAULT_PAGE_SIZE}
+                />
+              )}
             </Flex>
-          </Flex>
-        )}
+          )}
+        </Flex>
       </Flex>
     </div>
   );
