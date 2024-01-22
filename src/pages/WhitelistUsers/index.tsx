@@ -12,6 +12,7 @@ import { useParams } from 'react-router-dom';
 import { useEffectOnce } from 'react-use';
 import { useViewContract } from 'contexts/useViewContract/hooks';
 import { DEFAULT_CHAIN_ID } from 'constants/network';
+import dayjs from 'dayjs';
 
 const { Title, Text } = Typography;
 
@@ -44,7 +45,7 @@ type TAddressItem = {
 export default function WhitelistUsers() {
   const [isTableLoading, setIsTableLoading] = useState(true);
   const { whitelistId = '' } = useParams();
-  const { getWhitelistUserAddressList } = useViewContract();
+  const { getWhitelistUserList } = useViewContract();
   const [totalParticipants, setTotalParticipants] = useState<number>(0);
 
   const [pager, setPager] = useState({
@@ -65,12 +66,12 @@ export default function WhitelistUsers() {
   const getWhitelistInfo = useCallback(async () => {
     setIsTableLoading(true);
     try {
-      const addressList = await getWhitelistUserAddressList(whitelistId);
-      const userList: TAddressItem[] = addressList.map((address, idx) => ({
+      const addressList = await getWhitelistUserList(whitelistId);
+      const userList: TAddressItem[] = addressList.map((item, idx) => ({
         key: `${idx + 1}`,
         order: `${idx + 1}`,
-        address,
-        time: '03:06:32  28/07/2023',
+        address: item.address,
+        time: dayjs(item.createTime ?? 0).format('HH:mm:ss DD/MM/YYYY'),
       }));
 
       setTotalAddressList(userList);
@@ -83,7 +84,7 @@ export default function WhitelistUsers() {
       console.log('getWhitelistInfo error', error);
     }
     setIsTableLoading(false);
-  }, [getWhitelistUserAddressList, whitelistId]);
+  }, [getWhitelistUserList, whitelistId]);
 
   useEffectOnce(() => {
     getWhitelistInfo();

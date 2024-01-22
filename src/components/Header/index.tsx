@@ -19,6 +19,7 @@ import menuSvg from './images/menu.svg';
 import { Drawer } from 'antd';
 import { createStyles } from 'antd-style';
 import type { DrawerClassNames } from 'antd/es/drawer/DrawerPanel';
+import { COMMUNITY_LIST } from 'constants/community';
 
 const useStyle = createStyles(() => ({
   'menu-drawer-header': {
@@ -78,32 +79,12 @@ export default function Header() {
       },
       {
         name: 'Community',
-        children: [
-          {
-            name: 'Medium',
-            icon: arrowSvg,
-            content: 'Join this open space for discussion news, and announcements.',
-            onClick: () => {
-              //
-            },
+        children: COMMUNITY_LIST.map((item) => ({
+          ...item,
+          onClick: () => {
+            //
           },
-          {
-            name: 'X',
-            icon: arrowSvg,
-            content: "Stay up-to-date with Ewell's new features and projects.",
-            onClick: () => {
-              //
-            },
-          },
-          {
-            name: 'Telegram',
-            content: 'Meet the community and get live support.',
-            icon: arrowSvg,
-            onClick: () => {
-              //
-            },
-          },
-        ],
+        })),
         onClick: () => {
           //
         },
@@ -119,7 +100,7 @@ export default function Header() {
         },
       },
     ],
-    [isProjectPage, login, loginState],
+    [isProjectPage, login, loginState, navigate],
   );
 
   const onWalletClick = useCallback(() => {

@@ -3,3 +3,8 @@ export type TViewContractState = {
   ewellContract?: any;
   whitelistContract?: any;
 };
+
+export type TWhitelistUser = {
+  address: string;
+  createTime: number;
+};

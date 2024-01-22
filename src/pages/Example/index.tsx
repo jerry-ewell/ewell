@@ -351,7 +351,11 @@ export default function Example() {
           value: [
             {
               addressList: {
-                value: ['ELF_2R7QtJp7e1qUcfh2RYYJzti9tKpPheNoAGD7dTVFd4m9NaCh27_tDVV', ...walletAddressList],
+                value: ['ELF_2R7QtJp7e1qUcfh2RYYJzti9tKpPheNoAGD7dTVFd4m9NaCh27_tDVV', ...walletAddressList].map(
+                  (item) => ({
+                    address: item,
+                  }),
+                ),
               },
             },
           ],
@@ -366,6 +370,7 @@ export default function Example() {
     const whitelistId = await ewellContract.GetWhitelistId.call(projectId);
     console.log('whitelistId', whitelistId);
     const whitelistContract = await getWhitelistContract();
+    console.log('whitelistContract', whitelistContract);
     const whitelistDetail = await whitelistContract.GetWhitelistDetail.call(whitelistId);
     console.log('getWhitelistDetail ', whitelistDetail);
   }, [getEwellContract, getWhitelistContract, projectId]);
