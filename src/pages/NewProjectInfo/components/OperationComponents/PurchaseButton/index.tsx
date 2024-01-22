@@ -253,7 +253,7 @@ export default function PurchaseButton({ buttonDisabled, projectInfo, purchaseAm
           amountList: [
             {
               // TODO: adjust amount
-              amount: new BigNumber(purchaseAmount || 0).plus(txFee).toFormat(),
+              amount: totalAmount.toFormat(),
               symbol: projectInfo?.toRaiseToken?.symbol ?? '--',
             },
           ],
