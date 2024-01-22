@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import BigNumber from 'bignumber.js';
 import { useParams } from 'react-router-dom';
-import { Flex } from 'antd';
+import { Flex, message } from 'antd';
 import { Button, FontWeightEnum, HashAddress, Modal, Typography } from 'aelf-design';
 import ProjectLogo from 'components/ProjectLogo';
 import SuccessModal from '../SuccessModal';
@@ -31,10 +31,12 @@ export default function PurchaseButton({ buttonDisabled, projectInfo, purchaseAm
   const { additionalInfo } = projectInfo || {};
   const { wallet, checkManagerSyncState } = useWallet();
   const { getTokenContract } = useViewContract();
+  const [messageApi, contextHolder] = message.useMessage();
 
   const [isSubmitModalOpen, setIsSubmitModalOpen] = useState(false);
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
   const [balance, setBalance] = useState('0');
+  const [transactionId, setTransactionId] = useState('');
 
   // TODO: get estimatedTransactionFee
   const estimatedTransactionFee = '3604';
@@ -83,9 +85,14 @@ export default function PurchaseButton({ buttonDisabled, projectInfo, purchaseAm
         },
       });
       console.log('approveResult', approveResult);
-    } catch (error) {
+    } catch (error: any) {
       console.log('error', error);
+      messageApi.open({
+        type: 'error',
+        content: error?.message || 'Approve failed',
+      });
       emitLoading(false);
+      return;
     }
 
     try {
@@ -99,10 +106,15 @@ export default function PurchaseButton({ buttonDisabled, projectInfo, purchaseAm
         },
       });
       console.log('investResult', investResult);
-      // TODO: polling get Transaction ID
+      const { TransactionId } = investResult;
+      setTransactionId(TransactionId);
       setIsSuccessModalOpen(true);
-    } catch (error) {
+    } catch (error: any) {
       console.log('error', error);
+      messageApi.open({
+        type: 'error',
+        content: error?.message || 'Invest failed',
+      });
     } finally {
       emitLoading(false);
     }
@@ -110,6 +122,7 @@ export default function PurchaseButton({ buttonDisabled, projectInfo, purchaseAm
 
   return (
     <>
+      {contextHolder}
       <Button
         type="primary"
         disabled={buttonDisabled}
@@ -145,25 +158,21 @@ export default function PurchaseButton({ buttonDisabled, projectInfo, purchaseAm
             <Flex justify="space-between">
               <Text>My Allocation</Text>
               <Text>
-                {projectInfo?.investAmount
-                  ? divDecimalsStr(totalAllocationAmount, projectInfo?.toRaiseToken?.decimals ?? 8)
-                  : 0}{' '}
+                {divDecimalsStr(totalAllocationAmount, projectInfo?.toRaiseToken?.decimals ?? 8)}{' '}
                 {projectInfo?.toRaiseToken?.symbol ?? '--'}
               </Text>
             </Flex>
             <Flex justify="space-between">
               <Text>To Receive</Text>
               <Text>
-                {projectInfo?.investAmount
-                  ? divDecimals(totalAllocationAmount, projectInfo?.toRaiseToken?.decimals)
-                      .times(
-                        divDecimals(
-                          projectInfo?.preSalePrice ?? 0,
-                          getPriceDecimal(projectInfo?.crowdFundingIssueToken, projectInfo?.toRaiseToken),
-                        ),
-                      )
-                      .toFormat()
-                  : 0}{' '}
+                {divDecimals(totalAllocationAmount, projectInfo?.toRaiseToken?.decimals)
+                  .times(
+                    divDecimals(
+                      projectInfo?.preSalePrice ?? 0,
+                      getPriceDecimal(projectInfo?.crowdFundingIssueToken, projectInfo?.toRaiseToken),
+                    ),
+                  )
+                  .toFormat()}{' '}
                 {projectInfo?.crowdFundingIssueToken?.symbol ?? '--'}
               </Text>
             </Flex>
@@ -179,7 +188,6 @@ export default function PurchaseButton({ buttonDisabled, projectInfo, purchaseAm
             </Text>
           </Flex>
           <Flex vertical gap={8}>
-            {/* TODO: check its meaning */}
             <Flex justify="space-between">
               <Text>Allocation</Text>
               <Flex gap={8} align="baseline">
@@ -243,9 +251,9 @@ export default function PurchaseButton({ buttonDisabled, projectInfo, purchaseAm
           ],
           description: 'Congratulations, payment success!',
           boxData: {
-            // TODO: Transaction ID ?
-            label: 'Contract Address',
-            value: 'ELF_2Pew…W28l_AELF',
+            // TODO: check
+            label: 'Transaction ID',
+            value: transactionId,
           },
         }}
       />

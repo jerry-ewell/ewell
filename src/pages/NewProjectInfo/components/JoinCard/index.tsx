@@ -35,7 +35,7 @@ export default function JoinCard({ projectInfo }: IJoinCardProps) {
   const [balances] = useBalances(projectInfo?.toRaiseToken?.symbol);
   console.log('balance: ', balances[0].toNumber());
 
-  const [purchaseInputValue, setPurchaseInputValue] = useState('1');
+  const [purchaseInputValue, setPurchaseInputValue] = useState('');
   const [purchaseInputErrorMessage, setPurchaseInputErrorMessage] = useState('');
 
   const maxCanInvestAmount = useMemo(() => {
@@ -251,7 +251,7 @@ export default function JoinCard({ projectInfo }: IJoinCardProps) {
                   />
                 </Form.Item>
                 <PurchaseButton
-                  buttonDisabled={!!purchaseInputErrorMessage}
+                  buttonDisabled={!!purchaseInputErrorMessage || !purchaseInputValue}
                   projectInfo={projectInfo}
                   purchaseAmount={purchaseInputValue}
                   info={info}
