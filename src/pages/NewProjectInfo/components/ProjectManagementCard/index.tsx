@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Flex, Switch } from 'antd';
 import { Button, Typography, FontWeightEnum } from 'aelf-design';
 import CommonCard from 'components/CommonCard';
@@ -8,6 +9,8 @@ import CreatorClaimTokenButton from '../OperationComponents/CreatorClaimTokenBut
 import { useWallet } from 'contexts/useWallet/hooks';
 import { IProjectInfo } from 'types/project';
 import { NETWORK_CONFIG } from 'constants/network';
+import UpdateWhitelistUsersButton from 'components/UpdateWhitelistUsersButton';
+import { UpdateType } from 'components/UpdateWhitelistUsersButton/types';
 import './styles.less';
 
 const { Text } = Typography;
@@ -17,6 +20,8 @@ interface IProjectManagementCardProps {
 }
 
 export default function ProjectManagementCard({ projectInfo }: IProjectManagementCardProps) {
+  const navigate = useNavigate();
+  const { projectId } = useParams();
   const { wallet, checkManagerSyncState } = useWallet();
 
   const [isWhitelistSwitchLoading, setIsWhitelistSwitchLoading] = useState(false);
@@ -51,7 +56,12 @@ export default function ProjectManagementCard({ projectInfo }: IProjectManagemen
       title="Project Management">
       <Flex vertical gap={12}>
         <Text fontWeight={FontWeightEnum.Medium}>Participants</Text>
-        <Button>View Participants List</Button>
+        <Button
+          onClick={() => {
+            navigate(`/participant-list/${projectId}`);
+          }}>
+          View Participants List
+        </Button>
       </Flex>
       <div className="divider" />
       <Flex vertical gap={12}>
@@ -73,9 +83,28 @@ export default function ProjectManagementCard({ projectInfo }: IProjectManagemen
               whitelistId={projectInfo?.whitelistId}
               whitelistTasksUrl={projectInfo?.whitelistInfo?.url}
             />
-            <Button>Whitelist Users</Button>
-            <Button>Add Whitelisted Users</Button>
-            <Button>Remove Whitelisted Users</Button>
+            <Button
+              onClick={() => {
+                navigate(`/whitelist-users/${projectInfo?.whitelistId}`);
+              }}>
+              Whitelist Users
+            </Button>
+            <UpdateWhitelistUsersButton
+              buttonProps={{
+                children: 'Add Whitelisted Users',
+              }}
+              updateType={UpdateType.ADD}
+              whitelistId={projectInfo?.whitelistId}
+              onSuccess={() => {}}
+            />
+            <UpdateWhitelistUsersButton
+              buttonProps={{
+                children: 'Remove Whitelisted Users',
+              }}
+              updateType={UpdateType.REMOVE}
+              whitelistId={projectInfo?.whitelistId}
+              onSuccess={() => {}}
+            />
           </>
         )}
       </Flex>

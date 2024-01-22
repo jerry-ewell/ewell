@@ -160,7 +160,7 @@ export default function JoinCard({ projectInfo }: IJoinCardProps) {
       </Flex>
       <div className="divider" />
       <Flex vertical gap={12}>
-        {projectInfo?.isEnableWhitelist && info.hasWhitelistTasks && !info.isFinishWhitelist && (
+        {projectInfo?.isEnableWhitelist && projectInfo?.whitelistInfo?.url && !projectInfo?.isInWhitelist && (
           <>
             {(projectInfo?.status === ProjectStatus.UPCOMING ||
               projectInfo?.status === ProjectStatus.PARTICIPATORY) && (
@@ -178,7 +178,7 @@ export default function JoinCard({ projectInfo }: IJoinCardProps) {
             </Flex>
           </>
         )}
-        {projectInfo?.isEnableWhitelist && info.isFinishWhitelist && (
+        {projectInfo?.isEnableWhitelist && projectInfo?.isInWhitelist && (
           <div className="flex-between-center">
             <Text>Whitelist</Text>
             <Text className="purple-text" fontWeight={FontWeightEnum.Medium}>
@@ -186,7 +186,7 @@ export default function JoinCard({ projectInfo }: IJoinCardProps) {
             </Text>
           </div>
         )}
-        {isLogin && (!projectInfo?.isEnableWhitelist || info.isFinishWhitelist) && (
+        {isLogin && (!projectInfo?.isEnableWhitelist || projectInfo?.isInWhitelist) && (
           <>
             {(projectInfo?.status === ProjectStatus.PARTICIPATORY ||
               projectInfo?.status === ProjectStatus.UNLOCKED ||
@@ -258,17 +258,18 @@ export default function JoinCard({ projectInfo }: IJoinCardProps) {
                 />
               </>
             )}
-            {projectInfo?.status === ProjectStatus.PARTICIPATORY && info.myAllocation.amount > 0 && (
-              <RevokeInvestmentButton projectInfo={projectInfo} />
-            )}
-            {projectInfo?.status === ProjectStatus.UNLOCKED && info.myAllocation.amount > 0 && (
+            {projectInfo?.status === ProjectStatus.PARTICIPATORY &&
+              new BigNumber(projectInfo?.investAmount || '').gt(0) && (
+                <RevokeInvestmentButton projectInfo={projectInfo} />
+              )}
+            {projectInfo?.status === ProjectStatus.UNLOCKED && new BigNumber(projectInfo?.investAmount || '').gt(0) && (
               <Text className="text-center" fontWeight={FontWeightEnum.Medium}>
                 Claim Token when it's time to unlock!
               </Text>
             )}
-            {projectInfo?.status === ProjectStatus.ENDED && info.myAllocation.amount > 0 && !info.hasClaimedToken && (
-              <ClaimTokenButton projectInfo={projectInfo} />
-            )}
+            {projectInfo?.status === ProjectStatus.ENDED &&
+              new BigNumber(projectInfo?.investAmount || '').gt(0) &&
+              !info.hasClaimedToken && <ClaimTokenButton projectInfo={projectInfo} />}
             {projectInfo?.status === ProjectStatus.CANCELED && info.hasNotRedeemedDefault && (
               <RevokeFineButton projectInfo={projectInfo} />
             )}

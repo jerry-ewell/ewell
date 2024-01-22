@@ -25,31 +25,36 @@ export default function ProjectInfo({ previewData }: IProjectInfoProps) {
 
   const getProjectInfo = useCallback(async () => {
     try {
-      // const result = await request.project.getProjectList({
-      //   params: {
-      //     chainId: DEFAULT_CHAIN_ID,
-      //     projectId,
-      //   },
-      // });
+      const result = await request.project.getProjectList({
+        params: {
+          chainId: DEFAULT_CHAIN_ID,
+          projectId,
+        },
+      });
 
-      // const detail = result?.data?.detail;
-      // const creator = detail?.creator;
-      // const isCreator = creator === wallet?.walletInfo.address;
-      // const whitelistId = detail?.whitelistId;
+      const detail = result?.data?.detail;
+      console.log('detail: ', detail);
+      const creator = detail?.creator;
+      const isCreator = creator === wallet?.walletInfo.address;
+      const whitelistId = detail?.whitelistId;
 
-      // console.log('isCreator', isCreator);
-      // console.log('api detail', detail);
-      // const whitelistContract = await getWhitelistContract();
-      // const whitelistInfo = await whitelistContract.GetWhitelist.call(whitelistId);
+      console.log('isCreator', isCreator);
+      console.log('api detail', detail);
+      const whitelistContract = await getWhitelistContract();
+      const whitelistInfo = await whitelistContract.GetWhitelist.call(whitelistId);
 
-      // console.log('whitelistInfo', whitelistInfo);
+      console.log('whitelistInfo', whitelistInfo);
       const newProjectInfo = {
-        ...mockDetail,
-        additionalInfo: JSON.parse(mockDetail.additionalInfo),
-        listMarketInfo: JSON.parse(mockDetail.listMarketInfo),
-        isCreator: true,
-        whitelistInfo: mockWhitelistInfo,
+        ...detail,
+        additionalInfo: JSON.parse(detail.additionalInfo),
+        listMarketInfo: JSON.parse(detail.listMarketInfo),
+        whitelistInfo,
+        isCreator: creator === wallet?.walletInfo.address,
+        isInWhitelist: whitelistInfo?.extraInfoIdList?.value?.[0]?.addressList?.value?.includes(
+          wallet?.walletInfo.address,
+        ),
       };
+      console.log('newProjectInfo: ', newProjectInfo);
       setProjectInfo(newProjectInfo);
     } catch (error) {
       console.log('getDetail error', error);

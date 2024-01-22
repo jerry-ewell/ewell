@@ -33,7 +33,7 @@ const UpdateModal = forwardRef(function (
   { updateType, modalOpen, onModalCancel, onModalSubmit }: IUpdateModalProps,
   ref,
 ) {
-  const [currentUpdateWay, setCurrentUpdateWay] = useState<UpdateWay>(UpdateWay.PASTE);
+  const [currentUpdateWay, setCurrentUpdateWay] = useState<UpdateWay>(UpdateWay.UPLOAD);
   const [file, setFile] = useState<RcFile>();
   const [addressInput, setAddressInput] = useState<string>('');
 

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import BigNumber from 'bignumber.js';
 import { useParams } from 'react-router-dom';
 import { Flex } from 'antd';
@@ -11,7 +11,7 @@ import { tempInfo } from '../../temp';
 import { NETWORK_CONFIG } from 'constants/network';
 import { divDecimals, divDecimalsStr } from 'utils/calculate';
 import { getPriceDecimal } from 'utils';
-import { useBalances } from 'hooks/useBalances';
+import { useViewContract } from 'contexts/useViewContract/hooks';
 import { useWallet } from 'contexts/useWallet/hooks';
 import { emitLoading } from 'utils/events';
 import { timesDecimals } from 'utils/calculate';
@@ -30,14 +30,37 @@ export default function PurchaseButton({ buttonDisabled, projectInfo, purchaseAm
   const { projectId } = useParams();
   const { additionalInfo } = projectInfo || {};
   const { wallet, checkManagerSyncState } = useWallet();
-  const [balances] = useBalances(projectInfo?.toRaiseToken?.symbol);
-  console.log('balances: ', balances?.[0].toNumber());
+  const { getTokenContract } = useViewContract();
 
   const [isSubmitModalOpen, setIsSubmitModalOpen] = useState(false);
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
+  const [balance, setBalance] = useState('0');
 
   // TODO: get estimatedTransactionFee
   const estimatedTransactionFee = '3604';
+
+  const getBalance = useCallback(async () => {
+    const tokenContract = await getTokenContract();
+    const result = await tokenContract.GetBalance.call({
+      symbol: projectInfo?.crowdFundingIssueToken?.symbol,
+      owner: wallet?.walletInfo.address,
+    });
+    setBalance(result.balance);
+  }, [getTokenContract, projectInfo?.crowdFundingIssueToken?.symbol, wallet?.walletInfo.address]);
+
+  useEffect(() => {
+    if (isSubmitModalOpen) {
+      getBalance();
+    }
+  }, [getBalance, isSubmitModalOpen]);
+
+  const allocationAmount = useMemo(() => {
+    return timesDecimals(purchaseAmount, projectInfo?.toRaiseToken?.decimals);
+  }, [projectInfo?.toRaiseToken?.decimals, purchaseAmount]);
+
+  const totalAllocationAmount = useMemo(() => {
+    return new BigNumber(projectInfo?.investAmount ?? 0).plus(allocationAmount);
+  }, [allocationAmount, projectInfo?.investAmount]);
 
   const handleSubmit = async () => {
     setIsSubmitModalOpen(false);
@@ -47,7 +70,7 @@ export default function PurchaseButton({ buttonDisabled, projectInfo, purchaseAm
       return;
     }
     emitLoading(true, { text: 'Processing on the blockchain...' });
-    const amount = timesDecimals(purchaseAmount, projectInfo?.toRaiseToken?.decimals).toFixed();
+    const amount = allocationAmount.toFixed();
 
     try {
       const approveResult = await wallet?.callContract({
@@ -123,7 +146,7 @@ export default function PurchaseButton({ buttonDisabled, projectInfo, purchaseAm
               <Text>My Allocation</Text>
               <Text>
                 {projectInfo?.investAmount
-                  ? divDecimalsStr(projectInfo?.investAmount, projectInfo?.toRaiseToken?.decimals ?? 8)
+                  ? divDecimalsStr(totalAllocationAmount, projectInfo?.toRaiseToken?.decimals ?? 8)
                   : 0}{' '}
                 {projectInfo?.toRaiseToken?.symbol ?? '--'}
               </Text>
@@ -132,7 +155,7 @@ export default function PurchaseButton({ buttonDisabled, projectInfo, purchaseAm
               <Text>To Receive</Text>
               <Text>
                 {projectInfo?.investAmount
-                  ? divDecimals(projectInfo?.investAmount, projectInfo?.toRaiseToken?.decimals)
+                  ? divDecimals(totalAllocationAmount, projectInfo?.toRaiseToken?.decimals)
                       .times(
                         divDecimals(
                           projectInfo?.preSalePrice ?? 0,
@@ -151,7 +174,7 @@ export default function PurchaseButton({ buttonDisabled, projectInfo, purchaseAm
               <Text fontWeight={FontWeightEnum.Medium}>Balance</Text>
             </Flex>
             <Text fontWeight={FontWeightEnum.Medium}>
-              {divDecimalsStr(balances?.[0], projectInfo?.toRaiseToken?.decimals ?? 8)}{' '}
+              {divDecimalsStr(balance, projectInfo?.toRaiseToken?.decimals ?? 8)}{' '}
               {projectInfo?.toRaiseToken?.symbol ?? '--'}
             </Text>
           </Flex>
