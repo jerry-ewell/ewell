@@ -25,9 +25,10 @@ const { Title, Text } = Typography;
 
 interface IJoinCardProps {
   projectInfo?: IProjectInfo;
+  isPreview?: boolean;
 }
 
-export default function JoinCard({ projectInfo }: IJoinCardProps) {
+export default function JoinCard({ projectInfo, isPreview }: IJoinCardProps) {
   const info = tempInfo;
   const { wallet } = useWallet();
   const isLogin = !!wallet;
@@ -35,7 +36,7 @@ export default function JoinCard({ projectInfo }: IJoinCardProps) {
   const [balances] = useBalances(projectInfo?.toRaiseToken?.symbol);
   console.log('balance: ', balances[0].toNumber());
 
-  const [purchaseInputValue, setPurchaseInputValue] = useState('1');
+  const [purchaseInputValue, setPurchaseInputValue] = useState('');
   const [purchaseInputErrorMessage, setPurchaseInputErrorMessage] = useState('');
 
   const maxCanInvestAmount = useMemo(() => {
@@ -241,6 +242,7 @@ export default function JoinCard({ projectInfo }: IJoinCardProps) {
                         </Title>
                       </div>
                     }
+                    disabled={isPreview}
                     value={purchaseInputValue}
                     onChange={(value) => {
                       setPurchaseInputValue(parseInputNumberChange(value || '', projectInfo?.toRaiseToken?.decimals));
@@ -251,7 +253,7 @@ export default function JoinCard({ projectInfo }: IJoinCardProps) {
                   />
                 </Form.Item>
                 <PurchaseButton
-                  buttonDisabled={!!purchaseInputErrorMessage}
+                  buttonDisabled={isPreview || !!purchaseInputErrorMessage || !purchaseInputValue}
                   projectInfo={projectInfo}
                   purchaseAmount={purchaseInputValue}
                   info={info}

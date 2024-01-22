@@ -8,14 +8,14 @@ import { useWallet } from 'contexts/useWallet/hooks';
 import { useViewContract } from 'contexts/useViewContract/hooks';
 import { DEFAULT_CHAIN_ID, NETWORK_CONFIG } from 'constants/network';
 import { IProjectInfo } from 'types/project';
-import { mockDetail, mockWhitelistInfo } from './mock';
+import { mockDetail, mockWhitelistInfo, mockPreviewData } from './mock';
 import './styles.less';
 
 interface IProjectInfoProps {
   previewData?: IProjectInfo;
 }
 
-export default function ProjectInfo({ previewData }: IProjectInfoProps) {
+export default function ProjectInfo({ previewData = mockPreviewData }: IProjectInfoProps) {
   const isMobile = useMobile();
   const { wallet } = useWallet();
   const { projectId } = useParams();
@@ -71,7 +71,7 @@ export default function ProjectInfo({ previewData }: IProjectInfoProps) {
     <div className="common-page-1360 min-height-container project-info-wrapper">
       <div className="flex project-info-content">
         <InfoWrapper projectInfo={previewData || projectInfo} />
-        {!isMobile && <ActionCard projectInfo={previewData || projectInfo} />}
+        {!isMobile && <ActionCard projectInfo={previewData || projectInfo} isPreview={!!previewData} />}
       </div>
     </div>
   );
