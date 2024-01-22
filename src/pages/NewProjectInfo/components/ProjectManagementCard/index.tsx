@@ -1,17 +1,18 @@
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Flex, Switch } from 'antd';
+import { Flex, Switch, message } from 'antd';
 import { Button, Typography, FontWeightEnum } from 'aelf-design';
 import CommonCard from 'components/CommonCard';
 import WhitelistTasksButton from './components/WhitelistTasksButton';
 import CancelProjectButton from './components/CancelProjectButton';
 import CreatorClaimTokenButton from '../OperationComponents/CreatorClaimTokenButton';
 import { useWallet } from 'contexts/useWallet/hooks';
-import { IProjectInfo } from 'types/project';
+import { IProjectInfo, ProjectStatus } from 'types/project';
 import { NETWORK_CONFIG } from 'constants/network';
 import UpdateWhitelistUsersButton from 'components/UpdateWhitelistUsersButton';
 import { UpdateType } from 'components/UpdateWhitelistUsersButton/types';
 import './styles.less';
+import { emitSyncTipsModal } from 'utils/events';
 
 const { Text } = Typography;
 
@@ -23,6 +24,7 @@ export default function ProjectManagementCard({ projectInfo }: IProjectManagemen
   const navigate = useNavigate();
   const { projectId } = useParams();
   const { wallet, checkManagerSyncState } = useWallet();
+  const [messageApi, contextHolder] = message.useMessage();
 
   const [isWhitelistSwitchLoading, setIsWhitelistSwitchLoading] = useState(false);
 
@@ -31,7 +33,7 @@ export default function ProjectManagementCard({ projectInfo }: IProjectManagemen
     const isManagerSynced = await checkManagerSyncState();
     if (!isManagerSynced) {
       setIsWhitelistSwitchLoading(false);
-      // TODO: show tips modal
+      emitSyncTipsModal(true);
       return;
     }
     try {
@@ -42,78 +44,87 @@ export default function ProjectManagementCard({ projectInfo }: IProjectManagemen
       });
       console.log('txResult', txResult);
       // TODO: refresh isEnableWhitelist
-    } catch (error) {
+    } catch (error: any) {
       console.log('error', error);
+      messageApi.open({
+        type: 'error',
+        content: error?.message || 'Switch whitelist failed',
+      });
     } finally {
       setIsWhitelistSwitchLoading(false);
     }
   };
 
   return (
-    <CommonCard
-      className="project-management-card-wrapper"
-      contentClassName="project-management-card-content"
-      title="Project Management">
-      <Flex vertical gap={12}>
-        <Text fontWeight={FontWeightEnum.Medium}>Participants</Text>
-        <Button
-          onClick={() => {
-            navigate(`/participant-list/${projectId}`);
-          }}>
-          View Participants List
-        </Button>
-      </Flex>
-      <div className="divider" />
-      <Flex vertical gap={12}>
-        <Flex gap={8} justify="space-between">
-          <Text fontWeight={FontWeightEnum.Medium}>Whitelist</Text>
-          <Flex gap={8} align="center">
-            <Text>{projectInfo?.isEnableWhitelist ? 'Enable' : 'Disable'}</Text>
-            <Switch
-              size="small"
-              loading={isWhitelistSwitchLoading}
-              checked={projectInfo?.isEnableWhitelist}
-              onChange={handleWhitelistSwitchChange}
-            />
-          </Flex>
+    <>
+      {contextHolder}
+      <CommonCard
+        className="project-management-card-wrapper"
+        contentClassName="project-management-card-content"
+        title="Project Management">
+        <Flex vertical gap={12}>
+          <Text fontWeight={FontWeightEnum.Medium}>Participants</Text>
+          <Button
+            onClick={() => {
+              navigate(`/participant-list/${projectId}`);
+            }}>
+            View Participants List
+          </Button>
         </Flex>
-        {projectInfo?.isEnableWhitelist && (
-          <>
-            <WhitelistTasksButton
-              whitelistId={projectInfo?.whitelistId}
-              whitelistTasksUrl={projectInfo?.whitelistInfo?.url}
-            />
-            <Button
-              onClick={() => {
-                navigate(`/whitelist-users/${projectInfo?.whitelistId}`);
-              }}>
-              Whitelist Users
-            </Button>
-            <UpdateWhitelistUsersButton
-              buttonProps={{
-                children: 'Add Whitelisted Users',
-              }}
-              updateType={UpdateType.ADD}
-              whitelistId={projectInfo?.whitelistId}
-              onSuccess={() => {}}
-            />
-            <UpdateWhitelistUsersButton
-              buttonProps={{
-                children: 'Remove Whitelisted Users',
-              }}
-              updateType={UpdateType.REMOVE}
-              whitelistId={projectInfo?.whitelistId}
-              onSuccess={() => {}}
-            />
-          </>
-        )}
-      </Flex>
-      <div className="divider" />
-      <Flex vertical gap={12}>
-        <Text fontWeight={FontWeightEnum.Medium}>Project</Text>
-        <CancelProjectButton projectInfo={projectInfo} />
-        <CreatorClaimTokenButton projectInfo={projectInfo} />
-      </Flex>
-    </CommonCard>
+        <div className="divider" />
+        <Flex vertical gap={12}>
+          <Flex gap={8} justify="space-between">
+            <Text fontWeight={FontWeightEnum.Medium}>Whitelist</Text>
+            <Flex gap={8} align="center">
+              <Text>{projectInfo?.isEnableWhitelist ? 'Enable' : 'Disable'}</Text>
+              <Switch
+                size="small"
+                loading={isWhitelistSwitchLoading}
+                checked={projectInfo?.isEnableWhitelist}
+                onChange={handleWhitelistSwitchChange}
+              />
+            </Flex>
+          </Flex>
+          {projectInfo?.isEnableWhitelist && (
+            <>
+              <WhitelistTasksButton
+                whitelistId={projectInfo?.whitelistId}
+                whitelistTasksUrl={projectInfo?.whitelistInfo?.url}
+              />
+              <Button
+                onClick={() => {
+                  navigate(`/whitelist-users/${projectInfo?.whitelistId}`);
+                }}>
+                Whitelist Users
+              </Button>
+              <UpdateWhitelistUsersButton
+                buttonProps={{
+                  children: 'Add Whitelisted Users',
+                }}
+                updateType={UpdateType.ADD}
+                whitelistId={projectInfo?.whitelistId}
+                onSuccess={() => {}}
+              />
+              <UpdateWhitelistUsersButton
+                buttonProps={{
+                  children: 'Remove Whitelisted Users',
+                }}
+                updateType={UpdateType.REMOVE}
+                whitelistId={projectInfo?.whitelistId}
+                onSuccess={() => {}}
+              />
+            </>
+          )}
+        </Flex>
+        <div className="divider" />
+        <Flex vertical gap={12}>
+          <Text fontWeight={FontWeightEnum.Medium}>Project</Text>
+          <CancelProjectButton projectInfo={projectInfo} />
+          {projectInfo?.status === ProjectStatus.ENDED && !projectInfo?.isWithdraw && (
+            <CreatorClaimTokenButton projectInfo={projectInfo} />
+          )}
+        </Flex>
+      </CommonCard>
+    </>
   );
 }

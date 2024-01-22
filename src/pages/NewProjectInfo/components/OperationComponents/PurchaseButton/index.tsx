@@ -1,20 +1,21 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import BigNumber from 'bignumber.js';
 import { useParams } from 'react-router-dom';
 import { Flex, message } from 'antd';
-import { Button, FontWeightEnum, HashAddress, Modal, Typography } from 'aelf-design';
+import { Button, FontWeightEnum, HashAddress, ITextProps, Modal, Typography } from 'aelf-design';
 import ProjectLogo from 'components/ProjectLogo';
 import SuccessModal from '../SuccessModal';
 import { wallet as walletIcon } from 'assets/images';
 import { IProjectInfo } from 'types/project';
-import { tempInfo } from '../../temp';
 import { NETWORK_CONFIG } from 'constants/network';
 import { divDecimals, divDecimalsStr } from 'utils/calculate';
 import { getPriceDecimal } from 'utils';
-import { useViewContract } from 'contexts/useViewContract/hooks';
 import { useWallet } from 'contexts/useWallet/hooks';
-import { emitLoading } from 'utils/events';
+import { emitLoading, emitSyncTipsModal } from 'utils/events';
 import { timesDecimals } from 'utils/calculate';
+import { useTokenPrice, useTxFee } from 'contexts/useAssets/hooks';
+import { renderTokenPrice } from 'utils/project';
+import { useBalance } from 'hooks/useBalance';
 import './styles.less';
 
 const { Title, Text } = Typography;
@@ -23,38 +24,26 @@ export interface IPurchaseButtonProps {
   buttonDisabled?: boolean;
   projectInfo: IProjectInfo;
   purchaseAmount?: string;
-  info: typeof tempInfo;
 }
 
-export default function PurchaseButton({ buttonDisabled, projectInfo, purchaseAmount, info }: IPurchaseButtonProps) {
+export default function PurchaseButton({ buttonDisabled, projectInfo, purchaseAmount }: IPurchaseButtonProps) {
   const { projectId } = useParams();
   const { additionalInfo } = projectInfo || {};
   const { wallet, checkManagerSyncState } = useWallet();
-  const { getTokenContract } = useViewContract();
+  const { tokenPrice } = useTokenPrice();
+  const { txFee } = useTxFee();
   const [messageApi, contextHolder] = message.useMessage();
+  const { balance, updateBalance } = useBalance(projectInfo?.toRaiseToken?.symbol);
 
   const [isSubmitModalOpen, setIsSubmitModalOpen] = useState(false);
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
-  const [balance, setBalance] = useState('0');
   const [transactionId, setTransactionId] = useState('');
-
-  // TODO: get estimatedTransactionFee
-  const estimatedTransactionFee = '3604';
-
-  const getBalance = useCallback(async () => {
-    const tokenContract = await getTokenContract();
-    const result = await tokenContract.GetBalance.call({
-      symbol: projectInfo?.crowdFundingIssueToken?.symbol,
-      owner: wallet?.walletInfo.address,
-    });
-    setBalance(result.balance);
-  }, [getTokenContract, projectInfo?.crowdFundingIssueToken?.symbol, wallet?.walletInfo.address]);
 
   useEffect(() => {
     if (isSubmitModalOpen) {
-      getBalance();
+      updateBalance();
     }
-  }, [getBalance, isSubmitModalOpen]);
+  }, [updateBalance, isSubmitModalOpen]);
 
   const allocationAmount = useMemo(() => {
     return timesDecimals(purchaseAmount, projectInfo?.toRaiseToken?.decimals);
@@ -64,16 +53,20 @@ export default function PurchaseButton({ buttonDisabled, projectInfo, purchaseAm
     return new BigNumber(projectInfo?.investAmount ?? 0).plus(allocationAmount);
   }, [allocationAmount, projectInfo?.investAmount]);
 
+  const totalAmount = useMemo(() => {
+    return new BigNumber(purchaseAmount || 0).plus(txFee);
+  }, [purchaseAmount, txFee]);
+
   const handleSubmit = async () => {
     setIsSubmitModalOpen(false);
+    emitLoading(true, { text: 'Processing on the blockchain...' });
     const isManagerSynced = await checkManagerSyncState();
     if (!isManagerSynced) {
-      // TODO: show tips modal
+      emitLoading(false);
+      emitSyncTipsModal(true);
       return;
     }
-    emitLoading(true, { text: 'Processing on the blockchain...' });
     const amount = allocationAmount.toFixed();
-
     try {
       const approveResult = await wallet?.callContract({
         contractAddress: NETWORK_CONFIG.sideChainInfo.tokenContractAddress,
@@ -96,7 +89,7 @@ export default function PurchaseButton({ buttonDisabled, projectInfo, purchaseAm
     }
 
     try {
-      const investResult = await wallet?.callContract<any, any>({
+      const result = await wallet?.callContract<any, any>({
         contractAddress: NETWORK_CONFIG.ewellContractAddress,
         methodName: 'Invest',
         args: {
@@ -105,8 +98,8 @@ export default function PurchaseButton({ buttonDisabled, projectInfo, purchaseAm
           investAmount: amount,
         },
       });
-      console.log('investResult', investResult);
-      const { TransactionId } = investResult;
+      console.log('Invest result', result);
+      const { TransactionId } = result;
       setTransactionId(TransactionId);
       setIsSuccessModalOpen(true);
     } catch (error: any) {
@@ -142,7 +135,7 @@ export default function PurchaseButton({ buttonDisabled, projectInfo, purchaseAm
         }}>
         <Flex vertical gap={24}>
           <Flex align="center" gap={12}>
-            <ProjectLogo key={additionalInfo?.logoUrl} src={info.logoUrl} alt="logo" />
+            <ProjectLogo key={additionalInfo?.logoUrl} src={additionalInfo?.logoUrl} alt="logo" />
             <Title fontWeight={FontWeightEnum.Medium}>{additionalInfo?.projectName}</Title>
           </Flex>
           <Flex vertical gap={8}>
@@ -194,31 +187,47 @@ export default function PurchaseButton({ buttonDisabled, projectInfo, purchaseAm
                 <Text>
                   {purchaseAmount} {projectInfo?.toRaiseToken?.symbol ?? '--'}
                 </Text>
-                <Text size="small">$ 1.86</Text>
+                {renderTokenPrice({
+                  textProps: {
+                    size: 'small',
+                  },
+                  amount: purchaseAmount,
+                  decimals: projectInfo?.toRaiseToken?.decimals,
+                  tokenPrice,
+                })}
               </Flex>
             </Flex>
             <Flex justify="space-between">
               <Text>Estimated Transaction Fee</Text>
               <Flex gap={8} align="baseline">
                 <Text>
-                  {divDecimalsStr(estimatedTransactionFee, projectInfo?.toRaiseToken?.decimals ?? 8)}{' '}
-                  {projectInfo?.toRaiseToken?.symbol ?? '--'}
+                  {txFee} {projectInfo?.toRaiseToken?.symbol ?? '--'}
                 </Text>
-                <Text size="small">$ 0.19</Text>
+                {renderTokenPrice({
+                  textProps: {
+                    size: 'small',
+                  },
+                  amount: txFee,
+                  decimals: 0,
+                  tokenPrice,
+                })}
               </Flex>
             </Flex>
             <Flex justify="space-between">
               <Text>Total</Text>
               <Flex gap={8} align="baseline">
                 <Text>
-                  {new BigNumber(purchaseAmount || 0)
-                    .plus(divDecimals(estimatedTransactionFee, projectInfo?.toRaiseToken?.decimals ?? 8))
-                    .toFormat()}{' '}
-                  {projectInfo?.toRaiseToken?.symbol ?? '--'}
+                  {totalAmount.toFormat()} {projectInfo?.toRaiseToken?.symbol ?? '--'}
                 </Text>
-                <Text fontWeight={FontWeightEnum.Medium} size="small">
-                  $ 2.04
-                </Text>
+                {renderTokenPrice({
+                  textProps: {
+                    size: 'small',
+                    fontWeight: FontWeightEnum.Medium,
+                  },
+                  amount: totalAmount,
+                  decimals: 0,
+                  tokenPrice,
+                })}
               </Flex>
             </Flex>
           </Flex>
@@ -243,15 +252,13 @@ export default function PurchaseButton({ buttonDisabled, projectInfo, purchaseAm
         data={{
           amountList: [
             {
-              amount: new BigNumber(purchaseAmount || 0)
-                .plus(divDecimals(estimatedTransactionFee, projectInfo?.toRaiseToken?.decimals ?? 8))
-                .toFormat(),
+              // TODO: adjust amount
+              amount: new BigNumber(purchaseAmount || 0).plus(txFee).toFormat(),
               symbol: projectInfo?.toRaiseToken?.symbol ?? '--',
             },
           ],
           description: 'Congratulations, payment success!',
           boxData: {
-            // TODO: check
             label: 'Transaction ID',
             value: transactionId,
           },

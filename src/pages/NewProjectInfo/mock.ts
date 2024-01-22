@@ -65,6 +65,7 @@ export const mockDetail = {
   cancelTime: undefined,
   status: 3,
   realEndTime: '2024-01-20T08:52:01Z',
+  liquidatedDamageAmount: '10',
 };
 
 export const mockWhitelistInfo = {

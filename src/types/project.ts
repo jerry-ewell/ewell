@@ -73,6 +73,11 @@ export interface IProjectInfo {
   };
   isCreator?: boolean;
   isInWhitelist?: boolean;
+  liquidatedDamageAmount?: string;
+  receivableLiquidatedDamageAmount?: string;
+  currentCrowdFundingIssueAmount?: string;
+  claimedLiquidatedDamage?: boolean;
+  isWithdraw?: boolean;
 }
 
 export interface ProjectItem {

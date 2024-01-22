@@ -1,13 +1,15 @@
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { Flex } from 'antd';
+import { Flex, message } from 'antd';
 import { Button, Modal, Typography, FontWeightEnum, HashAddress } from 'aelf-design';
 import SuccessModal from '../../../OperationComponents/SuccessModal';
-import { emitLoading } from 'utils/events';
+import { emitLoading, emitSyncTipsModal } from 'utils/events';
 import { useWallet } from 'contexts/useWallet/hooks';
 import { IProjectInfo } from 'types/project';
 import { divDecimalsStr } from 'utils/calculate';
 import { NETWORK_CONFIG } from 'constants/network';
+import { useTokenPrice, useTxFee } from 'contexts/useAssets/hooks';
+import { renderTokenPrice } from 'utils/project';
 
 const { Text, Title } = Typography;
 
@@ -15,14 +17,11 @@ interface ICancelProjectButtonProps {
   projectInfo?: IProjectInfo;
 }
 
-// TODO: get estimatedTransactionFee
-const estimatedTransactionFee = '366';
-
-// TODO: convert to USD
-
 export default function CancelProjectButton({ projectInfo }: ICancelProjectButtonProps) {
   const { wallet, checkManagerSyncState } = useWallet();
-
+  const { tokenPrice } = useTokenPrice();
+  const { txFee } = useTxFee();
+  const [messageApi, contextHolder] = message.useMessage();
   const { projectId } = useParams();
 
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
@@ -35,29 +34,32 @@ export default function CancelProjectButton({ projectInfo }: ICancelProjectButto
     const isManagerSynced = await checkManagerSyncState();
     if (!isManagerSynced) {
       emitLoading(false);
-      // TODO: show tips modal
+      emitSyncTipsModal(true);
       return;
     }
-
     try {
       const result = await wallet?.callContract<any, any>({
         contractAddress: NETWORK_CONFIG.ewellContractAddress,
         methodName: 'Cancel',
-        // TODO: check args
         args: projectId,
       });
       console.log('result', result);
       // TODO: polling get Transaction ID
-      emitLoading(false);
       setIsSuccessModalOpen(true);
-    } catch (error) {
-      console.log('error', error);
+    } catch (error: any) {
+      console.log('Cancel error', error);
+      messageApi.open({
+        type: 'error',
+        content: error?.message || 'Cancel failed',
+      });
+    } finally {
       emitLoading(false);
     }
   };
 
   return (
     <>
+      {contextHolder}
       <Button danger onClick={() => setIsConfirmModalOpen(true)}>
         Closure Of Project
       </Button>
@@ -119,10 +121,16 @@ export default function CancelProjectButton({ projectInfo }: ICancelProjectButto
             <Text>Estimated Transaction Fee</Text>
             <Flex gap={8} justify="flex-end" align="baseline">
               <Text>
-                {divDecimalsStr(estimatedTransactionFee, projectInfo?.toRaiseToken?.decimals)}{' '}
-                {projectInfo?.toRaiseToken?.symbol ?? '--'}
+                {txFee} {projectInfo?.toRaiseToken?.symbol ?? '--'}
               </Text>
-              <Text size="small">$ 0.19</Text>
+              {renderTokenPrice({
+                textProps: {
+                  size: 'small',
+                },
+                amount: txFee,
+                decimals: 0,
+                tokenPrice,
+              })}
             </Flex>
           </Flex>
           <Flex justify="center">
@@ -146,6 +154,7 @@ export default function CancelProjectButton({ projectInfo }: ICancelProjectButto
         data={{
           amountList: [
             {
+              // TODO: get amount
               amount: divDecimalsStr(
                 projectInfo?.crowdFundingIssueAmount,
                 projectInfo?.crowdFundingIssueToken?.decimals,
@@ -156,6 +165,7 @@ export default function CancelProjectButton({ projectInfo }: ICancelProjectButto
           description: 'Congratulations, transfer success!',
           boxData: {
             label: 'Transaction ID',
+            // TODO: get txId
             value: 'ELF_0x00000000000000ADc04C56Bf30aC9d3c0aAF14dC_AELF',
           },
         }}

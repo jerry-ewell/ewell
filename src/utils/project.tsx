@@ -2,6 +2,11 @@ import { ZERO } from 'constants/misc';
 import { ProjectItem } from 'types/project';
 import { getLog } from './protoUtils';
 import { unifySecond } from './time';
+import { ITextProps, Typography } from 'aelf-design';
+import { divDecimals } from './calculate';
+import BigNumber from 'bignumber.js';
+
+const { Text } = Typography;
 
 export enum ProjectStatus {
   Canceled = 4,
@@ -66,4 +71,23 @@ export function unifyProjectFromInfo(info: any): any {
   } catch (error) {
     return undefined;
   }
+}
+
+export function renderTokenPrice({
+  textProps,
+  amount,
+  decimals = 8,
+  tokenPrice,
+}: {
+  textProps?: ITextProps;
+  amount?: number | string | BigNumber;
+  decimals?: number;
+  tokenPrice?: string;
+}) {
+  return (
+    !!tokenPrice &&
+    new BigNumber(tokenPrice).gt(0) && (
+      <Text {...textProps}>$ {divDecimals(amount, decimals).times(tokenPrice).toFixed(2)}</Text>
+    )
+  );
 }
