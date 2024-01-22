@@ -25,3 +25,9 @@ export const getAddressInfo = (value: string): { prefix: string; address: string
   if (isAelfAddress(arr[0])) return { ...initAddressInfo, address: arr[0], suffix: arr[1] };
   return { ...initAddressInfo, prefix: arr[0], address: arr[1] };
 };
+
+export const getTxFee = (txResult: any): string => {
+  const txFeeLog = txResult.Logs.find((item: any) => item.Name === 'TransactionFeeCharged');
+  if (!txFeeLog) return '0';
+  return AElf.pbUtils.getFee(txFeeLog?.NonIndexed || '', 'TransactionFeeCharged').amount;
+};
