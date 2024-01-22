@@ -107,7 +107,7 @@ export default function ProjectTabs({ projectInfo }: IProjectTabsProps) {
     {
       key: ProjectTabsLabel.DESCRIPTION,
       label: ProjectTabsLabel.DESCRIPTION,
-      children: <Text className="white-space-pre-wrap">{projectInfo?.additionalInfo?.projectDescription || '-'}</Text>,
+      children: <Text className="white-space-pre-wrap">{projectInfo?.additionalInfo?.projectDescription || '--'}</Text>,
     },
     {
       key: ProjectTabsLabel.IDO_INFORMATION,

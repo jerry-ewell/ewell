@@ -79,12 +79,18 @@ export default function ProjectInfo({ previewData }: IProjectInfoProps) {
     };
   }, [isPreview, getProjectInfo]);
 
+  const info = useMemo(() => previewData || projectInfo, [previewData, projectInfo]);
+
+  const showInfo = useMemo(() => !!Object.keys(info).length, [info]);
+
   return (
     <div className="common-page-1360 min-height-container project-info-wrapper">
-      <div className="flex project-info-content">
-        <InfoWrapper projectInfo={previewData || projectInfo} />
-        {!isMobile && <ActionCard projectInfo={previewData || projectInfo} isPreview={isPreview} />}
-      </div>
+      {showInfo && (
+        <div className="flex project-info-content">
+          <InfoWrapper projectInfo={info} />
+          {!isMobile && <ActionCard projectInfo={info} isPreview={isPreview} />}
+        </div>
+      )}
     </div>
   );
 }
