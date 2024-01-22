@@ -5,7 +5,6 @@ import ProjectManagementCard from '../ProjectManagementCard';
 import { edit, login as loginIcon } from 'assets/images';
 import { useWallet } from 'contexts/useWallet/hooks';
 import { IProjectInfo } from 'types/project';
-import { tempInfo } from '../temp';
 import './styles.less';
 
 interface IActionCardProps {
@@ -31,7 +30,7 @@ export default function ActionCard({ projectInfo }: IActionCardProps) {
           Log in to view details
         </Button>
       )}
-      {!!isLogin && tempInfo.isCreator && <ProjectManagementCard projectInfo={projectInfo} />}
+      {!!isLogin && projectInfo?.isCreator && <ProjectManagementCard projectInfo={projectInfo} />}
     </Flex>
   );
 }

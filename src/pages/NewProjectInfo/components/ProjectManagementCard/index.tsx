@@ -8,6 +8,8 @@ import CreatorClaimTokenButton from '../OperationComponents/CreatorClaimTokenBut
 import { useWallet } from 'contexts/useWallet/hooks';
 import { IProjectInfo } from 'types/project';
 import { NETWORK_CONFIG } from 'constants/network';
+import UpdateWhitelistUsersButton from 'components/UpdateWhitelistUsersButton';
+import { UpdateType } from 'components/UpdateWhitelistUsersButton/types';
 import './styles.less';
 
 const { Text } = Typography;
@@ -74,8 +76,22 @@ export default function ProjectManagementCard({ projectInfo }: IProjectManagemen
               whitelistTasksUrl={projectInfo?.whitelistInfo?.url}
             />
             <Button>Whitelist Users</Button>
-            <Button>Add Whitelisted Users</Button>
-            <Button>Remove Whitelisted Users</Button>
+            <UpdateWhitelistUsersButton
+              buttonProps={{
+                children: 'Add Whitelisted Users',
+              }}
+              updateType={UpdateType.ADD}
+              whitelistId={projectInfo?.whitelistId}
+              onSuccess={() => {}}
+            />
+            <UpdateWhitelistUsersButton
+              buttonProps={{
+                children: 'Remove Whitelisted Users',
+              }}
+              updateType={UpdateType.REMOVE}
+              whitelistId={projectInfo?.whitelistId}
+              onSuccess={() => {}}
+            />
           </>
         )}
       </Flex>

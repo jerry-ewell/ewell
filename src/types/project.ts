@@ -71,6 +71,8 @@ export interface IProjectInfo {
   whitelistInfo?: {
     url?: string;
   };
+  isCreator?: boolean;
+  isInWhitelist?: boolean;
 }
 
 export interface ProjectItem {
