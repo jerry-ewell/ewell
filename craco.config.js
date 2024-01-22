@@ -62,6 +62,14 @@ module.exports = {
           '^/webLoginRequest': '',
         },
       },
+      '/webLoginConnect': {
+        target: activeApi.webLoginConnectApi,
+        changeOrigin: true,
+        secure: true,
+        pathRewrite: {
+          '^/webLoginConnect': '',
+        },
+      },
       '/api': {
         target: activeApi.api,
         changeOrigin: true,

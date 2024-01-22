@@ -17,6 +17,7 @@ import { InboxOutlined } from '@ant-design/icons';
 import { useParseWhitelist } from 'hooks/useParseWhitelist';
 import { identifyWhitelistData } from 'hooks/useParseWhitelist/utils';
 import { UpdateType } from 'components/UpdateWhitelistUsersButton/types';
+import { useTokenPrice, useTxFee } from 'contexts/useAssets/hooks';
 
 const { Dragger } = Upload;
 
@@ -26,6 +27,16 @@ export default function Example() {
   const { getTokenContract, getEwellContract, getWhitelistContract } = useViewContract();
   const [projectId, setProjectId] = useState('15d556a57222ef06ea9a46a6fb9db416bffb98b8de60ccef6bcded8ca851f407');
   const { updateFile } = useParseWhitelist();
+
+  const { tokenPrice } = useTokenPrice();
+  const { txFee } = useTxFee();
+  useEffect(() => {
+    console.log('tokenPrice', tokenPrice);
+  }, [tokenPrice]);
+
+  useEffect(() => {
+    console.log('txFee', txFee);
+  }, [txFee]);
 
   const transfer = useCallback(async () => {
     try {

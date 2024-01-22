@@ -54,7 +54,7 @@ const NETWORK_CONFIG_LIST = {
     sideChainId: 'tDVV',
     webLoginGraphqlUrl: '/AElfIndexer_DApp/PortKeyIndexerCASchema/graphql',
     webLoginRequestDefaultsUrl: '/webLoginRequest',
-    webLoginConnectUrl: 'http://192.168.66.203:8001',
+    webLoginConnectUrl: '/webLoginConnect',
     ewellContractAddress: 'mhgUyGhd27YaoG8wgXTbwtbAiYx7E59n5GXEkmkTFKKQTvGnB',
     whitelistContractAddress: 'x4CTSuM8typUbpdfxRZDTqYVa42RdxrwwPkXX7WUJHeRmzE6k',
     mainChainInfo: {

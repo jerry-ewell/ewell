@@ -140,8 +140,9 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
   }, [navigate]);
   useWebLoginEvent(WebLoginEvents.LOGOUT, onLogout);
 
+  // TODO: remove
   useEffect(() => {
-    console.log('state', state);
+    console.log('wallet state', state);
   }, [state]);
 
   useEffect(() => {
