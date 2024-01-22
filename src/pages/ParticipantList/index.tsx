@@ -57,6 +57,7 @@ export default function ParticipantList() {
   const [totalAmount, setTotalAmount] = useState<string>();
   const [totalUserCount, setTotalUserCount] = useState<number>(0);
   const isSearchRef = useRef<boolean>(false);
+  const [isSearch, setIsSearch] = useState(false);
 
   const fetchTimeRef = useRef<number>();
   const getWhitelistInfo = useCallback(
@@ -78,6 +79,7 @@ export default function ParticipantList() {
         if (fetchTime < fetchTimeRef.current) return;
         console.log('data', data);
         isSearchRef.current = !!address;
+        setIsSearch(!!address);
         const _list = data?.users?.map((item, idx) => ({
           key: `${skipCount + idx + 1}`,
           order: `${skipCount + idx + 1}`,
@@ -160,13 +162,15 @@ export default function ParticipantList() {
             </Text>
           </Text>
         </Flex>
-        <Pagination
-          current={pager.page}
-          total={pager.total}
-          pageSize={DEFAULT_PAGE_SIZE}
-          showSizeChanger={false}
-          pageChange={onPageChange}
-        />
+        {!isSearch && (
+          <Pagination
+            current={pager.page}
+            total={pager.total}
+            pageSize={DEFAULT_PAGE_SIZE}
+            showSizeChanger={false}
+            pageChange={onPageChange}
+          />
+        )}
       </Flex>
     </div>
   );

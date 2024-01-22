@@ -2,12 +2,13 @@ import ReactDOM from 'react-dom';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
-import './index.css';
 import { prefixCls } from 'constants/theme';
 import WalletProvider from './contexts/useWallet';
 
-import '@portkey/did-ui-react/dist/assets/index.css';
+import './assets/theme/antd.css';
 import 'aelf-web-login/dist/assets/index.css';
+import '@portkey/did-ui-react/dist/assets/index.css';
+import './index.css';
 import { ReactNode } from 'react';
 import StoreProvider from './contexts/useStore';
 import ViewContractProvider from 'contexts/useViewContract';

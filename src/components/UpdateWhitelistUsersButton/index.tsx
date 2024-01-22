@@ -61,7 +61,6 @@ export default function UpdateWhitelistUsers({
           identifyData: uploadAddressList,
           type: updateType,
         });
-        console.log('onUpdateSubmit', userAddressList, uploadAddressList, _validationData);
         setValidationData(_validationData);
       } catch (error) {
         // TODO: toast error

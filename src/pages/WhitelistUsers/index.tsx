@@ -93,7 +93,6 @@ export default function WhitelistUsers() {
     const address = e.target.value.trim();
     if (address) {
       setSearchAddress(address);
-      // setPager((v) => ({ ...v, page: 1 }));
     } else {
       setSearchAddress('');
     }
