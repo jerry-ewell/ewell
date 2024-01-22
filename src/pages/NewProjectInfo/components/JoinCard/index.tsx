@@ -18,7 +18,6 @@ import { divDecimals, divDecimalsStr } from 'utils/calculate';
 import { getPriceDecimal } from 'utils';
 import { parseInputNumberChange } from 'utils/input';
 import { useBalances } from 'hooks/useBalances';
-import { tempInfo } from '../temp';
 import './styles.less';
 
 const { Title, Text } = Typography;
@@ -29,7 +28,6 @@ interface IJoinCardProps {
 }
 
 export default function JoinCard({ projectInfo, isPreview }: IJoinCardProps) {
-  const info = tempInfo;
   const { wallet } = useWallet();
   const isLogin = !!wallet;
 
@@ -207,7 +205,7 @@ export default function JoinCard({ projectInfo, isPreview }: IJoinCardProps) {
               projectInfo?.status === ProjectStatus.ENDED) && (
               <div className="flex-between-center">
                 <Text>
-                  {projectInfo?.status === ProjectStatus.ENDED && info.hasClaimedToken ? 'Receive' : 'To Receive'}
+                  {projectInfo?.status === ProjectStatus.ENDED && projectInfo?.isWithdraw ? 'Receive' : 'To Receive'}
                 </Text>
                 <Text fontWeight={FontWeightEnum.Medium}>
                   {projectInfo?.investAmount
@@ -256,7 +254,6 @@ export default function JoinCard({ projectInfo, isPreview }: IJoinCardProps) {
                   buttonDisabled={isPreview || !!purchaseInputErrorMessage || !purchaseInputValue}
                   projectInfo={projectInfo}
                   purchaseAmount={purchaseInputValue}
-                  info={info}
                 />
               </>
             )}
@@ -271,8 +268,8 @@ export default function JoinCard({ projectInfo, isPreview }: IJoinCardProps) {
             )}
             {projectInfo?.status === ProjectStatus.ENDED &&
               new BigNumber(projectInfo?.investAmount || '').gt(0) &&
-              !info.hasClaimedToken && <ClaimTokenButton projectInfo={projectInfo} />}
-            {projectInfo?.status === ProjectStatus.CANCELED && info.hasNotRedeemedDefault && (
+              !projectInfo?.isWithdraw && <ClaimTokenButton projectInfo={projectInfo} />}
+            {projectInfo?.status === ProjectStatus.CANCELED && !projectInfo?.claimedLiquidatedDamage && (
               <RevokeFineButton projectInfo={projectInfo} />
             )}
           </>

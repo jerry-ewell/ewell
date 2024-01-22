@@ -47,6 +47,7 @@ export default function SuccessModal({ modalProps, data: { amountList, descripti
         </Flex>
         <Flex className="modal-box-data-wrapper" justify="space-between">
           <Text>{boxData.label}</Text>
+          {/* TODO: jump */}
           <HashAddress className="hash-address-small" preLen={8} endLen={9} address={boxData.value} />
         </Flex>
         <Flex justify="center">
