@@ -1,18 +1,16 @@
 import { Statistic, StatisticProps } from 'antd';
-import { FontWeightEnum, Typography } from 'aelf-design';
+import { FontWeightEnum, Typography, ITextProps } from 'aelf-design';
 import { formatCountdown, countdownValueType, FormatConfig, Formatter } from 'antd/lib/statistic/utils';
-import clsx from 'clsx';
 import dayjs from 'dayjs';
 import * as React from 'react';
 
 const { Text } = Typography;
 
-const REFRESH_INTERVAL = 1000 / 30;
+const ONE_DAY_IN_MS = 24 * 60 * 60 * 1000;
 
 interface CountdownProps extends StatisticProps {
+  textProps?: ITextProps;
   value?: countdownValueType;
-  valueClassName?: string;
-  format?: string /** example DD/HH/mm/ss => 00d 00h 00m 07s */;
   onFinish?: () => void;
   onChange?: (value?: countdownValueType) => void;
 }
@@ -22,11 +20,19 @@ function getTime(value?: countdownValueType) {
 }
 
 class BaseCountdown extends React.Component<CountdownProps, {}> {
-  static defaultProps: Partial<CountdownProps> = {
-    format: 'HH:mm:ss',
-  };
-
   countdownId?: number;
+
+  get refreshInterval() {
+    const { value } = this.props;
+    const timestamp = getTime(value);
+    const remainingTime = timestamp - Date.now();
+
+    if (remainingTime <= ONE_DAY_IN_MS) {
+      return 1000;
+    } else {
+      return 1000 * 60;
+    }
+  }
 
   componentDidMount() {
     this.syncTimer();
@@ -63,7 +69,7 @@ class BaseCountdown extends React.Component<CountdownProps, {}> {
       if (onChange && timestamp > Date.now()) {
         onChange(timestamp - Date.now());
       }
-    }, REFRESH_INTERVAL);
+    }, this.refreshInterval);
   };
 
   stopTimer = () => {
@@ -80,26 +86,25 @@ class BaseCountdown extends React.Component<CountdownProps, {}> {
   };
 
   formatCountdown = (value: countdownValueType, config: FormatConfig) => {
-    const { format } = this.props;
-    if (!dayjs(value).isValid()) return <div>error</div>;
+    if (!dayjs(value).isValid()) return <span>error</span>;
+    const now = Date.now();
+    const timestamp = getTime(value);
+    const remainingTime = timestamp - now;
+    let format;
+    if (remainingTime <= ONE_DAY_IN_MS) {
+      format = 'HH:mm:ss';
+    } else {
+      format = 'Dd HHh';
+    }
     const formatData = formatCountdown(value, { ...config, format });
-    const formatDataArr = formatData.split('/');
 
     return (
-      <div className={this.props.valueClassName}>
-        {formatDataArr.map((item, index) => {
-          return (
-            <Text key={index} fontWeight={FontWeightEnum.Medium}>
-              {item}
-              {index !== formatDataArr.length - 1 && ':'}
-            </Text>
-          );
-        })}
-      </div>
+      <Text fontWeight={FontWeightEnum.Medium} {...this.props.textProps}>
+        {formatData}
+      </Text>
     );
   };
 
-  // TODO: adjust the height
   render() {
     return <Statistic {...this.props} formatter={this.formatCountdown as Formatter} />;
   }

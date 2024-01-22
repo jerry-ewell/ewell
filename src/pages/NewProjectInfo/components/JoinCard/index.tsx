@@ -91,44 +91,59 @@ export default function JoinCard({ projectInfo, isPreview }: IJoinCardProps) {
   }, [isPreview, isPurchaseInputting, purchaseInputErrorMessage, purchaseInputValue]);
 
   const renderRemainder = () => {
-    if (projectInfo?.status === ProjectStatus.ENDED) {
+    if (projectInfo?.status === ProjectStatus.UPCOMING) {
       return (
-        <Text fontWeight={FontWeightEnum.Medium}>
-          {projectInfo?.endTime ? dayjs(projectInfo?.endTime).format('DD-MM-YYYY\nH:mm [UTC] Z') : '-'}
-        </Text>
-      );
-    } else if (projectInfo?.status === ProjectStatus.CANCELED) {
-      return (
-        <Text fontWeight={FontWeightEnum.Medium}>
-          {projectInfo?.cancelTime ? dayjs(projectInfo?.cancelTime).format('DD-MM-YYYY\nH:mm [UTC] Z') : '-'}
-        </Text>
-      );
-    } else if (projectInfo?.status === ProjectStatus.UPCOMING) {
-      return (
-        <NewBaseCountdown
-          value={projectInfo?.startTime ? dayjs(projectInfo.startTime).valueOf() : 0}
-          format="HH/mm/ss"
-          // TODO: refresh
-          onFinish={() => {}}
-        />
+        <>
+          <Text>Remainder</Text>
+          <NewBaseCountdown
+            className="countdown-wrapper"
+            value={projectInfo?.startTime ? dayjs(projectInfo.startTime).valueOf() : 0}
+            // TODO: refresh
+            onFinish={() => {}}
+          />
+        </>
       );
     } else if (projectInfo?.status === ProjectStatus.PARTICIPATORY) {
       return (
-        <NewBaseCountdown
-          value={projectInfo?.endTime ? dayjs(projectInfo.endTime).valueOf() : 0}
-          format="HH/mm/ss"
-          // TODO: refresh
-          onFinish={() => {}}
-        />
+        <>
+          <Text>Remainder</Text>
+          <NewBaseCountdown
+            className="countdown-wrapper"
+            value={projectInfo?.endTime ? dayjs(projectInfo.endTime).valueOf() : 0}
+            // TODO: refresh
+            onFinish={() => {}}
+          />
+        </>
       );
     } else if (projectInfo?.status === ProjectStatus.UNLOCKED) {
       return (
-        <NewBaseCountdown
-          value={projectInfo?.unlockTime ? dayjs(projectInfo.unlockTime).valueOf() : 0}
-          format="HH/mm/ss"
-          // TODO: refresh
-          onFinish={() => {}}
-        />
+        <>
+          <Text>Remainder</Text>
+          <NewBaseCountdown
+            className="countdown-wrapper"
+            value={projectInfo?.unlockTime ? dayjs(projectInfo.unlockTime).valueOf() : 0}
+            // TODO: refresh
+            onFinish={() => {}}
+          />
+        </>
+      );
+    } else if (projectInfo?.status === ProjectStatus.CANCELED) {
+      return (
+        <>
+          <Text>Canceled Time</Text>
+          <Text fontWeight={FontWeightEnum.Medium}>
+            {projectInfo?.cancelTime ? dayjs(projectInfo?.cancelTime).format('DD MMM YYYY') : '--'}
+          </Text>
+        </>
+      );
+    } else if (projectInfo?.status === ProjectStatus.ENDED) {
+      return (
+        <>
+          <Text>Ended Time</Text>
+          <Text fontWeight={FontWeightEnum.Medium}>
+            {projectInfo?.endTime ? dayjs(projectInfo?.endTime).format('DD MMM YYYY') : '--'}
+          </Text>
+        </>
       );
     } else {
       return '--';
@@ -168,10 +183,7 @@ export default function JoinCard({ projectInfo, isPreview }: IJoinCardProps) {
       </div>
       <div className="divider" />
       <Flex vertical gap={12}>
-        <div className="flex-between-center">
-          <Text>Remainder</Text>
-          {renderRemainder()}
-        </div>
+        <div className="flex-between-center">{renderRemainder()}</div>
         <div className="flex-between-center">
           <Text>Sale Price</Text>
           <Text fontWeight={FontWeightEnum.Medium}>
