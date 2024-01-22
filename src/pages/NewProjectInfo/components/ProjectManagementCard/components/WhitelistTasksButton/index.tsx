@@ -10,11 +10,12 @@ import './styles.less';
 interface IWhitelistTasksButtonProps {
   whitelistId?: string;
   whitelistTasksUrl?: string;
+  disabled?: boolean;
 }
 
 const { Text } = Typography;
 
-export default function WhitelistTasksButton({ whitelistId, whitelistTasksUrl }: IWhitelistTasksButtonProps) {
+export default function WhitelistTasksButton({ whitelistId, whitelistTasksUrl, disabled }: IWhitelistTasksButtonProps) {
   const { wallet, checkManagerSyncState } = useWallet();
   const [messageApi, contextHolder] = message.useMessage();
 
@@ -82,7 +83,7 @@ export default function WhitelistTasksButton({ whitelistId, whitelistTasksUrl }:
             <Button className="flex-1" onClick={() => setIsWhitelistTasksModalOpen(false)}>
               Cancel
             </Button>
-            <Button className="flex-1" type="primary" disabled={!urlInputValue} onClick={handleSubmit}>
+            <Button className="flex-1" type="primary" disabled={disabled || !urlInputValue} onClick={handleSubmit}>
               Submit
             </Button>
           </Flex>

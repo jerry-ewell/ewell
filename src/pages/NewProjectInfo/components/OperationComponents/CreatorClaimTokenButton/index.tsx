@@ -29,6 +29,7 @@ export default function CreatorClaimTokenButton({ projectInfo }: ICreatorClaimTo
 
   const [isSubmitModalOpen, setIsSubmitModalOpen] = useState(false);
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
+  const [transactionId, setTransactionId] = useState('');
 
   useEffect(() => {
     if (isSubmitModalOpen) {
@@ -54,7 +55,7 @@ export default function CreatorClaimTokenButton({ projectInfo }: ICreatorClaimTo
       return;
     }
     try {
-      const result = await wallet?.callContract({
+      const result = await wallet?.callContract<any, any>({
         contractAddress: NETWORK_CONFIG.ewellContractAddress,
         methodName: 'Claim',
         args: {
@@ -63,7 +64,8 @@ export default function CreatorClaimTokenButton({ projectInfo }: ICreatorClaimTo
         },
       });
       console.log('Claim result', result);
-      // TODO: polling get Transaction ID
+      const { TransactionId } = result;
+      setTransactionId(TransactionId);
       setIsSuccessModalOpen(true);
     } catch (error: any) {
       console.log('Claim error', error);
@@ -173,19 +175,28 @@ export default function CreatorClaimTokenButton({ projectInfo }: ICreatorClaimTo
           amountList: [
             // TODO: get amount
             {
-              amount: '30',
-              symbol: 'ELF',
+              amount: divDecimalsStr(
+                new BigNumber(projectInfo?.currentRaisedAmount || '').plus(
+                  projectInfo?.receivableLiquidatedDamageAmount || '',
+                ),
+                projectInfo?.toRaiseToken?.decimals,
+              ),
+              symbol: projectInfo?.toRaiseToken?.symbol || '--',
             },
             {
-              amount: '30,000',
-              symbol: 'PIGE',
+              amount: divDecimalsStr(
+                new BigNumber(projectInfo?.crowdFundingIssueAmount || '').minus(
+                  projectInfo?.currentCrowdFundingIssueAmount || '',
+                ),
+                projectInfo?.crowdFundingIssueToken?.decimals,
+              ),
+              symbol: projectInfo?.crowdFundingIssueToken?.symbol || '--',
             },
           ],
           description: 'Congratulations, transfer success!',
           boxData: {
             label: 'Transaction ID',
-            // TODO: get txId
-            value: 'ELF_0x00…14dC_AELF',
+            value: transactionId,
           },
         }}
       />

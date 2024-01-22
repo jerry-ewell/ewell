@@ -32,6 +32,7 @@ export default function ClaimTokenButton({ projectInfo }: IClaimTokenButtonProps
 
   const [isSubmitModalOpen, setIsSubmitModalOpen] = useState(false);
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
+  const [transactionId, setTransactionId] = useState('');
 
   useEffect(() => {
     if (isSubmitModalOpen) {
@@ -57,7 +58,7 @@ export default function ClaimTokenButton({ projectInfo }: IClaimTokenButtonProps
       return;
     }
     try {
-      const result = await wallet?.callContract({
+      const result = await wallet?.callContract<any, any>({
         contractAddress: NETWORK_CONFIG.ewellContractAddress,
         methodName: 'Claim',
         args: {
@@ -66,7 +67,8 @@ export default function ClaimTokenButton({ projectInfo }: IClaimTokenButtonProps
         },
       });
       console.log('Claim result', result);
-      // TODO: process result
+      const { TransactionId } = result;
+      setTransactionId(TransactionId);
       setIsSuccessModalOpen(true);
     } catch (error: any) {
       console.log('Claim error', error);
@@ -166,8 +168,7 @@ export default function ClaimTokenButton({ projectInfo }: IClaimTokenButtonProps
           description: 'Congratulations, claimed successfully!',
           boxData: {
             label: 'Transaction ID',
-            // TODO: get the value
-            value: 'ELF_0x00…14dC_AELF',
+            value: transactionId,
           },
         }}
       />

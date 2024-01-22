@@ -24,7 +24,7 @@ export default function InfoWrapper({ projectInfo }: IInfoWrapperProps) {
       <div className="info-wrapper flex-1 flex-column">
         <div className="info-header flex-column">
           <Title level={5} fontWeight={FontWeightEnum.Medium}>
-            {additionalInfo?.projectName}
+            {additionalInfo?.projectName || '--'}
           </Title>
           <Flex gap={12} align="center">
             {Object.entries(additionalInfo || [])
@@ -43,7 +43,7 @@ export default function InfoWrapper({ projectInfo }: IInfoWrapperProps) {
           </Flex>
           {!!additionalInfo?.projectSummary && <Text>{additionalInfo?.projectSummary}</Text>}
         </div>
-        <Carousel className="carousel" data={projectImgs} />
+        {projectImgs.length > 0 && <Carousel className="carousel" data={projectImgs} />}
         <ProjectTabs projectInfo={projectInfo} />
       </div>
     </div>

@@ -28,6 +28,7 @@ export default function RevokeFineButton({ projectInfo }: IClaimTokenButtonProps
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [isSubmitModalOpen, setIsSubmitModalOpen] = useState(true);
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
+  const [transactionId, setTransactionId] = useState('');
 
   const handleSubmit = async () => {
     setIsSubmitModalOpen(false);
@@ -39,13 +40,14 @@ export default function RevokeFineButton({ projectInfo }: IClaimTokenButtonProps
       return;
     }
     try {
-      const result = await wallet?.callContract({
+      const result = await wallet?.callContract<any, any>({
         contractAddress: NETWORK_CONFIG.ewellContractAddress,
         methodName: 'ClaimLiquidatedDamage',
         args: projectId,
       });
       console.log('ClaimLiquidatedDamage result', result);
-      // TODO: polling get Transaction ID
+      const { TransactionId } = result;
+      setTransactionId(TransactionId);
       setIsSuccessModalOpen(true);
     } catch (error: any) {
       console.log('ClaimLiquidatedDamage error', error);
@@ -158,15 +160,14 @@ export default function RevokeFineButton({ projectInfo }: IClaimTokenButtonProps
           amountList: [
             {
               // TODO: get value
-              amount: '3.3604',
-              symbol: 'ELF',
+              amount: divDecimalsStr(projectInfo?.liquidatedDamageAmount, projectInfo?.toRaiseToken?.decimals),
+              symbol: projectInfo?.toRaiseToken?.symbol || '--',
             },
           ],
           description: 'Congratulations, your token has been revoked successfully!',
           boxData: {
             label: 'Transaction ID',
-            // TODO: get value
-            value: 'ELF_0x00…14dC_AELF',
+            value: transactionId,
           },
         }}
       />

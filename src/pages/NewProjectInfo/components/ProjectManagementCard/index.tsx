@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Flex, Switch, message } from 'antd';
 import { Button, Typography, FontWeightEnum } from 'aelf-design';
@@ -28,6 +28,10 @@ export default function ProjectManagementCard({ projectInfo }: IProjectManagemen
 
   const [isWhitelistSwitchLoading, setIsWhitelistSwitchLoading] = useState(false);
 
+  const canEdit = useMemo(() => {
+    return projectInfo?.status === ProjectStatus.UPCOMING || projectInfo?.status === ProjectStatus.PARTICIPATORY;
+  }, [projectInfo?.status]);
+
   const handleWhitelistSwitchChange = async (checked: boolean) => {
     setIsWhitelistSwitchLoading(true);
     const isManagerSynced = await checkManagerSyncState();
@@ -39,7 +43,7 @@ export default function ProjectManagementCard({ projectInfo }: IProjectManagemen
     try {
       const txResult = await wallet?.callContract({
         contractAddress: NETWORK_CONFIG.whitelistContractAddress,
-        methodName: projectInfo?.isEnableWhitelist ? 'DisableWhitelist' : 'EnableWhitelist',
+        methodName: checked ? 'DisableWhitelist' : 'EnableWhitelist',
         args: projectInfo?.whitelistId,
       });
       console.log('txResult', txResult);
@@ -80,6 +84,7 @@ export default function ProjectManagementCard({ projectInfo }: IProjectManagemen
               <Switch
                 size="small"
                 loading={isWhitelistSwitchLoading}
+                disabled={!canEdit}
                 checked={projectInfo?.isEnableWhitelist}
                 onChange={handleWhitelistSwitchChange}
               />
@@ -90,6 +95,7 @@ export default function ProjectManagementCard({ projectInfo }: IProjectManagemen
               <WhitelistTasksButton
                 whitelistId={projectInfo?.whitelistId}
                 whitelistTasksUrl={projectInfo?.whitelistInfo?.url}
+                disabled={!canEdit}
               />
               <Button
                 onClick={() => {
@@ -100,6 +106,7 @@ export default function ProjectManagementCard({ projectInfo }: IProjectManagemen
               <UpdateWhitelistUsersButton
                 buttonProps={{
                   children: 'Add Whitelisted Users',
+                  disabled: !canEdit,
                 }}
                 updateType={UpdateType.ADD}
                 whitelistId={projectInfo?.whitelistId}
@@ -108,6 +115,7 @@ export default function ProjectManagementCard({ projectInfo }: IProjectManagemen
               <UpdateWhitelistUsersButton
                 buttonProps={{
                   children: 'Remove Whitelisted Users',
+                  disabled: !canEdit,
                 }}
                 updateType={UpdateType.REMOVE}
                 whitelistId={projectInfo?.whitelistId}
@@ -119,7 +127,9 @@ export default function ProjectManagementCard({ projectInfo }: IProjectManagemen
         <div className="divider" />
         <Flex vertical gap={12}>
           <Text fontWeight={FontWeightEnum.Medium}>Project</Text>
-          <CancelProjectButton projectInfo={projectInfo} />
+          {(projectInfo?.status === ProjectStatus.UPCOMING ||
+            projectInfo?.status === ProjectStatus.PARTICIPATORY ||
+            projectInfo?.status === ProjectStatus.UNLOCKED) && <CancelProjectButton projectInfo={projectInfo} />}
           {projectInfo?.status === ProjectStatus.ENDED && !projectInfo?.isWithdraw && (
             <CreatorClaimTokenButton projectInfo={projectInfo} />
           )}

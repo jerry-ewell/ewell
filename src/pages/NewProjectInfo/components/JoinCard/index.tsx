@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import clsx from 'clsx';
 import dayjs from 'dayjs';
 import BigNumber from 'bignumber.js';
@@ -14,10 +14,11 @@ import { IProjectInfo, ProjectStatus } from 'types/project';
 import { PROJECT_STATUS_TEXT_MAP } from 'constants/project';
 import { useWallet } from 'contexts/useWallet/hooks';
 import { ZERO } from 'constants/misc';
-import { divDecimals, divDecimalsStr } from 'utils/calculate';
+import { divDecimals, divDecimalsStr, timesDecimals } from 'utils/calculate';
 import { getPriceDecimal } from 'utils';
 import { parseInputNumberChange } from 'utils/input';
-import { useBalances } from 'hooks/useBalances';
+import { useBalance } from 'hooks/useBalance';
+import { useTxFee } from 'contexts/useAssets/hooks';
 import './styles.less';
 
 const { Title, Text } = Typography;
@@ -31,18 +32,44 @@ export default function JoinCard({ projectInfo, isPreview }: IJoinCardProps) {
   const { wallet } = useWallet();
   const isLogin = !!wallet;
 
-  const [balances] = useBalances(projectInfo?.toRaiseToken?.symbol);
-  // console.log('balance: ', balances[0].toNumber());
+  const { txFee } = useTxFee();
+  const { balance } = useBalance(projectInfo?.toRaiseToken?.symbol);
 
   const [purchaseInputValue, setPurchaseInputValue] = useState('');
   const [purchaseInputErrorMessage, setPurchaseInputErrorMessage] = useState('');
+  const [isPurchaseInputting, setIsPurchaseInputting] = useState(false);
+  const [isPurchaseButtonDisabled, setIsPurchaseButtonDisabled] = useState(true);
+
+  const txFeeAmount = useMemo(() => {
+    return timesDecimals(txFee, projectInfo?.toRaiseToken?.decimals);
+  }, [txFee, projectInfo?.toRaiseToken?.decimals]);
+
+  const canPurchaseAmount = useMemo(() => {
+    return ZERO.plus(balance).minus(txFeeAmount);
+  }, [balance, txFeeAmount]);
 
   const maxCanInvestAmount = useMemo(() => {
-    const maxInvest = ZERO.plus(projectInfo?.toRaisedAmount ?? 0).minus(projectInfo?.currentRaisedAmount ?? 0);
-    const canInput = ZERO.plus(projectInfo?.maxSubscription ?? 0).minus(projectInfo?.investAmount ?? 0);
-    const arr = [maxInvest, canInput, balances?.[0]];
+    const remainingToRaisedAmount = ZERO.plus(projectInfo?.toRaisedAmount ?? 0).minus(
+      projectInfo?.currentRaisedAmount ?? 0,
+    );
+    const currentMaxSubscription = ZERO.plus(projectInfo?.maxSubscription ?? 0).minus(projectInfo?.investAmount ?? 0);
+    const arr = [remainingToRaisedAmount, currentMaxSubscription, canPurchaseAmount];
     return BigNumber.min.apply(null, arr);
-  }, [projectInfo, balances]);
+  }, [
+    canPurchaseAmount,
+    projectInfo?.currentRaisedAmount,
+    projectInfo?.investAmount,
+    projectInfo?.maxSubscription,
+    projectInfo?.toRaisedAmount,
+  ]);
+
+  const minCanInvestAmount = useMemo(() => {
+    return new BigNumber(projectInfo?.minSubscription || '');
+  }, [projectInfo?.minSubscription]);
+
+  const notEnoughTokens = useMemo(() => {
+    return canPurchaseAmount.lt(minCanInvestAmount);
+  }, [canPurchaseAmount, minCanInvestAmount]);
 
   const progressPercent = useMemo(() => {
     const percent = ZERO.plus(projectInfo?.currentRaisedAmount ?? 0)
@@ -51,45 +78,72 @@ export default function JoinCard({ projectInfo, isPreview }: IJoinCardProps) {
     return percent.isNaN() ? ZERO : percent;
   }, [projectInfo?.currentRaisedAmount, projectInfo?.toRaisedAmount]);
 
+  useEffect(() => {
+    setIsPurchaseButtonDisabled((pre) => {
+      if (isPreview) {
+        return true;
+      } else if (isPurchaseInputting) {
+        return pre;
+      } else {
+        return !!purchaseInputErrorMessage || !purchaseInputValue;
+      }
+    });
+  }, [isPreview, isPurchaseInputting, purchaseInputErrorMessage, purchaseInputValue]);
+
   const renderRemainder = () => {
-    if (projectInfo?.status === ProjectStatus.ENDED) {
+    if (projectInfo?.status === ProjectStatus.UPCOMING) {
       return (
-        <Text fontWeight={FontWeightEnum.Medium}>
-          {projectInfo?.endTime ? dayjs(projectInfo?.endTime).format('DD-MM-YYYY\nH:mm [UTC] Z') : '-'}
-        </Text>
-      );
-    } else if (projectInfo?.status === ProjectStatus.CANCELED) {
-      return (
-        <Text fontWeight={FontWeightEnum.Medium}>
-          {projectInfo?.cancelTime ? dayjs(projectInfo?.cancelTime).format('DD-MM-YYYY\nH:mm [UTC] Z') : '-'}
-        </Text>
-      );
-    } else if (projectInfo?.status === ProjectStatus.UPCOMING) {
-      return (
-        <NewBaseCountdown
-          value={projectInfo?.startTime ? dayjs(projectInfo.startTime).valueOf() : 0}
-          format="HH/mm/ss"
-          // TODO: refresh
-          onFinish={() => {}}
-        />
+        <>
+          <Text>Remainder</Text>
+          <NewBaseCountdown
+            className="countdown-wrapper"
+            value={projectInfo?.startTime ? dayjs(projectInfo.startTime).valueOf() : 0}
+            // TODO: refresh
+            onFinish={() => {}}
+          />
+        </>
       );
     } else if (projectInfo?.status === ProjectStatus.PARTICIPATORY) {
       return (
-        <NewBaseCountdown
-          value={projectInfo?.endTime ? dayjs(projectInfo.endTime).valueOf() : 0}
-          format="HH/mm/ss"
-          // TODO: refresh
-          onFinish={() => {}}
-        />
+        <>
+          <Text>Remainder</Text>
+          <NewBaseCountdown
+            className="countdown-wrapper"
+            value={projectInfo?.endTime ? dayjs(projectInfo.endTime).valueOf() : 0}
+            // TODO: refresh
+            onFinish={() => {}}
+          />
+        </>
       );
     } else if (projectInfo?.status === ProjectStatus.UNLOCKED) {
       return (
-        <NewBaseCountdown
-          value={projectInfo?.unlockTime ? dayjs(projectInfo.unlockTime).valueOf() : 0}
-          format="HH/mm/ss"
-          // TODO: refresh
-          onFinish={() => {}}
-        />
+        <>
+          <Text>Remainder</Text>
+          <NewBaseCountdown
+            className="countdown-wrapper"
+            value={projectInfo?.unlockTime ? dayjs(projectInfo.unlockTime).valueOf() : 0}
+            // TODO: refresh
+            onFinish={() => {}}
+          />
+        </>
+      );
+    } else if (projectInfo?.status === ProjectStatus.CANCELED) {
+      return (
+        <>
+          <Text>Canceled Time</Text>
+          <Text fontWeight={FontWeightEnum.Medium}>
+            {projectInfo?.cancelTime ? dayjs(projectInfo?.cancelTime).format('DD MMM YYYY') : '--'}
+          </Text>
+        </>
+      );
+    } else if (projectInfo?.status === ProjectStatus.ENDED) {
+      return (
+        <>
+          <Text>Ended Time</Text>
+          <Text fontWeight={FontWeightEnum.Medium}>
+            {projectInfo?.endTime ? dayjs(projectInfo?.endTime).format('DD MMM YYYY') : '--'}
+          </Text>
+        </>
       );
     } else {
       return '--';
@@ -129,10 +183,7 @@ export default function JoinCard({ projectInfo, isPreview }: IJoinCardProps) {
       </div>
       <div className="divider" />
       <Flex vertical gap={12}>
-        <div className="flex-between-center">
-          <Text>Remainder</Text>
-          {renderRemainder()}
-        </div>
+        <div className="flex-between-center">{renderRemainder()}</div>
         <div className="flex-between-center">
           <Text>Sale Price</Text>
           <Text fontWeight={FontWeightEnum.Medium}>
@@ -193,9 +244,7 @@ export default function JoinCard({ projectInfo, isPreview }: IJoinCardProps) {
               <div className="flex-between-center">
                 <Text>My Allocation</Text>
                 <Text fontWeight={FontWeightEnum.Medium}>
-                  {projectInfo?.investAmount
-                    ? divDecimalsStr(projectInfo?.investAmount, projectInfo?.toRaiseToken?.decimals ?? 8)
-                    : 0}{' '}
+                  {divDecimalsStr(projectInfo?.investAmount, projectInfo?.toRaiseToken?.decimals ?? 8, '0')}{' '}
                   {projectInfo?.toRaiseToken?.symbol ?? '--'}
                 </Text>
               </div>
@@ -208,16 +257,7 @@ export default function JoinCard({ projectInfo, isPreview }: IJoinCardProps) {
                   {projectInfo?.status === ProjectStatus.ENDED && projectInfo?.isWithdraw ? 'Receive' : 'To Receive'}
                 </Text>
                 <Text fontWeight={FontWeightEnum.Medium}>
-                  {projectInfo?.investAmount
-                    ? divDecimals(projectInfo?.investAmount, projectInfo?.toRaiseToken?.decimals)
-                        .times(
-                          divDecimals(
-                            projectInfo?.preSalePrice ?? 0,
-                            getPriceDecimal(projectInfo?.crowdFundingIssueToken, projectInfo?.toRaiseToken),
-                          ),
-                        )
-                        .toFixed()
-                    : 0}{' '}
+                  {divDecimalsStr(projectInfo?.toClaimAmount, projectInfo?.crowdFundingIssueToken?.decimals, '0')}{' '}
                   {projectInfo?.crowdFundingIssueToken?.symbol ?? '--'}
                 </Text>
               </div>
@@ -235,23 +275,47 @@ export default function JoinCard({ projectInfo, isPreview }: IJoinCardProps) {
                     stringMode
                     addonAfter={
                       <div className="max-operation-wrapper">
-                        <Title className="max-operation purple-text cursor-pointer" fontWeight={FontWeightEnum.Medium}>
+                        <Title
+                          className="max-operation purple-text cursor-pointer"
+                          fontWeight={FontWeightEnum.Medium}
+                          onClick={() => {
+                            setPurchaseInputValue(
+                              divDecimals(maxCanInvestAmount, projectInfo?.toRaiseToken?.decimals).toString(),
+                            );
+                          }}
+                          disabled={isPreview || notEnoughTokens}>
                           MAX
                         </Title>
                       </div>
                     }
                     disabled={isPreview}
+                    min="0"
                     value={purchaseInputValue}
                     onChange={(value) => {
                       setPurchaseInputValue(parseInputNumberChange(value || '', projectInfo?.toRaiseToken?.decimals));
                     }}
+                    onFocus={() => {
+                      setIsPurchaseInputting(true);
+                    }}
                     onBlur={() => {
-                      // TODO: validate
+                      const value = new BigNumber(purchaseInputValue);
+                      if (value.gt(divDecimals(maxCanInvestAmount, projectInfo?.toRaiseToken?.decimals))) {
+                        setPurchaseInputErrorMessage(
+                          `Max Amount ${divDecimalsStr(maxCanInvestAmount, projectInfo?.toRaiseToken?.decimals)}`,
+                        );
+                      } else if (value.lt(divDecimals(minCanInvestAmount, projectInfo?.toRaiseToken?.decimals))) {
+                        setPurchaseInputErrorMessage(
+                          `Min Amount ${divDecimalsStr(minCanInvestAmount, projectInfo?.toRaiseToken?.decimals)}`,
+                        );
+                      } else {
+                        setPurchaseInputErrorMessage('');
+                      }
+                      setIsPurchaseInputting(false);
                     }}
                   />
                 </Form.Item>
                 <PurchaseButton
-                  buttonDisabled={isPreview || !!purchaseInputErrorMessage || !purchaseInputValue}
+                  buttonDisabled={isPurchaseButtonDisabled}
                   projectInfo={projectInfo}
                   purchaseAmount={purchaseInputValue}
                 />

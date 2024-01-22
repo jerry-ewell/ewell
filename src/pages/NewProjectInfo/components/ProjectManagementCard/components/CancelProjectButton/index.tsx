@@ -27,6 +27,7 @@ export default function CancelProjectButton({ projectInfo }: ICancelProjectButto
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [isSubmitModalOpen, setIsSubmitModalOpen] = useState(false);
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
+  const [transactionId, setTransactionId] = useState('');
 
   const handleSubmit = async () => {
     setIsSubmitModalOpen(false);
@@ -44,7 +45,8 @@ export default function CancelProjectButton({ projectInfo }: ICancelProjectButto
         args: projectId,
       });
       console.log('result', result);
-      // TODO: polling get Transaction ID
+      const { TransactionId } = result;
+      setTransactionId(TransactionId);
       setIsSuccessModalOpen(true);
     } catch (error: any) {
       console.log('Cancel error', error);
@@ -165,8 +167,7 @@ export default function CancelProjectButton({ projectInfo }: ICancelProjectButto
           description: 'Congratulations, transfer success!',
           boxData: {
             label: 'Transaction ID',
-            // TODO: get txId
-            value: 'ELF_0x00000000000000ADc04C56Bf30aC9d3c0aAF14dC_AELF',
+            value: transactionId,
           },
         }}
       />
