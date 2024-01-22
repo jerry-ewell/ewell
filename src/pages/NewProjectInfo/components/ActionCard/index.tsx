@@ -6,6 +6,7 @@ import { edit, login as loginIcon } from 'assets/images';
 import { useWallet } from 'contexts/useWallet/hooks';
 import { IProjectInfo } from 'types/project';
 import './styles.less';
+import { useMemo } from 'react';
 
 interface IActionCardProps {
   projectInfo: IProjectInfo;
@@ -14,11 +15,14 @@ interface IActionCardProps {
 
 export default function ActionCard({ projectInfo, isPreview }: IActionCardProps) {
   const { login, wallet } = useWallet();
-  const isLogin = !!wallet;
+  const isLogin = useMemo(() => !!wallet, [wallet]);
+  const canEdit = useMemo(() => {
+    return !!isLogin && projectInfo?.isCreator && !isPreview;
+  }, [isLogin, isPreview, projectInfo?.isCreator]);
 
   return (
     <Flex className="action-card-wrapper flex-1" vertical gap={24}>
-      {!isPreview && (
+      {canEdit && (
         <Button className="edit-button" icon={<img src={edit} alt="edit" />}>
           Edit Project Information
         </Button>
@@ -33,7 +37,7 @@ export default function ActionCard({ projectInfo, isPreview }: IActionCardProps)
           Log in to view details
         </Button>
       )}
-      {!!isLogin && projectInfo?.isCreator && !isPreview && <ProjectManagementCard projectInfo={projectInfo} />}
+      {canEdit && <ProjectManagementCard projectInfo={projectInfo} />}
     </Flex>
   );
 }
