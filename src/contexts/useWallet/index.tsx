@@ -155,15 +155,6 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
     };
   }, [wallet]);
 
-  useEffect(() => {
-    const { remove } = myEvents.RefuseAuth.addListener(() => {
-      logout();
-    });
-    return () => {
-      remove();
-    };
-  }, [logout]);
-
   return (
     <WalletContext.Provider value={useMemo(() => [state, dispatch], [state, dispatch])}>
       {children}

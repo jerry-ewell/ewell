@@ -85,6 +85,9 @@ export const ANTD_THEME_CONFIG: ThemeConfig = {
       trackMinWidthSM: 28,
       colorPrimaryHover: '#070A26',
     },
+    Checkbox: {
+      controlInteractiveSize: 16,
+    },
   },
 };
 

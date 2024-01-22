@@ -20,6 +20,7 @@ import { Drawer } from 'antd';
 import { createStyles } from 'antd-style';
 import type { DrawerClassNames } from 'antd/es/drawer/DrawerPanel';
 import { COMMUNITY_LIST } from 'constants/community';
+import { WelcomeModal } from 'components/WelcomeModal';
 
 const useStyle = createStyles(() => ({
   'menu-drawer-header': {
@@ -215,6 +216,7 @@ export default function Header() {
           </div>
         </div>
       </header>
+      <WelcomeModal />
       {isMobile && (
         <div className="menu-drawer"></div>
         // <Drawer
