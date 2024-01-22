@@ -34,7 +34,7 @@ export default function JoinCard({ projectInfo, isPreview }: IJoinCardProps) {
   const isLogin = !!wallet;
 
   const [balances] = useBalances(projectInfo?.toRaiseToken?.symbol);
-  console.log('balance: ', balances[0].toNumber());
+  // console.log('balance: ', balances[0].toNumber());
 
   const [purchaseInputValue, setPurchaseInputValue] = useState('');
   const [purchaseInputErrorMessage, setPurchaseInputErrorMessage] = useState('');
