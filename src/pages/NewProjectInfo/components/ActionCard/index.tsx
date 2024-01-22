@@ -5,23 +5,25 @@ import ProjectManagementCard from '../ProjectManagementCard';
 import { edit, login as loginIcon } from 'assets/images';
 import { useWallet } from 'contexts/useWallet/hooks';
 import { IProjectInfo } from 'types/project';
-import { tempInfo } from '../temp';
 import './styles.less';
 
 interface IActionCardProps {
   projectInfo: IProjectInfo;
+  isPreview?: boolean;
 }
 
-export default function ActionCard({ projectInfo }: IActionCardProps) {
+export default function ActionCard({ projectInfo, isPreview }: IActionCardProps) {
   const { login, wallet } = useWallet();
   const isLogin = !!wallet;
 
   return (
     <Flex className="action-card-wrapper flex-1" vertical gap={24}>
-      <Button className="edit-button" icon={<img src={edit} alt="edit" />}>
-        Edit Project Information
-      </Button>
-      <JoinCard projectInfo={projectInfo} />
+      {!isPreview && (
+        <Button className="edit-button" icon={<img src={edit} alt="edit" />}>
+          Edit Project Information
+        </Button>
+      )}
+      <JoinCard projectInfo={projectInfo} isPreview={isPreview} />
       {!isLogin && (
         <Button
           className="login-button"
@@ -31,7 +33,7 @@ export default function ActionCard({ projectInfo }: IActionCardProps) {
           Log in to view details
         </Button>
       )}
-      {!!isLogin && tempInfo.isCreator && <ProjectManagementCard projectInfo={projectInfo} />}
+      {!!isLogin && projectInfo?.isCreator && !isPreview && <ProjectManagementCard projectInfo={projectInfo} />}
     </Flex>
   );
 }

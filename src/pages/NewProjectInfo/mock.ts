@@ -91,3 +91,57 @@ export const mockWhitelistInfo = {
   strategyType: 'Basic',
   url: 'https://www.google.com/',
 };
+
+export const mockPreviewData = {
+  chainId: 'tDVV',
+  crowdFundingType: 'Sell at the set price',
+  startTime: '2024-01-18T11:53:01Z',
+  endTime: '2024-01-25T03:52:01Z',
+  toRaisedAmount: '1000000000',
+  crowdFundingIssueAmount: '1000000000',
+  preSalePrice: '100000000',
+  minSubscription: '1',
+  maxSubscription: '1000000000',
+  unlockTime: '2024-01-29T17:52:01Z',
+  additionalInfo: {
+    projectName: 'Citizen Conflict',
+    projectSummary:
+      'The mobile game immerses players in a metaverse that bridges the virtual and physical worlds, DEFY fuses hyper casual code-breaking gameplay, with real world exploration and Augmented Reality (AR) adventures.',
+    projectDescription:
+      'The DEFY team believes that in order to make P&E sustainable for the long term, it is critical to wrap the earning mechanics in a fun, highly engaging game which is rewarding beyond just playing to earn. Using a rich narrative and introducing novel new features into the game, DEFY is built for the long term. Furthermore, the DEFY game economy has been built to harness the creativity of the community, via the upcoming creators platform which will allow users to burn $DEFY tokens in order to forge and create new NFT game assets which may be sold via a native marketplace. By doing this, DEFY is creating a platform that has the ability to absorb and distribute value in multiple ways. Location based play and earn game DEFY fuses hyper casual code breaking gameplay, real world exploration and AR adventures The mobile game immerses players in a metaverse that bridges the virtual and physical worlds, DEFY fuses hyper casual code-breaking gameplay, with real world exploration and Augmented Reality (AR) adventures. DEFY Labs is proud to announce the completion of their US$3.5m seed round led by Animoca Brands, liveXThe Spartan Group, GameFi Ventures, BIXIN, Polygon Studios, Unanimous Capital, PathDAO andPlay It Forward DAO DEFY’s in-game economy has been designed with scale and longevity in mind. A dual currency model is combined with an extensive set of customisable tradable game assets as well as multiple active and passive earning mechanisms that can be leveraged by the players. A creators platform will be added for content creators to collaborate with DEFY and bring NFTs into Augmented Reality. DEFY intends to bring PvP into DEFY which creates huge longevity.',
+    x: 'https://www.google.com/',
+    telegram: 'https://www.google.com/',
+    medium: 'https://www.google.com/',
+    logoUrl: '',
+    projectImgs: 'url1,url2',
+  },
+  isCanceled: false,
+  isEnableWhitelist: true,
+  whitelistId: '3e205f05b2eae8833f8b10300f3d5246728dfb43d3fd249b0809ecda6492abc6',
+  currentRaisedAmount: '0',
+  currentCrowdFundingIssueAmount: '0',
+  receivableLiquidatedDamageAmount: '0',
+  toRaiseToken: {
+    chainId: 'tDVV',
+    symbol: 'ELF',
+    name: 'Native Token',
+    address: '7RzVGiuVWkvL4VfVHdZfQF2Tri3sgLe9U991bohHFfSRZXuGX',
+    decimals: 8,
+    id: 'tDVV-ELF',
+  },
+  crowdFundingIssueToken: {
+    chainId: 'tDVV',
+    symbol: 'LINHONG',
+    name: 'LINHONG token',
+    address: '7RzVGiuVWkvL4VfVHdZfQF2Tri3sgLe9U991bohHFfSRZXuGX',
+    decimals: 8,
+    id: 'tDVV-LINHONG',
+  },
+  investAmount: '0',
+  toClaimAmount: '0',
+  status: 2, // UPCOMING
+  isInWhitelist: false,
+  whitelistInfo: {
+    url: 'https://www.google.com/',
+  },
+};

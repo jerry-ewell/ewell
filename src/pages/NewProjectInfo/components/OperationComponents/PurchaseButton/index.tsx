@@ -1,7 +1,7 @@
-import { useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import BigNumber from 'bignumber.js';
 import { useParams } from 'react-router-dom';
-import { Flex } from 'antd';
+import { Flex, message } from 'antd';
 import { Button, FontWeightEnum, HashAddress, Modal, Typography } from 'aelf-design';
 import ProjectLogo from 'components/ProjectLogo';
 import SuccessModal from '../SuccessModal';
@@ -11,7 +11,7 @@ import { tempInfo } from '../../temp';
 import { NETWORK_CONFIG } from 'constants/network';
 import { divDecimals, divDecimalsStr } from 'utils/calculate';
 import { getPriceDecimal } from 'utils';
-import { useBalances } from 'hooks/useBalances';
+import { useViewContract } from 'contexts/useViewContract/hooks';
 import { useWallet } from 'contexts/useWallet/hooks';
 import { emitLoading } from 'utils/events';
 import { timesDecimals } from 'utils/calculate';
@@ -30,14 +30,39 @@ export default function PurchaseButton({ buttonDisabled, projectInfo, purchaseAm
   const { projectId } = useParams();
   const { additionalInfo } = projectInfo || {};
   const { wallet, checkManagerSyncState } = useWallet();
-  const [balances] = useBalances(projectInfo?.toRaiseToken?.symbol);
-  console.log('balances: ', balances?.[0].toNumber());
+  const { getTokenContract } = useViewContract();
+  const [messageApi, contextHolder] = message.useMessage();
 
   const [isSubmitModalOpen, setIsSubmitModalOpen] = useState(false);
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
+  const [balance, setBalance] = useState('0');
+  const [transactionId, setTransactionId] = useState('');
 
   // TODO: get estimatedTransactionFee
   const estimatedTransactionFee = '3604';
+
+  const getBalance = useCallback(async () => {
+    const tokenContract = await getTokenContract();
+    const result = await tokenContract.GetBalance.call({
+      symbol: projectInfo?.crowdFundingIssueToken?.symbol,
+      owner: wallet?.walletInfo.address,
+    });
+    setBalance(result.balance);
+  }, [getTokenContract, projectInfo?.crowdFundingIssueToken?.symbol, wallet?.walletInfo.address]);
+
+  useEffect(() => {
+    if (isSubmitModalOpen) {
+      getBalance();
+    }
+  }, [getBalance, isSubmitModalOpen]);
+
+  const allocationAmount = useMemo(() => {
+    return timesDecimals(purchaseAmount, projectInfo?.toRaiseToken?.decimals);
+  }, [projectInfo?.toRaiseToken?.decimals, purchaseAmount]);
+
+  const totalAllocationAmount = useMemo(() => {
+    return new BigNumber(projectInfo?.investAmount ?? 0).plus(allocationAmount);
+  }, [allocationAmount, projectInfo?.investAmount]);
 
   const handleSubmit = async () => {
     setIsSubmitModalOpen(false);
@@ -47,7 +72,7 @@ export default function PurchaseButton({ buttonDisabled, projectInfo, purchaseAm
       return;
     }
     emitLoading(true, { text: 'Processing on the blockchain...' });
-    const amount = timesDecimals(purchaseAmount, projectInfo?.toRaiseToken?.decimals).toFixed();
+    const amount = allocationAmount.toFixed();
 
     try {
       const approveResult = await wallet?.callContract({
@@ -60,9 +85,14 @@ export default function PurchaseButton({ buttonDisabled, projectInfo, purchaseAm
         },
       });
       console.log('approveResult', approveResult);
-    } catch (error) {
+    } catch (error: any) {
       console.log('error', error);
+      messageApi.open({
+        type: 'error',
+        content: error?.message || 'Approve failed',
+      });
       emitLoading(false);
+      return;
     }
 
     try {
@@ -76,10 +106,15 @@ export default function PurchaseButton({ buttonDisabled, projectInfo, purchaseAm
         },
       });
       console.log('investResult', investResult);
-      // TODO: polling get Transaction ID
+      const { TransactionId } = investResult;
+      setTransactionId(TransactionId);
       setIsSuccessModalOpen(true);
-    } catch (error) {
+    } catch (error: any) {
       console.log('error', error);
+      messageApi.open({
+        type: 'error',
+        content: error?.message || 'Invest failed',
+      });
     } finally {
       emitLoading(false);
     }
@@ -87,6 +122,7 @@ export default function PurchaseButton({ buttonDisabled, projectInfo, purchaseAm
 
   return (
     <>
+      {contextHolder}
       <Button
         type="primary"
         disabled={buttonDisabled}
@@ -122,25 +158,21 @@ export default function PurchaseButton({ buttonDisabled, projectInfo, purchaseAm
             <Flex justify="space-between">
               <Text>My Allocation</Text>
               <Text>
-                {projectInfo?.investAmount
-                  ? divDecimalsStr(projectInfo?.investAmount, projectInfo?.toRaiseToken?.decimals ?? 8)
-                  : 0}{' '}
+                {divDecimalsStr(totalAllocationAmount, projectInfo?.toRaiseToken?.decimals ?? 8)}{' '}
                 {projectInfo?.toRaiseToken?.symbol ?? '--'}
               </Text>
             </Flex>
             <Flex justify="space-between">
               <Text>To Receive</Text>
               <Text>
-                {projectInfo?.investAmount
-                  ? divDecimals(projectInfo?.investAmount, projectInfo?.toRaiseToken?.decimals)
-                      .times(
-                        divDecimals(
-                          projectInfo?.preSalePrice ?? 0,
-                          getPriceDecimal(projectInfo?.crowdFundingIssueToken, projectInfo?.toRaiseToken),
-                        ),
-                      )
-                      .toFormat()
-                  : 0}{' '}
+                {divDecimals(totalAllocationAmount, projectInfo?.toRaiseToken?.decimals)
+                  .times(
+                    divDecimals(
+                      projectInfo?.preSalePrice ?? 0,
+                      getPriceDecimal(projectInfo?.crowdFundingIssueToken, projectInfo?.toRaiseToken),
+                    ),
+                  )
+                  .toFormat()}{' '}
                 {projectInfo?.crowdFundingIssueToken?.symbol ?? '--'}
               </Text>
             </Flex>
@@ -151,12 +183,11 @@ export default function PurchaseButton({ buttonDisabled, projectInfo, purchaseAm
               <Text fontWeight={FontWeightEnum.Medium}>Balance</Text>
             </Flex>
             <Text fontWeight={FontWeightEnum.Medium}>
-              {divDecimalsStr(balances?.[0], projectInfo?.toRaiseToken?.decimals ?? 8)}{' '}
+              {divDecimalsStr(balance, projectInfo?.toRaiseToken?.decimals ?? 8)}{' '}
               {projectInfo?.toRaiseToken?.symbol ?? '--'}
             </Text>
           </Flex>
           <Flex vertical gap={8}>
-            {/* TODO: check its meaning */}
             <Flex justify="space-between">
               <Text>Allocation</Text>
               <Flex gap={8} align="baseline">
@@ -220,9 +251,9 @@ export default function PurchaseButton({ buttonDisabled, projectInfo, purchaseAm
           ],
           description: 'Congratulations, payment success!',
           boxData: {
-            // TODO: Transaction ID ?
-            label: 'Contract Address',
-            value: 'ELF_2Pew…W28l_AELF',
+            // TODO: check
+            label: 'Transaction ID',
+            value: transactionId,
           },
         }}
       />
