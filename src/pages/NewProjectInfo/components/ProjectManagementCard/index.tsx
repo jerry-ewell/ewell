@@ -87,6 +87,18 @@ export default function ProjectManagementCard({ projectInfo }: IProjectManagemen
     );
   }, [navigate, projectId, projectInfo]);
 
+  const jumpWhitelistUsers = useCallback(() => {
+    navigate(
+      stringifyUrl({
+        url: `/whitelist-users/${projectInfo?.whitelistId}`,
+        query: {
+          projectName: projectInfo?.additionalInfo?.projectName || '',
+          projectId,
+        },
+      }),
+    );
+  }, [navigate, projectId, projectInfo?.additionalInfo?.projectName, projectInfo?.whitelistId]);
+
   return (
     <>
       {contextHolder}
@@ -120,12 +132,7 @@ export default function ProjectManagementCard({ projectInfo }: IProjectManagemen
                 whitelistTasksUrl={projectInfo?.whitelistInfo?.url}
                 disabled={!canEdit}
               />
-              <Button
-                onClick={() => {
-                  navigate(`/whitelist-users/${projectInfo?.whitelistId}`);
-                }}>
-                Whitelist Users
-              </Button>
+              <Button onClick={jumpWhitelistUsers}>Whitelist Users</Button>
               <UpdateWhitelistUsersButton
                 buttonProps={{
                   children: 'Add Whitelisted Users',

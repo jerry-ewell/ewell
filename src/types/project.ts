@@ -7,7 +7,7 @@ export enum ProjectStatus {
   CANCELED = 6,
 }
 
-export enum ProjecType {
+export enum ProjectType {
   ACTIVE = 1,
   CLOSED = 2,
   CREATED = 3,
@@ -132,4 +132,9 @@ export interface ProjectItem {
 export interface ListMarketInfo {
   market?: string;
   weight?: number;
+}
+
+export enum ProjectListType {
+  ALL = 'all',
+  MY = 'my',
 }

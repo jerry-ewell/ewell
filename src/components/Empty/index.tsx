@@ -2,12 +2,12 @@ import React from 'react';
 import { Flex, FlexProps } from 'antd';
 import EmptyLogo from 'assets/images/project/emptyLogo.png';
 
-interface EmpytProps extends Omit<FlexProps, 'children'> {
+interface EmptyProps extends Omit<FlexProps, 'children'> {
   text?: string | React.ReactNode | any;
   children?: React.ReactNode;
 }
 
-const Empty: React.FC<EmpytProps> = ({ text, style, ...props }) => {
+const Empty: React.FC<EmptyProps> = ({ text, style, ...props }) => {
   return (
     <Flex justify="center" align="center" {...props} style={{ padding: '48px 0', ...style }}>
       <Flex vertical justify="center" align="center">

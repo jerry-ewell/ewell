@@ -111,7 +111,7 @@ export default function Example() {
       liquidityLockProportion: 0, // fixed
       unlockTime: getProtobufTime(Date.now() + 60 * 1000 * 6), // fixed
       tokenReleaseTime: getProtobufTime(Date.now() + 60 * 1000 * 6), // fixed
-      isEnableWhitelist: false,
+      isEnableWhitelist: true,
       isBurnRestToken: false,
       totalPeriod: 1, // fixed
       additionalInfo: {

@@ -1,16 +1,17 @@
 import React from 'react';
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
-import { useParams, NavLink } from 'react-router-dom';
+import { useParams, useLocation, NavLink } from 'react-router-dom';
 import { request } from 'api';
 import { Breadcrumb, Flex, message } from 'antd';
 import { Typography } from 'aelf-design';
+import { WebLoginEvents, useWebLoginEvent } from 'aelf-web-login';
 import ActionCard from './components/ActionCard';
 import InfoWrapper from './components/InfoWrapper';
 import { useMobile } from 'contexts/useStore/hooks';
 import { useWallet } from 'contexts/useWallet/hooks';
 import { useViewContract } from 'contexts/useViewContract/hooks';
-import { DEFAULT_CHAIN_ID, NETWORK_CONFIG } from 'constants/network';
-import { IProjectInfo } from 'types/project';
+import { DEFAULT_CHAIN_ID } from 'constants/network';
+import { IProjectInfo, ProjectListType } from 'types/project';
 import myEvents from 'utils/myEvent';
 import { mockDetail, mockWhitelistInfo, mockPreviewData } from './mock';
 import { emitLoading } from 'utils/events';
@@ -28,6 +29,8 @@ export default function ProjectInfo({ previewData, style }: IProjectInfoProps) {
   const isMobile = useMobile();
   const { wallet } = useWallet();
   const { projectId } = useParams();
+  const location = useLocation();
+  const { from = ProjectListType.ALL } = (location.state || {}) as { from?: ProjectListType };
   const { getWhitelistContract } = useViewContract();
   const isPreview = useMemo(() => !!previewData, [previewData]);
   const [messageApi, contextHolder] = message.useMessage();
@@ -111,15 +114,21 @@ export default function ProjectInfo({ previewData, style }: IProjectInfoProps) {
   const breadList = useMemo(
     () => [
       {
-        // TODO: adjust
-        title: <NavLink to={`/project-list/my`}>My Projects</NavLink>,
+        title: <NavLink to={`/project-list/${from}`}>{from === ProjectListType.MY && 'My '}Projects</NavLink>,
       },
       {
         title: projectInfo?.additionalInfo?.projectName || 'Project Info',
       },
     ],
-    [projectInfo?.additionalInfo?.projectName],
+    [projectInfo?.additionalInfo?.projectName, from],
   );
+
+  const onLogout = useCallback(() => {
+    console.log('onLogout');
+    getProjectInfo();
+  }, [getProjectInfo]);
+
+  useWebLoginEvent(WebLoginEvents.LOGOUT, onLogout);
 
   return (
     <>

@@ -4,7 +4,7 @@ import { useEffectOnce } from 'react-use';
 import { useCardCol } from '../../hooks/useCardCol';
 import PorjectCard, { IProjectCard } from '../Card';
 import { useGetList, IListData } from '../../hooks/useGetList';
-import { ProjecType } from 'types/project';
+import { ProjectType } from 'types/project';
 import Empty from 'components/Empty';
 import { emitLoading } from 'utils/events';
 import InfiniteList from 'components/InfiniteList';
@@ -22,7 +22,7 @@ const MyProjects: React.FC<ProjectListProps> = () => {
   const { getList } = useGetList();
 
   const getCreatedProjects = useCallback(async () => {
-    const { createdItems } = await getList({ types: ProjecType.CREATED });
+    const { createdItems } = await getList({ types: ProjectType.CREATED });
     setCreatedItems(createdItems || []);
   }, [getList]);
 
@@ -31,7 +31,7 @@ const MyProjects: React.FC<ProjectListProps> = () => {
       if (loading) emitLoading(true, { text: 'loading...' });
 
       const list = await getList({
-        types: ProjecType.PARTICIPATE,
+        types: ProjectType.PARTICIPATE,
         skipCount: participateListPageNum,
         maxResultCount: colNum * 3,
         // maxResultCount: 3,
