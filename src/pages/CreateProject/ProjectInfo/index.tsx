@@ -1,105 +1,12 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback } from 'react';
 import { useLocalStorage } from 'react-use';
-import { FormItemProps, FormFields } from 'components/FormItem';
-import { Form, Button, GetProp, message } from 'antd';
-import { getInputOptions, normFile } from 'components/FormItem/utils';
-import { urlValidator } from 'pages/CreateProjectOld/validate';
+import { FormFields } from 'components/FormItem';
+import { Form, message } from 'antd';
 import CustomMark from '../components/CustomMark';
 import { CreateStepPorps } from '../types';
 import ButtonGroup from '../components/ButtonGroup';
 import storages from '../storages';
-
-const formList: FormItemProps[] = [
-  getInputOptions({
-    label: 'Project Name:',
-    name: 'projectName',
-    tooltip: 'test',
-    childrenProps: {
-      maxLength: 40,
-      showCount: true,
-    },
-  }),
-  {
-    type: 'textArea',
-    label: 'Summary Project Description (20-500 character):',
-    name: 'projectSummmary',
-    rules: [
-      { required: true, message: 'required' },
-      { min: 20, message: 'Please enter the necessary information' },
-    ],
-    childrenProps: {
-      maxLength: 500,
-      autoSize: { minRows: 3, maxRows: 5 },
-    },
-  },
-  {
-    type: 'textArea',
-    label: 'Project Description (300-20000 character):',
-    name: 'projectDescription',
-    rules: [
-      { required: true, message: 'Please enter the necessary information' },
-      { min: 300, max: 20000, message: '300-20000' },
-    ],
-    childrenProps: {
-      autoSize: { minRows: 3, maxRows: 5 },
-    },
-  },
-  {
-    type: 'fileUpload',
-    label: 'LogoUrl:',
-    name: 'logoUrl',
-    valuePropName: 'fileList',
-    getValueFromEvent: normFile,
-    childrenProps: {
-      maxFileCount: 1,
-      fileLimit: '10M',
-      accept: '.jpg,.jpeg.,.png',
-    },
-  },
-  {
-    type: 'fileUpload',
-    label: 'Project Images:',
-    name: 'projectImgs',
-    required: true,
-    valuePropName: 'fileList',
-    getValueFromEvent: normFile,
-    childrenProps: {
-      maxFileCount: 5,
-      fileLimit: '10M',
-      accept: '.jpg,.jpeg.,.png',
-    },
-  },
-  getInputOptions({
-    label: 'Official Website:',
-    name: 'website',
-    tooltip: 'test',
-    rules: [{ required: true, message: 'sdssds' }, { validator: urlValidator }],
-  }),
-  {
-    type: 'fieldsGroup',
-    label: 'Other Community',
-    fieldsList: [
-      getInputOptions({
-        label: 'Medium:',
-        name: 'medium',
-        required: false,
-        rules: [{ validator: urlValidator }],
-      }),
-      getInputOptions({
-        label: 'X:',
-        name: 'x',
-        required: false,
-        rules: [{ validator: urlValidator }],
-      }),
-      getInputOptions({
-        label: 'Telegram:',
-        name: 'telegram',
-        required: false,
-        rules: [{ validator: urlValidator }],
-      }),
-    ],
-  },
-];
+import { ProjectInfoFromJson } from '../constants';
 
 const ProjectInfo: React.FC<CreateStepPorps> = ({ onNext, onPre }) => {
   const [additional, setAdditional] = useLocalStorage(storages.AdditionalInformation, {});
@@ -135,7 +42,7 @@ const ProjectInfo: React.FC<CreateStepPorps> = ({ onNext, onPre }) => {
         scrollToFirstError
         onFinish={onFinish}
         validateTrigger="onSubmit">
-        {FormFields(formList)}
+        {FormFields(ProjectInfoFromJson)}
         <Form.Item>
           <ButtonGroup onPre={onPre} htmlType="submit" />
         </Form.Item>

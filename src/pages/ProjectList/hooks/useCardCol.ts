@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { useWindowSize } from 'react-use';
 
 export const useCardCol = () => {

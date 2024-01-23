@@ -7,6 +7,7 @@ import { useWallet } from 'contexts/useWallet/hooks';
 import { IProjectInfo } from 'types/project';
 import { tempInfo } from '../temp';
 import './styles.less';
+import { useNavigate, useParams } from 'react-router-dom';
 
 interface IActionCardProps {
   projectInfo: IProjectInfo;
@@ -14,11 +15,18 @@ interface IActionCardProps {
 
 export default function ActionCard({ projectInfo }: IActionCardProps) {
   const { login, wallet } = useWallet();
+  const { projectId } = useParams();
+  const navigate = useNavigate();
   const isLogin = !!wallet;
 
   return (
     <Flex className="action-card-wrapper flex-1" vertical gap={24}>
-      <Button className="edit-button" icon={<img src={edit} alt="edit" />}>
+      <Button
+        className="edit-button"
+        icon={<img src={edit} alt="edit" />}
+        onClick={() => {
+          navigate(`/edit-information/${projectId}`);
+        }}>
         Edit Project Information
       </Button>
       <JoinCard projectInfo={projectInfo} />

@@ -1,9 +1,17 @@
 export enum ProjectStatus {
+  ALL = 1,
   UPCOMING = 2,
   PARTICIPATORY = 3,
   UNLOCKED = 4,
   ENDED = 5,
   CANCELED = 6,
+}
+
+export enum ProjecType {
+  ACTIVE = 1,
+  CLOSED = 2,
+  CREATED = 3,
+  PARTICIPATE = 4,
 }
 
 export enum PROGRESS_RATE {

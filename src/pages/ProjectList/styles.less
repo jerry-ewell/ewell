@@ -1,6 +1,13 @@
+@import '../../assets/theme/constants.less';
+
 .project-list {
   width: 100%;
   
+  #project-list-scroll {
+    height: calc(100vh - @header-height - @footer-height);
+    overflow: scroll;
+  }
+
   .project-page {
     margin: 0 40px;
 

@@ -130,7 +130,7 @@ export default function Example() {
   const getList = useCallback(async () => {
     try {
       const result = await request.project.getProjectList({
-        params: { chainId: DEFAULT_CHAIN_ID, types: '3' },
+        params: { chainId: DEFAULT_CHAIN_ID, types: 3 },
       });
       console.log('getList', result);
     } catch (error) {

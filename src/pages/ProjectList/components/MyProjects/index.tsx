@@ -1,16 +1,57 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState, useCallback } from 'react';
 import { Row, Col } from 'antd';
+import { useEffectOnce } from 'react-use';
 import { useCardCol } from '../../hooks/useCardCol';
 import PorjectCard, { IProjectCard } from '../Card';
+import { useGetList, IListData } from '../../hooks/useGetList';
+import { ProjecType } from 'types/project';
 import Empty from 'components/Empty';
-
+import { emitLoading } from 'utils/events';
+import InfiniteList from 'components/InfiniteList';
 interface ProjectListProps {
   createdItems?: IProjectCard[];
   participateItems?: IProjectCard[];
 }
 
-const MyProjects: React.FC<ProjectListProps> = ({ createdItems = [], participateItems = [] }) => {
+const MyProjects: React.FC<ProjectListProps> = () => {
   const [colNum] = useCardCol();
+  const [createdItems, setCreatedItems] = useState<IListData['createdItems']>([]);
+  const [participateItems, setParticipateItems] = useState<IListData['participateItems']>([]);
+  const [participateListPageNum, setParticipateListPageNum] = useState(0);
+  const [loadAllParticipateItems, setLoadAllParticipateItems] = useState(false);
+  const { getList } = useGetList();
+
+  const getCreatedProjects = useCallback(async () => {
+    const { createdItems } = await getList({ types: ProjecType.CREATED });
+    setCreatedItems(createdItems || []);
+  }, [getList]);
+
+  const getParticipateProject = useCallback(
+    async (loading: boolean = false) => {
+      if (loading) emitLoading(true, { text: 'loading...' });
+
+      const list = await getList({
+        types: ProjecType.PARTICIPATE,
+        skipCount: participateListPageNum,
+        maxResultCount: colNum * 3,
+        // maxResultCount: 3,
+      });
+
+      if (loading) emitLoading(false);
+
+      if (list.participateItems.length === 0) return;
+      const newList = participateItems.concat(list.participateItems);
+      setParticipateItems(newList);
+      setParticipateListPageNum(participateListPageNum + 1);
+      setLoadAllParticipateItems(newList.length >= list.totalCount);
+    },
+    [colNum, getList, participateItems, participateListPageNum],
+  );
+
+  useEffectOnce(() => {
+    getCreatedProjects();
+    getParticipateProject();
+  });
 
   const emptyText = useMemo(() => {
     return (
@@ -22,7 +63,7 @@ const MyProjects: React.FC<ProjectListProps> = ({ createdItems = [], participate
   }, []);
 
   return (
-    <div className="project-page">
+    <div className="project-page" id="project-list-scroll">
       {!createdItems.length && !participateItems.length && (
         <>
           <div className="project-type"> No Projects</div>
@@ -41,18 +82,21 @@ const MyProjects: React.FC<ProjectListProps> = ({ createdItems = [], participate
           </Row>
         </>
       )}
-      {!!participateItems.length && (
-        <>
-          <div className="project-type">Participate</div>
-          <Row gutter={[24, 24]}>
-            {participateItems.map((item) => (
-              <Col span={24 / colNum} key={item.id}>
-                <PorjectCard data={item} />
-              </Col>
-            ))}
-          </Row>
-        </>
-      )}
+      <InfiniteList
+        showScrollToTop={false}
+        loaded={loadAllParticipateItems}
+        loadMoreData={getParticipateProject}
+        id="project-list-scroll"
+        dataLength={participateItems.length}>
+        {!!participateItems.length && <div className="project-type">Participate</div>}
+        <Row gutter={[24, 24]}>
+          {participateItems.map((item) => (
+            <Col span={24 / colNum} key={item.id}>
+              <PorjectCard data={item} />
+            </Col>
+          ))}
+        </Row>
+      </InfiniteList>
     </div>
   );
 };

@@ -12,4 +12,4 @@ export type BaseConfig = string | { target: string; baseConfig: requestConfig };
 
 export type UrlObj = { [key: string]: BaseConfig };
 
-export type API_REQ_FUNCTION = (config?: requestConfig) => Promise<any | AxiosResponse<any>>;
+export type API_REQ_FUNCTION<T = any> = (config?: requestConfig) => Promise<T | AxiosResponse<T>>;
