@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import { request } from 'api';
+import { message } from 'antd';
 import ActionCard from './components/ActionCard';
 import InfoWrapper from './components/InfoWrapper';
 import { useMobile } from 'contexts/useStore/hooks';
@@ -22,6 +23,7 @@ export default function ProjectInfo({ previewData }: IProjectInfoProps) {
   const { projectId } = useParams();
   const { getWhitelistContract } = useViewContract();
   const isPreview = useMemo(() => !!previewData, [previewData]);
+  const [messageApi, contextHolder] = message.useMessage();
 
   const [projectInfo, setProjectInfo] = useState<IProjectInfo>({});
 
@@ -44,8 +46,11 @@ export default function ProjectInfo({ previewData }: IProjectInfoProps) {
       const whitelistId = detail?.whitelistId;
 
       console.log('isCreator', isCreator);
-      const whitelistContract = await getWhitelistContract();
-      const whitelistInfo = await whitelistContract.GetWhitelist.call(whitelistId);
+      let whitelistInfo;
+      if (whitelistId) {
+        const whitelistContract = await getWhitelistContract();
+        whitelistInfo = await whitelistContract.GetWhitelist.call(whitelistId);
+      }
 
       console.log('whitelistInfo', whitelistInfo);
       const newProjectInfo = {
@@ -58,10 +63,14 @@ export default function ProjectInfo({ previewData }: IProjectInfoProps) {
       };
       console.log('newProjectInfo: ', newProjectInfo);
       setProjectInfo(newProjectInfo);
-    } catch (error) {
+    } catch (error: any) {
       console.log('getDetail error', error);
+      messageApi.open({
+        type: 'error',
+        content: error?.message || 'Get detail failed',
+      });
     }
-  }, [getWhitelistContract, projectId]);
+  }, [getWhitelistContract, messageApi, projectId]);
 
   useEffect(() => {
     if (isPreview) {
@@ -84,13 +93,16 @@ export default function ProjectInfo({ previewData }: IProjectInfoProps) {
   const showInfo = useMemo(() => !!Object.keys(info).length, [info]);
 
   return (
-    <div className="common-page-1360 min-height-container project-info-wrapper">
-      {showInfo && (
-        <div className="flex project-info-content">
-          <InfoWrapper projectInfo={info} />
-          {!isMobile && <ActionCard projectInfo={info} isPreview={isPreview} />}
-        </div>
-      )}
-    </div>
+    <>
+      {contextHolder}
+      <div className="common-page-1360 min-height-container project-info-wrapper">
+        {showInfo && (
+          <div className="flex project-info-content">
+            <InfoWrapper projectInfo={info} />
+            {!isMobile && <ActionCard projectInfo={info} isPreview={isPreview} />}
+          </div>
+        )}
+      </div>
+    </>
   );
 }
