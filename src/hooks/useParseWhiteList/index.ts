@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react';
 
 import { RcFile } from 'antd/es/upload';
-import { parseWhitelistCSVFile, parseWhitelistExcelFile } from './utils';
+import { parseWhitelistCSVFile, parseWhitelistExcelFile } from 'utils/parseWhiteList';
 
 export const useParseWhitelist = () => {
   const [whitelistData, setWhitelistData] = useState<string[]>([]);
