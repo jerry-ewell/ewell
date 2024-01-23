@@ -1,14 +1,13 @@
 import { useCallback, useMemo, useState } from 'react';
-import { Flex } from 'antd';
+import { Flex, Breadcrumb } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import { HashAddress, Search, Pagination, Typography, FontWeightEnum } from 'aelf-design';
-import BaseBreadcrumb from 'components/BaseBreadcrumb';
 import CommonTable from 'components/CommonTable';
 import UpdateWhitelistUsersButton from 'components/UpdateWhitelistUsersButton';
 import { UpdateType } from 'components/UpdateWhitelistUsersButton/types';
 import { add, remove } from 'assets/images';
 import './styles.less';
-import { useParams } from 'react-router-dom';
+import { NavLink, useParams } from 'react-router-dom';
 import { useEffectOnce } from 'react-use';
 import { useViewContract } from 'contexts/useViewContract/hooks';
 import { DEFAULT_CHAIN_ID } from 'constants/network';
@@ -103,9 +102,24 @@ export default function WhitelistUsers() {
     setSearchAddress('');
   }, []);
 
+  const breadList = useMemo(
+    () => [
+      {
+        title: <NavLink to={`/project-list/my`}>My Projects</NavLink>,
+      },
+      {
+        title: <NavLink to={`/project-list`}>Citizen Conflict</NavLink>,
+      },
+      {
+        title: 'Whitelist Users',
+      },
+    ],
+    [],
+  );
+
   return (
     <div className="common-page page-body whitelist-users-wrapper">
-      <BaseBreadcrumb />
+      <Breadcrumb className="bread-wrap" items={breadList} />
       <Flex vertical gap={24}>
         <Title level={5} fontWeight={FontWeightEnum.Medium}>
           Whitelist Users

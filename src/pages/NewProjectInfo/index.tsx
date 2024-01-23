@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, NavLink } from 'react-router-dom';
 import { request } from 'api';
-import { Flex, message } from 'antd';
+import { Breadcrumb, Flex, message } from 'antd';
 import { Typography } from 'aelf-design';
 import ActionCard from './components/ActionCard';
 import InfoWrapper from './components/InfoWrapper';
@@ -101,10 +101,24 @@ export default function ProjectInfo({ previewData }: IProjectInfoProps) {
 
   const showInfo = useMemo(() => !!Object.keys(info).length, [info]);
 
+  const breadList = useMemo(
+    () => [
+      {
+        // TODO: adjust
+        title: <NavLink to={`/project-list/my`}>My Projects</NavLink>,
+      },
+      {
+        title: projectInfo?.additionalInfo?.projectName || 'Project Info',
+      },
+    ],
+    [projectInfo?.additionalInfo?.projectName],
+  );
+
   return (
     <>
       {contextHolder}
       <div className="common-page-1360 min-height-container project-info-wrapper">
+        {!isPreview && <Breadcrumb className="bread-wrap" items={breadList} />}
         {showInfo ? (
           <div className="flex project-info-content">
             <InfoWrapper projectInfo={info} />

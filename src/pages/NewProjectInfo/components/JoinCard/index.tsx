@@ -98,7 +98,7 @@ export default function JoinCard({ projectInfo, isPreview, handleRefresh }: IJoi
       } else if (isPurchaseInputting) {
         return pre;
       } else {
-        return !!purchaseInputErrorMessage || !purchaseInputValue;
+        return !!purchaseInputErrorMessage || !purchaseInputValue || new BigNumber(purchaseInputValue).lte(0);
       }
     });
   }, [isPreview, isPurchaseInputting, purchaseInputErrorMessage, purchaseInputValue]);
