@@ -78,6 +78,7 @@ export default function PurchaseButton({ buttonDisabled, projectInfo, purchaseAm
         symbol: projectInfo?.toRaiseToken?.symbol || '',
         amount,
         owner: wallet?.walletInfo.address || '',
+        spender: NETWORK_CONFIG.ewellContractAddress,
       });
       console.log('getApproveAmount result', result);
       needApprove = result?.isNeedApprove;

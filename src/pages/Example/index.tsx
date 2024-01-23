@@ -382,9 +382,10 @@ export default function Example() {
       symbol: 'ELF',
       owner: wallet?.walletInfo.address || '',
       amount: '1000000000',
+      spender: NETWORK_CONFIG.ewellContractAddress,
     });
     console.log('shouldApproveLocal', result);
-  }, [getApproveAmount, wallet?.walletInfo.address]);
+  }, [getApproveAmount, wallet]);
 
   return (
     <div>
