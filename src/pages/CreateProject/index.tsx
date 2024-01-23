@@ -11,6 +11,8 @@ import { CreateStepProps, TSteps } from './types';
 import { stepsItems, stepTitle } from './constants';
 import ScrollToTop from 'components/ScrollToTop';
 import './styles.less';
+import { useEffectOnce } from 'react-use';
+import { useWallet } from 'contexts/useWallet/hooks';
 
 const CreateProject: React.FC = () => {
   const [currentStep, setCurrentStep] = useState<TSteps>(TSteps.ONE);
@@ -18,7 +20,7 @@ const CreateProject: React.FC = () => {
   const breadTitles = useMemo(() => {
     return [
       {
-        title: 'Lanch with EWELL',
+        title: 'Launch with EWELL',
       },
       {
         title: stepTitle[currentStep],

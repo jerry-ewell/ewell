@@ -133,3 +133,8 @@ export interface ListMarketInfo {
   market?: string;
   weight?: number;
 }
+
+export enum ProjectListType {
+  ALL = 'all',
+  MY = 'my',
+}

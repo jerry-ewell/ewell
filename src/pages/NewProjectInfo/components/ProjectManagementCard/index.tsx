@@ -13,8 +13,7 @@ import UpdateWhitelistUsersButton from 'components/UpdateWhitelistUsersButton';
 import { UpdateType } from 'components/UpdateWhitelistUsersButton/types';
 import './styles.less';
 import { emitSyncTipsModal } from 'utils/events';
-import { stringify, stringifyUrl } from 'query-string';
-import { parseAdditionalInfo } from 'utils/project';
+import { stringifyUrl } from 'query-string';
 
 const { Text } = Typography;
 
@@ -88,6 +87,18 @@ export default function ProjectManagementCard({ projectInfo }: IProjectManagemen
     );
   }, [navigate, projectId, projectInfo]);
 
+  const jumpWhitelistUsers = useCallback(() => {
+    navigate(
+      stringifyUrl({
+        url: `/whitelist-users/${projectInfo?.whitelistId}`,
+        query: {
+          projectName: projectInfo?.additionalInfo?.projectName || '',
+          projectId,
+        },
+      }),
+    );
+  }, [navigate, projectId, projectInfo?.additionalInfo?.projectName, projectInfo?.whitelistId]);
+
   return (
     <>
       {contextHolder}
@@ -121,12 +132,7 @@ export default function ProjectManagementCard({ projectInfo }: IProjectManagemen
                 whitelistTasksUrl={projectInfo?.whitelistInfo?.url}
                 disabled={!canEdit}
               />
-              <Button
-                onClick={() => {
-                  navigate(`/whitelist-users/${projectInfo?.whitelistId}`);
-                }}>
-                Whitelist Users
-              </Button>
+              <Button onClick={jumpWhitelistUsers}>Whitelist Users</Button>
               <UpdateWhitelistUsersButton
                 buttonProps={{
                   children: 'Add Whitelisted Users',

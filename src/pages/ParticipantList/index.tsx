@@ -11,6 +11,7 @@ import { DEFAULT_CHAIN_ID } from 'constants/network';
 import { divDecimalsStr } from 'utils/calculate';
 import dayjs from 'dayjs';
 import { useQuery } from 'hooks/useQuery';
+import { stringifyUrl } from 'query-string';
 
 const { Title, Text } = Typography;
 
@@ -140,13 +141,23 @@ export default function ParticipantList() {
         title: <NavLink to={`/project-list/my`}>My Projects</NavLink>,
       },
       {
-        title: <NavLink to={`/project-list`}>{projectName}</NavLink>,
+        title: (
+          <NavLink
+            to={stringifyUrl({
+              url: `/project/${projectId}`,
+              query: {
+                projectName,
+              },
+            })}>
+            {projectName}
+          </NavLink>
+        ),
       },
       {
         title: 'Participants List',
       },
     ],
-    [projectName],
+    [projectId, projectName],
   );
 
   return (

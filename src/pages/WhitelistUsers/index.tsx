@@ -12,6 +12,7 @@ import { useEffectOnce } from 'react-use';
 import { useViewContract } from 'contexts/useViewContract/hooks';
 import { DEFAULT_CHAIN_ID } from 'constants/network';
 import dayjs from 'dayjs';
+import { useQuery } from 'hooks/useQuery';
 
 const { Title, Text } = Typography;
 
@@ -44,6 +45,7 @@ type TAddressItem = {
 export default function WhitelistUsers() {
   const [isTableLoading, setIsTableLoading] = useState(true);
   const { whitelistId = '' } = useParams();
+  const { projectName = 'Project', projectId } = useQuery();
   const { getWhitelistUserList } = useViewContract();
   const [totalParticipants, setTotalParticipants] = useState<number>(0);
 
@@ -108,13 +110,13 @@ export default function WhitelistUsers() {
         title: <NavLink to={`/project-list/my`}>My Projects</NavLink>,
       },
       {
-        title: <NavLink to={`/project-list`}>Citizen Conflict</NavLink>,
+        title: <NavLink to={`/project/${projectId}`}>{projectName}</NavLink>,
       },
       {
         title: 'Whitelist Users',
       },
     ],
-    [],
+    [projectName, projectId],
   );
 
   return (

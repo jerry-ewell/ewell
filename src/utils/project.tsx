@@ -92,9 +92,9 @@ export function renderTokenPrice({
   );
 }
 
-export const parseAdditionalInfo = (projectInfo: any) => {
+export const parseAdditionalInfo = (additionalInfoStr: any) => {
   try {
-    const additionalInfo = JSON.parse(projectInfo.additionalInfo);
+    const additionalInfo = JSON.parse(additionalInfoStr);
     return additionalInfo as IAdditionalInfo;
   } catch (error) {
     return undefined;
