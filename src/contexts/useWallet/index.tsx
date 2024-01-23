@@ -88,7 +88,7 @@ function reducer(state: any, { type, payload }: any) {
   }
 }
 
-const LOGOUT_STAY_PATH = ['example', 'project'];
+const LOGOUT_STAY_PATH = ['example', 'project', 'project-list/all'];
 export function WalletProvider({ children }: { children: React.ReactNode }) {
   const [state, dispatch] = useReducer(reducer, INITIAL_STATE);
   const webLoginContext = useWebLoginContext();
@@ -133,8 +133,11 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
     });
     clearLocalJWT();
 
-    const _pathname = (pathnameRef.current || '').split('/')[1] || '';
-    if (!LOGOUT_STAY_PATH.includes(_pathname)) {
+    const _pathname = `${pathnameRef.current || ''}/`;
+    const isStay = LOGOUT_STAY_PATH.find((path) => {
+      return _pathname.includes(`${path}/`);
+    });
+    if (!isStay) {
       navigate('/', { replace: true });
     }
   }, [navigate]);
@@ -145,11 +148,21 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
     console.log('wallet state', state);
   }, [state]);
 
+  const onAuthorizationExpired = useCallback(() => {
+    if (webLoginContext.loginState !== WebLoginState.logined) {
+      console.log('AuthorizationExpired: Not Logined');
+      return;
+    }
+    clearLocalJWT();
+    console.log('AuthorizationExpired');
+    authToken(wallet);
+  }, [wallet, webLoginContext.loginState]);
+  const onAuthorizationExpiredRef = useRef(onAuthorizationExpired);
+  onAuthorizationExpiredRef.current = onAuthorizationExpired;
+
   useEffect(() => {
     const { remove } = myEvents.AuthorizationExpired.addListener(() => {
-      clearLocalJWT();
-      console.log('AuthorizationExpired');
-      authToken(wallet);
+      onAuthorizationExpiredRef.current?.();
     });
     return () => {
       remove();

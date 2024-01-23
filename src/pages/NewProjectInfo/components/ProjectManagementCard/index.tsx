@@ -13,8 +13,7 @@ import UpdateWhitelistUsersButton from 'components/UpdateWhitelistUsersButton';
 import { UpdateType } from 'components/UpdateWhitelistUsersButton/types';
 import './styles.less';
 import { emitSyncTipsModal } from 'utils/events';
-import { stringify, stringifyUrl } from 'query-string';
-import { parseAdditionalInfo } from 'utils/project';
+import { stringifyUrl } from 'query-string';
 
 const { Text } = Typography;
 

@@ -19,6 +19,7 @@ import { identifyWhitelistData } from 'utils/parseWhiteList';
 import { UpdateType } from 'components/UpdateWhitelistUsersButton/types';
 import { useTokenPrice, useTxFee } from 'contexts/useAssets/hooks';
 import { stringify } from 'query-string';
+import { useLocation } from 'react-router-dom';
 
 const { Dragger } = Upload;
 
@@ -41,9 +42,11 @@ export default function Example() {
     );
   }, [tokenPrice]);
 
+  const { pathname } = useLocation();
   useEffect(() => {
-    console.log('txFee', txFee);
-  }, [txFee]);
+    const _pathname = `${pathname}/`;
+    console.log('pathname', pathname);
+  }, [pathname]);
 
   const transfer = useCallback(async () => {
     try {
