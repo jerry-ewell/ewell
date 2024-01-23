@@ -132,7 +132,7 @@ export default function JoinCard({ projectInfo, isPreview, handleRefresh }: IJoi
           <Text>Remainder</Text>
           <NewBaseCountdown
             className="countdown-wrapper"
-            value={projectInfo?.unlockTime ? dayjs(projectInfo.unlockTime).valueOf() : 0}
+            value={projectInfo?.tokenReleaseTime ? dayjs(projectInfo.tokenReleaseTime).valueOf() : 0}
             onFinish={handleRefresh}
           />
         </>
@@ -151,7 +151,7 @@ export default function JoinCard({ projectInfo, isPreview, handleRefresh }: IJoi
         <>
           <Text>Ended Time</Text>
           <Text fontWeight={FontWeightEnum.Medium}>
-            {projectInfo?.endTime ? dayjs(projectInfo?.endTime).format('DD MMM YYYY') : '--'}
+            {projectInfo?.tokenReleaseTime ? dayjs(projectInfo?.tokenReleaseTime).format('DD MMM YYYY') : '--'}
           </Text>
         </>
       );

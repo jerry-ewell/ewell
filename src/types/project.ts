@@ -86,6 +86,7 @@ export interface IProjectInfo {
   currentCrowdFundingIssueAmount?: string;
   claimedLiquidatedDamage?: boolean;
   isWithdraw?: boolean;
+  tokenReleaseTime?: string;
 }
 
 export interface ProjectItem {

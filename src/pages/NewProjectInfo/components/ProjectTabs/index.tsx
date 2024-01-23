@@ -77,7 +77,7 @@ export default function ProjectTabs({ projectInfo }: IProjectTabsProps) {
         },
         {
           label: 'Token Distribution Time',
-          value: projectInfo?.unlockTime || '--',
+          value: projectInfo?.tokenReleaseTime || '--',
           isTime: true,
         },
       ],

@@ -93,15 +93,16 @@ export default function Example() {
       crowdFundingIssueAmount: '1000',
       preSalePrice: '1000',
       startTime: getProtobufTime(Date.now() + 60 * 1000),
-      endTime: endTimePb,
+      endTime: getProtobufTime(Date.now() + 60 * 1000 * 5),
       minSubscription: 1,
       maxSubscription: '1000000000',
       publicSalePrice: ZERO.plus('100000000').div(1.05).toFixed(), // preSalePrice / 1.05
       listMarketInfo: [], // fixed
       liquidityLockProportion: 0, // fixed
-      unlockTime: endTimePb, // fixed
+      unlockTime: getProtobufTime(Date.now() + 60 * 1000 * 6), // fixed
+      tokenReleaseTime: getProtobufTime(Date.now() + 60 * 1000 * 6), // fixed
       isEnableWhitelist: false,
-      isBurnRestToken: true,
+      isBurnRestToken: false,
       totalPeriod: 1, // fixed
       additionalInfo: {
         data: {
@@ -120,7 +121,6 @@ export default function Example() {
       firstDistributeProportion: '100000000', // fixed 100%
       restDistributeProportion: 0, // fixed
       periodDuration: 0, // fixed
-      tokenReleaseTime: endTimePb,
     };
     console.log('registerInput', registerInput);
 
