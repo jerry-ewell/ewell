@@ -36,19 +36,19 @@ export default function ProjectTabs({ projectInfo }: IProjectTabsProps) {
           label: 'Sale Price',
           value: projectInfo?.preSalePrice
             ? `1 ${projectInfo?.toRaiseToken?.symbol ?? '--'} = ${
-                divDecimals(
+                divDecimalsStr(
                   projectInfo?.preSalePrice ?? 0,
                   getPriceDecimal(projectInfo?.crowdFundingIssueToken, projectInfo?.toRaiseToken),
-                ).toFixed() ?? '--'
+                ) ?? '--'
               } ${projectInfo?.crowdFundingIssueToken?.symbol ?? '--'}`
             : '--',
         },
         {
           label: 'Supply',
-          value: divDecimalsStr(
+          value: `${divDecimalsStr(
             projectInfo?.crowdFundingIssueAmount,
             projectInfo?.crowdFundingIssueToken?.decimals ?? 8,
-          ),
+          )} ${projectInfo?.crowdFundingIssueToken?.symbol ?? '--'}`,
         },
         {
           label: 'Goal',
@@ -67,17 +67,17 @@ export default function ProjectTabs({ projectInfo }: IProjectTabsProps) {
       data: [
         {
           label: 'IDO Starts At',
-          value: projectInfo?.startTime || '',
+          value: projectInfo?.startTime || '--',
           isTime: true,
         },
         {
           label: 'IDO Ends At',
-          value: projectInfo?.endTime || '',
+          value: projectInfo?.endTime || '--',
           isTime: true,
         },
         {
           label: 'Token Distribution Time',
-          value: projectInfo?.unlockTime || '',
+          value: projectInfo?.unlockTime || '--',
           isTime: true,
         },
       ],

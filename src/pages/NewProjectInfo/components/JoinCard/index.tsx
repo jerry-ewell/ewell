@@ -26,9 +26,10 @@ const { Title, Text } = Typography;
 interface IJoinCardProps {
   projectInfo?: IProjectInfo;
   isPreview?: boolean;
+  handleRefresh?: () => void;
 }
 
-export default function JoinCard({ projectInfo, isPreview }: IJoinCardProps) {
+export default function JoinCard({ projectInfo, isPreview, handleRefresh }: IJoinCardProps) {
   const { wallet } = useWallet();
   const isLogin = !!wallet;
 
@@ -98,8 +99,7 @@ export default function JoinCard({ projectInfo, isPreview }: IJoinCardProps) {
           <NewBaseCountdown
             className="countdown-wrapper"
             value={projectInfo?.startTime ? dayjs(projectInfo.startTime).valueOf() : 0}
-            // TODO: refresh
-            onFinish={() => {}}
+            onFinish={handleRefresh}
           />
         </>
       );
@@ -110,8 +110,7 @@ export default function JoinCard({ projectInfo, isPreview }: IJoinCardProps) {
           <NewBaseCountdown
             className="countdown-wrapper"
             value={projectInfo?.endTime ? dayjs(projectInfo.endTime).valueOf() : 0}
-            // TODO: refresh
-            onFinish={() => {}}
+            onFinish={handleRefresh}
           />
         </>
       );
@@ -122,8 +121,7 @@ export default function JoinCard({ projectInfo, isPreview }: IJoinCardProps) {
           <NewBaseCountdown
             className="countdown-wrapper"
             value={projectInfo?.unlockTime ? dayjs(projectInfo.unlockTime).valueOf() : 0}
-            // TODO: refresh
-            onFinish={() => {}}
+            onFinish={handleRefresh}
           />
         </>
       );
@@ -173,7 +171,7 @@ export default function JoinCard({ projectInfo, isPreview }: IJoinCardProps) {
           trailColor="#F5F5F6"
         />
         <div className="flex-between-center">
-          <Title fontWeight={FontWeightEnum.Medium}>{progressPercent.toNumber()}%</Title>
+          <Title fontWeight={FontWeightEnum.Medium}>{progressPercent.toFixed(0)}%</Title>
           <Title fontWeight={FontWeightEnum.Medium}>
             {divDecimalsStr(projectInfo?.currentRaisedAmount ?? 0, projectInfo?.toRaiseToken?.decimals)}/
             {divDecimalsStr(projectInfo?.toRaisedAmount, projectInfo?.toRaiseToken?.decimals)}{' '}

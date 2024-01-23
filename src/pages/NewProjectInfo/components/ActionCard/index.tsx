@@ -11,9 +11,10 @@ import { useMemo } from 'react';
 interface IActionCardProps {
   projectInfo: IProjectInfo;
   isPreview?: boolean;
+  handleRefresh?: () => void;
 }
 
-export default function ActionCard({ projectInfo, isPreview }: IActionCardProps) {
+export default function ActionCard({ projectInfo, isPreview, handleRefresh }: IActionCardProps) {
   const { login, wallet } = useWallet();
   const isLogin = useMemo(() => !!wallet, [wallet]);
   const canEdit = useMemo(() => {
@@ -27,7 +28,7 @@ export default function ActionCard({ projectInfo, isPreview }: IActionCardProps)
           Edit Project Information
         </Button>
       )}
-      <JoinCard projectInfo={projectInfo} isPreview={isPreview} />
+      <JoinCard projectInfo={projectInfo} isPreview={isPreview} handleRefresh={handleRefresh} />
       {!isLogin && (
         <Button
           className="login-button"

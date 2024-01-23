@@ -11,6 +11,7 @@ import { DEFAULT_CHAIN_ID, NETWORK_CONFIG } from 'constants/network';
 import { IProjectInfo } from 'types/project';
 import myEvents from 'utils/myEvent';
 import { mockDetail, mockWhitelistInfo, mockPreviewData } from './mock';
+import { emitLoading } from 'utils/events';
 import './styles.less';
 
 interface IProjectInfoProps {
@@ -31,6 +32,7 @@ export default function ProjectInfo({ previewData }: IProjectInfoProps) {
   addressRef.current = wallet?.walletInfo.address;
 
   const getProjectInfo = useCallback(async () => {
+    emitLoading(true);
     try {
       const result = await request.project.getProjectList({
         params: {
@@ -69,6 +71,8 @@ export default function ProjectInfo({ previewData }: IProjectInfoProps) {
         type: 'error',
         content: error?.message || 'Get detail failed',
       });
+    } finally {
+      emitLoading(false);
     }
   }, [getWhitelistContract, messageApi, projectId]);
 
@@ -99,7 +103,7 @@ export default function ProjectInfo({ previewData }: IProjectInfoProps) {
         {showInfo && (
           <div className="flex project-info-content">
             <InfoWrapper projectInfo={info} />
-            {!isMobile && <ActionCard projectInfo={info} isPreview={isPreview} />}
+            {!isMobile && <ActionCard projectInfo={info} isPreview={isPreview} handleRefresh={getProjectInfo} />}
           </div>
         )}
       </div>
