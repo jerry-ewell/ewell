@@ -13,7 +13,7 @@ export interface IAdditionalInfo {
 }
 
 export interface IProjectInfo {
-  additionalInfo?: string;
+  additionalInfo?: IAdditionalInfo;
   creator?: string;
   crowdFundingIssueAmount?: string;
   crowdFundingIssueToken?: TokenInfo & {

@@ -5,11 +5,13 @@ import { InfoCircleOutlined } from '@ant-design/icons';
 import { wallet } from 'assets/images';
 import { NumberFormat } from 'utils/format';
 import { success } from 'assets/images';
+import { NETWORK_CONFIG } from 'constants/network';
+import { IProjectInfo } from 'types/project';
 // import SuccessModal from '../SuccessModal';
 
 const { Text, Title } = Typography;
 
-interface ConfrimInfo {
+interface ConfirmInfo {
   supply?: number;
   contractAddress?: string;
   balance?: number;
@@ -18,19 +20,19 @@ interface ConfrimInfo {
 
 interface ITransferModalProps {
   open: boolean;
-  info: ConfrimInfo;
+  info: IProjectInfo;
   onCancel: () => void;
   onOk: () => void;
 }
 
-export function ComfirmModal({ open, info, onCancel, onOk }: ITransferModalProps) {
+export function ConfirmModal({ open, info, onCancel, onOk }: ITransferModalProps) {
   return (
     <>
       <Modal title="Confirm Transfer" footer={null} centered open={open} onCancel={onCancel}>
         <Flex vertical gap={24}>
           <Flex gap={8} justify="center" align="baseline">
             <Title fontWeight={FontWeightEnum.Medium} level={4}>
-              {NumberFormat(363604, 8)}
+              {/* {info?.supply ? NumberFormat(info?.supply, 8) : '--'} */}
             </Title>
             <Title fontWeight={FontWeightEnum.Medium}>PIGE</Title>
           </Flex>
@@ -45,7 +47,7 @@ export function ComfirmModal({ open, info, onCancel, onOk }: ITransferModalProps
                 className="hash-address-small"
                 preLen={8}
                 endLen={9}
-                address="ELF_0x00000000000000ADc04C56Bf30aC9d3c0aAF14dC_AELF"
+                address={NETWORK_CONFIG.ewellContractAddress}
               />
             </Flex>
           </Flex>

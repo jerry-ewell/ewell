@@ -2,14 +2,14 @@ import React, { useCallback, useEffect, useState } from 'react';
 import TradingPairList, { ITrandingParCard } from '../components/TradingPairList';
 import './styles.less';
 import { Button, message as adMessage } from 'antd';
-import { CreateStepPorps } from '../types';
+import { CreateStepProps } from '../types';
 import { useLocalStorage } from 'react-use';
 import storages from '../storages';
 import { request } from 'api';
 import { DEFAULT_CHAIN_ID } from 'constants/network';
 import ButtonGroup from '../components/ButtonGroup';
 
-const ConfirmTradingPair: React.FC<CreateStepPorps> = ({ onNext }) => {
+const ConfirmTradingPair: React.FC<CreateStepProps> = ({ onNext }) => {
   const [tradingPair, setTradingPair] = useLocalStorage(storages.ConfirmTradingPair);
   const [select, setSelect] = useState<ITrandingParCard>(tradingPair as ITrandingParCard);
   const [tokenList, setTokenList] = useState<ITrandingParCard[]>([]);

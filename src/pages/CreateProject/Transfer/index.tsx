@@ -2,8 +2,8 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { useLocalStorage } from 'react-use';
 import storages from '../storages';
 import ButtonGroup from '../components/ButtonGroup';
-import { CreateStepPorps } from '../types';
-import { ComfirmModal, SuccessModal } from './components/Modal';
+import { CreateStepProps } from '../types';
+import { ConfirmModal, SuccessModal } from './components/Modal';
 import { ITrandingParCard } from '../components/TradingPairList';
 import { useTransfer } from './useTransfer';
 import { emitLoading } from 'utils/events';
@@ -22,7 +22,7 @@ interface SuccessInfo {
 
 const { Title } = Typography;
 
-const Transfer: React.FC<CreateStepPorps> = ({ onPre }) => {
+const Transfer: React.FC<CreateStepProps> = ({ onPre }) => {
   const [tradingPair] = useLocalStorage<ITrandingParCard>(storages.ConfirmTradingPair);
   const [additional] = useLocalStorage(storages.AdditionalInformation);
   const [idoInfo] = useLocalStorage<any>(storages.IDOInfo);
@@ -89,7 +89,12 @@ const Transfer: React.FC<CreateStepPorps> = ({ onPre }) => {
         nextText="Transfer Now"
         style={{ marginTop: 24 }}
       />
-      <ComfirmModal info={{}} open={openConfirmModal} onCancel={() => setOpenConfirmModal(false)} onOk={onTransfer} />
+      <ConfirmModal
+        info={previewData}
+        open={openConfirmModal}
+        onCancel={() => setOpenConfirmModal(false)}
+        onOk={onTransfer}
+      />
       <SuccessModal
         info={{ transactionId: successInfo?.transactionId, supply: successInfo?.supply }}
         open={openSuccessModal}

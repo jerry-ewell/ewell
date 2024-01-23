@@ -7,7 +7,7 @@ import ProjectInfo from './ProjectInfo';
 import IDOInfo from './IDOInfo';
 import Transfer from './Transfer';
 import ESteps from './components/ESteps';
-import { CreateStepPorps, TSteps } from './types';
+import { CreateStepProps, TSteps } from './types';
 import { stepsItems, stepTitle } from './constants';
 import ScrollToTop from 'components/ScrollToTop';
 import './styles.less';

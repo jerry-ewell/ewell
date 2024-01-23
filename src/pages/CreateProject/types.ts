@@ -1,4 +1,4 @@
-export interface CreateStepPorps {
+export interface CreateStepProps {
   onNext?: () => void;
   onPre?: () => void;
 }
