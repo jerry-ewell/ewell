@@ -74,7 +74,7 @@ const Card: React.FC<ProjectCardProps> = ({ data }) => {
         },
       },
     );
-  }, [_additionalInfo?.projectName, data.id, navigate, type]);
+  }, [_additionalInfo?.projectName, data, navigate, type]);
 
   return (
     <div className="project-card" onClick={jumpDetail}>

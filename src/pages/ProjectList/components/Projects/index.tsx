@@ -30,7 +30,7 @@ const Projects: React.FC = () => {
 
       const list = await getList({
         types: ProjectType.CLOSED,
-        skipCount: closedListPage,
+        skipCount: closedItems.length,
         maxResultCount: colNum * 3,
         // maxResultCount: 3,
       });
@@ -68,7 +68,7 @@ const Projects: React.FC = () => {
           <Row gutter={[24, 24]}>
             {activeItems.map((item, index) => (
               <Col span={24 / colNum} key={index}>
-                <ProjectCard data={{}} />
+                <ProjectCard data={item} />
               </Col>
             ))}
           </Row>
