@@ -185,7 +185,7 @@ export default function PurchaseButton({ buttonDisabled, projectInfo, purchaseAm
               <Text>Allocation</Text>
               <Flex gap={8} align="baseline">
                 <Text>
-                  {purchaseAmount} {projectInfo?.toRaiseToken?.symbol ?? '--'}
+                  {divDecimalsStr(purchaseAmount, 0)} {projectInfo?.toRaiseToken?.symbol ?? '--'}
                 </Text>
                 {renderTokenPrice({
                   textProps: {
@@ -216,7 +216,7 @@ export default function PurchaseButton({ buttonDisabled, projectInfo, purchaseAm
             <Flex justify="space-between">
               <Text>Total</Text>
               <Flex gap={8} align="baseline">
-                <Text>
+                <Text fontWeight={FontWeightEnum.Medium}>
                   {totalAmount.toFormat()} {projectInfo?.toRaiseToken?.symbol ?? '--'}
                 </Text>
                 {renderTokenPrice({
@@ -252,8 +252,7 @@ export default function PurchaseButton({ buttonDisabled, projectInfo, purchaseAm
         data={{
           amountList: [
             {
-              // TODO: adjust amount
-              amount: totalAmount.toFormat(),
+              amount: divDecimalsStr(purchaseAmount, 0),
               symbol: projectInfo?.toRaiseToken?.symbol ?? '--',
             },
           ],

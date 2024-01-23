@@ -173,7 +173,6 @@ export default function CreatorClaimTokenButton({ projectInfo }: ICreatorClaimTo
         }}
         data={{
           amountList: [
-            // TODO: get amount
             {
               amount: divDecimalsStr(
                 new BigNumber(projectInfo?.currentRaisedAmount || '').plus(

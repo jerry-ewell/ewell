@@ -233,8 +233,7 @@ export default function RevokeInvestmentButton({ projectInfo }: IRevokeInvestmen
         data={{
           amountList: [
             {
-              // TODO: get the amount
-              amount: divDecimalsStr(finalAmount, projectInfo?.toRaiseToken?.decimals),
+              amount: divDecimalsStr(revokeAmount, projectInfo?.toRaiseToken?.decimals),
               symbol: projectInfo?.toRaiseToken?.symbol || '--',
             },
           ],

@@ -156,7 +156,6 @@ export default function CancelProjectButton({ projectInfo }: ICancelProjectButto
         data={{
           amountList: [
             {
-              // TODO: get amount
               amount: divDecimalsStr(
                 projectInfo?.crowdFundingIssueAmount,
                 projectInfo?.crowdFundingIssueToken?.decimals,

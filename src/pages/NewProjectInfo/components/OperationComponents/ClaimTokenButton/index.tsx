@@ -160,7 +160,6 @@ export default function ClaimTokenButton({ projectInfo }: IClaimTokenButtonProps
         data={{
           amountList: [
             {
-              // TODO: get the amount
               amount: divDecimalsStr(projectInfo?.toClaimAmount, projectInfo?.crowdFundingIssueToken?.decimals),
               symbol: projectInfo?.crowdFundingIssueToken?.symbol || '--',
             },

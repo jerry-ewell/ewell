@@ -159,7 +159,6 @@ export default function RevokeFineButton({ projectInfo }: IClaimTokenButtonProps
         data={{
           amountList: [
             {
-              // TODO: get value
               amount: divDecimalsStr(projectInfo?.liquidatedDamageAmount, projectInfo?.toRaiseToken?.decimals),
               symbol: projectInfo?.toRaiseToken?.symbol || '--',
             },
