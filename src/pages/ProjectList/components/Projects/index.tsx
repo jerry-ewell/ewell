@@ -2,10 +2,10 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Row, Col } from 'antd';
 import { useEffectOnce } from 'react-use';
 import { useCardCol } from '../../hooks/useCardCol';
-import PorjectCard from '../Card';
+import ProjectCard from '../Card';
 import Empty from 'components/Empty';
 import { useGetList, IListData } from '../../hooks/useGetList';
-import { ProjecType } from 'types/project';
+import { ProjectType } from 'types/project';
 import InfiniteList from 'components/InfiniteList';
 import { emitLoading } from 'utils/events';
 
@@ -19,7 +19,7 @@ const Projects: React.FC = () => {
   const { getList } = useGetList();
 
   const getActiveProjects = useCallback(async () => {
-    const { activeItems } = await getList({ types: ProjecType.ACTIVE });
+    const { activeItems } = await getList({ types: ProjectType.ACTIVE });
     setActiveItems(activeItems || []);
   }, [getList]);
 
@@ -29,7 +29,7 @@ const Projects: React.FC = () => {
       if (loading) emitLoading(true, { text: 'loading...' });
 
       const list = await getList({
-        types: ProjecType.CLOSED,
+        types: ProjectType.CLOSED,
         skipCount: closedListPage,
         maxResultCount: colNum * 3,
         // maxResultCount: 3,
@@ -67,15 +67,15 @@ const Projects: React.FC = () => {
         {/* <Row gutter={[24, 24]}>
           {Array.from({ length: 50 }).map((item, index) => (
             <Col span={24 / colNum} key={`${index}`}>
-              <PorjectCard data={{}} />
+              <ProjectCard data={{}} />
             </Col>
           ))}
         </Row> */}
         {activeItems.length ? (
           <Row gutter={[24, 24]}>
             {activeItems.map((item, index) => (
-              <Col span={24 / colNum} key={`${index}-${item.id}`}>
-                <PorjectCard data={item} />
+              <Col span={24 / colNum} key={index}>
+                <ProjectCard data={{}} />
               </Col>
             ))}
           </Row>
@@ -93,14 +93,14 @@ const Projects: React.FC = () => {
           <Row gutter={[24, 24]}>
             {closedItems.map((item) => (
               <Col span={24 / colNum} key={item.id}>
-                <PorjectCard data={item} />
+                <ProjectCard data={item} />
               </Col>
             ))}
           </Row>
         </InfiniteList> */}
       </>
     );
-  }, [activeItems, closedItems, colNum, getClosedProject, loadAllClosedItems]);
+  }, [activeItems, closedItems, colNum]);
 
   return (
     <div className="project-page" id="project-list-scroll">

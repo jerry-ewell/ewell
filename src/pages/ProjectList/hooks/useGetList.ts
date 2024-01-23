@@ -1,14 +1,14 @@
 import { useCallback, useState } from 'react';
 import { request } from 'api';
 import { DEFAULT_CHAIN_ID } from 'constants/network';
-import { ProjectStatus, ProjecType } from 'types/project';
+import { ProjectStatus, ProjectType } from 'types/project';
 import { IProjectInfo } from '../components/Card/types';
 
 interface IListParams {
   chainId?: string;
   projectId?: string;
   status?: ProjectStatus;
-  types?: ProjecType;
+  types?: ProjectType;
   skipCount?: number;
   maxResultCount?: number;
 }

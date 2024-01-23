@@ -7,7 +7,7 @@ export enum ProjectStatus {
   CANCELED = 6,
 }
 
-export enum ProjecType {
+export enum ProjectType {
   ACTIVE = 1,
   CLOSED = 2,
   CREATED = 3,
