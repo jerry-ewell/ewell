@@ -2,13 +2,9 @@ import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 import { fromCognitoIdentityPool } from '@aws-sdk/credential-provider-cognito-identity';
 import { CognitoIdentityClient } from '@aws-sdk/client-cognito-identity';
 import { useCallback, useMemo } from 'react';
+import { S3_CONFIG } from 'constants/index';
 
 export function useAWSUploadService() {
-  // const info = store.getState().elfInfo.elfInfo;
-  const info = {
-    identityPoolID: 'ap-northeast-1:8bf42009-6180-4bcf-97fd-9a849a9f1927',
-    bucket: 'forest-dev',
-  };
   const REGION = 'ap-northeast-1';
 
   const s3Client = useMemo(
@@ -19,17 +15,17 @@ export function useAWSUploadService() {
           client: new CognitoIdentityClient({
             region: REGION,
           }),
-          identityPoolId: info.identityPoolID || '',
+          identityPoolId: S3_CONFIG.identityPoolID || '',
         }),
       }),
-    [info.identityPoolID],
+    [],
   );
 
   const awsUploadFile = useCallback(
     async (file: File) => {
       const FileKey = `${Date.now()}-${file.name}`;
       const params = {
-        Bucket: info.bucket,
+        Bucket: S3_CONFIG.bucket,
         Key: FileKey,
       };
       try {
@@ -43,13 +39,13 @@ export function useAWSUploadService() {
           }),
         );
         console.log('=====uploadFile success:', res);
-        return `https://${info.bucket}.s3.${REGION}.amazonaws.com/${encodeURIComponent(FileKey)}`;
+        return `https://${S3_CONFIG.bucket}.s3.${REGION}.amazonaws.com/${encodeURIComponent(FileKey)}`;
       } catch (error) {
         console.error('=====awsUploadFile error:', error);
         return Promise.reject(error);
       }
     },
-    [s3Client, info.bucket],
+    [s3Client],
   );
 
   return {

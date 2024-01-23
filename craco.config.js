@@ -41,19 +41,6 @@ module.exports = {
   devServer: {
     port: 3003,
     proxy: {
-      '/whitelist-proxy': {
-        target: activeApi.whitelistApi,
-        changeOrigin: true,
-        secure: true,
-        pathRewrite: {
-          '^/whitelist-proxy': '',
-        },
-      },
-      '/v1': {
-        target: activeApi.mockApi,
-        changeOrigin: true,
-        secure: true,
-      },
       '/webLoginRequest/api': {
         target: activeApi.webLoginApi,
         changeOrigin: true,
