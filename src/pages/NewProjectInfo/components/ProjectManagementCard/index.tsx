@@ -5,7 +5,7 @@ import { Button, Typography, FontWeightEnum } from 'aelf-design';
 import CommonCard from 'components/CommonCard';
 import WhitelistTasksButton from './components/WhitelistTasksButton';
 import CancelProjectButton from './components/CancelProjectButton';
-import CreatorClaimTokenButton from '../OperationComponents/CreatorClaimTokenButton';
+// import CreatorClaimTokenButton from '../OperationComponents/CreatorClaimTokenButton';
 import { useWallet } from 'contexts/useWallet/hooks';
 import { IProjectInfo, ProjectStatus } from 'types/project';
 import { NETWORK_CONFIG } from 'constants/network';
@@ -40,9 +40,10 @@ export default function ProjectManagementCard({ projectInfo }: IProjectManagemen
     );
   }, [projectInfo?.status]);
 
-  const showCreatorClaimTokenButton = useMemo(() => {
-    return projectInfo?.status === ProjectStatus.ENDED && !projectInfo?.isWithdraw;
-  }, [projectInfo?.status, projectInfo?.isWithdraw]);
+  // The claim operation of the creator is automatic
+  // const showCreatorClaimTokenButton = useMemo(() => {
+  //   return projectInfo?.status === ProjectStatus.ENDED && !projectInfo?.isWithdraw;
+  // }, [projectInfo?.status, projectInfo?.isWithdraw]);
 
   const handleWhitelistSwitchChange = async (checked: boolean) => {
     setIsWhitelistSwitchLoading(true);
@@ -139,13 +140,14 @@ export default function ProjectManagementCard({ projectInfo }: IProjectManagemen
             </>
           )}
         </Flex>
-        {(showCancelProjectButton || showCreatorClaimTokenButton) && (
+        {showCancelProjectButton && (
           <>
             <div className="divider" />
             <Flex vertical gap={12}>
               <Text fontWeight={FontWeightEnum.Medium}>Project</Text>
               {showCancelProjectButton && <CancelProjectButton projectInfo={projectInfo} />}
-              {showCreatorClaimTokenButton && <CreatorClaimTokenButton projectInfo={projectInfo} />}
+              {/* The claim operation of the creator is automatic */}
+              {/* {showCreatorClaimTokenButton && <CreatorClaimTokenButton projectInfo={projectInfo} />} */}
             </Flex>
           </>
         )}
