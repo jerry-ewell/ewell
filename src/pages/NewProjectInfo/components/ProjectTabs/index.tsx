@@ -4,7 +4,7 @@ import { Typography, FontWeightEnum } from 'aelf-design';
 import CommonCard from 'components/CommonCard';
 import { IProjectInfo } from 'types/project';
 import { getPriceDecimal } from 'utils';
-import { divDecimals, divDecimalsStr } from 'utils/calculate';
+import { divDecimalsStr } from 'utils/calculate';
 import './styles.less';
 
 const { Text } = Typography;

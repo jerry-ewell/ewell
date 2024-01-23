@@ -30,7 +30,7 @@ const Projects: React.FC = () => {
 
       const list = await getList({
         types: ProjectType.CLOSED,
-        skipCount: closedListPage,
+        skipCount: closedItems.length,
         maxResultCount: colNum * 3,
         // maxResultCount: 3,
       });

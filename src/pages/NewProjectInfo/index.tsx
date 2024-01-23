@@ -13,7 +13,6 @@ import { useViewContract } from 'contexts/useViewContract/hooks';
 import { DEFAULT_CHAIN_ID } from 'constants/network';
 import { IProjectInfo, ProjectListType } from 'types/project';
 import myEvents from 'utils/myEvent';
-import { mockDetail, mockWhitelistInfo, mockPreviewData } from './mock';
 import { emitLoading } from 'utils/events';
 import { tableEmpty } from 'assets/images';
 import './styles.less';
@@ -133,7 +132,7 @@ export default function ProjectInfo({ previewData, style }: IProjectInfoProps) {
   return (
     <>
       {contextHolder}
-      <div className="common-page-1360 min-height-container project-info-wrapper" style={style}>
+      <div className="common-page page-body project-info-wrapper" style={style}>
         {!isPreview && <Breadcrumb className="bread-wrap" items={breadList} />}
         {showInfo ? (
           <div className="flex project-info-content">

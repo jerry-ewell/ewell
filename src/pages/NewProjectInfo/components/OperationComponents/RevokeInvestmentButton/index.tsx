@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import BigNumber from 'bignumber.js';
 import clsx from 'clsx';
 import { useParams } from 'react-router-dom';
@@ -7,7 +7,7 @@ import { Button, Typography, FontWeightEnum, Modal, HashAddress } from 'aelf-des
 import SuccessModal from '../SuccessModal';
 import { useWallet } from 'contexts/useWallet/hooks';
 import { IProjectInfo } from 'types/project';
-import { divDecimals, divDecimalsStr, timesDecimals } from 'utils/calculate';
+import { divDecimalsStr, timesDecimals } from 'utils/calculate';
 import { ZERO } from 'constants/misc';
 import { emitLoading, emitSyncTipsModal } from 'utils/events';
 import { DEFAULT_CHAIN_ID, NETWORK_CONFIG } from 'constants/network';
