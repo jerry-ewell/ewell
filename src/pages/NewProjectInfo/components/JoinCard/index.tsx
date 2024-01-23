@@ -228,7 +228,9 @@ export default function JoinCard({ projectInfo, isPreview, handleRefresh }: IJoi
             <div
               className={clsx('status', {
                 'purple-status':
-                  projectInfo?.status === ProjectStatus.UNLOCKED || projectInfo?.status === ProjectStatus.PARTICIPATORY,
+                  projectInfo?.status === ProjectStatus.UPCOMING ||
+                  projectInfo?.status === ProjectStatus.UNLOCKED ||
+                  projectInfo?.status === ProjectStatus.PARTICIPATORY,
               })}>
               <Text size="small">{PROJECT_STATUS_TEXT_MAP[projectInfo?.status]}</Text>
             </div>

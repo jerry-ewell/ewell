@@ -10,8 +10,7 @@ import InfiniteList from 'components/InfiniteList';
 import { emitLoading } from 'utils/events';
 
 const Projects: React.FC = () => {
-  // const [colNum] = useCardCol();
-  const colNum = 3;
+  const [colNum] = useCardCol();
   const [activeItems, setActiveItems] = useState<IListData['activeItems']>([]);
   const [closedItems, setClosedItems] = useState<IListData['closedItems']>([]);
   const [closedListPage, setClosedListPage] = useState(0);
