@@ -1,5 +1,5 @@
 import { BasicActions } from 'contexts/utils';
-import { createContext, useContext, useMemo, useReducer } from 'react';
+import { ReactNode, createContext, useContext, useMemo, useReducer } from 'react';
 import { useLocalStorage } from 'react-use';
 import storages from 'storages';
 import { basicProjectView, dacState } from './actions';
@@ -40,7 +40,7 @@ function reducer(state: dacState, { type, payload }: any) {
     }
   }
 }
-export default function Provider({ children }: { children: React.ReactNode }) {
+export default function Provider({ children }: { children: ReactNode }) {
   const [s, dispatch] = useReducer(reducer, INITIAL_STATE);
   const [projectMap, setProjectMap] = useLocalStorage(storages.projectMap);
   const state = useMemo(() => ({ ...s, projectMap }), [projectMap, s]);

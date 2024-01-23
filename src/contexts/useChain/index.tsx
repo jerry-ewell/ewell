@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useMemo } from 'react';
+import { ReactNode, createContext, useContext, useEffect, useMemo } from 'react';
 import { useLocalStorage } from 'react-use';
 import storages from 'storages';
 import { eventBus } from 'utils';
@@ -13,7 +13,7 @@ export function useChain(): [ChainState] {
   return useContext(ChainContext);
 }
 
-export default function Provider({ children }: { children: React.ReactNode }) {
+export default function Provider({ children }: { children: ReactNode }) {
   const [userChainId, setUserChainId] = useLocalStorage(storages.userChainId, 'AELF');
   useEffect(() => {
     eventBus.addListener(storages.userChainId, setUserChainId);

@@ -1,5 +1,6 @@
 export default {
   ConfirmTradingPair: 'confirm-trading-pair',
-  ProjectPanel: 'project-panel',
+  IDOInfo: 'project-ido-info',
   AdditionalInformation: 'additional-information',
+  TokenBalance: 'token-balance',
 };

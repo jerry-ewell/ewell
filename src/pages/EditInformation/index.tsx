@@ -1,81 +1,92 @@
-import { Form, message } from 'antd';
+import { useCallback } from 'react';
+import { Form, message, Flex } from 'antd';
+import { Button, Typography, FontWeightEnum } from 'aelf-design';
 import { Navigate, useNavigate, useParams } from 'react-router-dom';
-const layout = { labelCol: { span: 6 }, wrapperCol: { span: 14 } };
+import { ProjectInfoFromJson } from 'pages/CreateProject/constants';
+import { useTransfer } from 'pages/CreateProject/Transfer/useTransfer';
+import { FormFields } from 'components/FormItem';
+import { useEffectOnce, useSetState } from 'react-use';
+import CustomMark from 'pages/CreateProject/components/CustomMark';
+import { IAdditionalInfo, IProjectInfo } from 'pages/ProjectList/components/Card/types';
+import { urlString2FileList } from 'utils/format';
+import { useUpdateAddition } from './useApi';
 import './styles.less';
-import '../CreateProject/styles.less';
-import { InformationForm } from 'pages/CreateProject/components/AdditionalInformation';
-import { useProjectInfoByChain } from 'hooks/project';
-import { useProjectById } from 'contexts/useProject/hooks';
-import { useEffect, useMemo, useState } from 'react';
-import { useProjectInfo } from 'contexts/useProjectInfo';
-import { useIDOContract } from 'hooks/useContract';
-import { useActiveWeb3React } from 'hooks/web3';
-import { unifyProjectToApi } from 'utils/project';
-import { useProject } from 'contexts/useProject';
+
+const { Title, Text } = Typography;
+
 export default function EditInformation() {
-  const [from] = Form.useForm();
-  const navigate = useNavigate();
+  const [additionalInfo, setAdditionalInfo] = useSetState();
   const { projectId } = useParams();
-  const infoByList = useProjectById(projectId || '');
-  const [infoByChain] = useProjectInfoByChain(projectId);
-  const [{ idoInfo }] = useProjectInfo();
-  const { account } = useActiveWeb3React();
-  const idoContract = useIDOContract();
-  const projectInfo = useMemo(
-    () => ({ ...idoInfo, ...infoByList, ...infoByChain }),
-    [idoInfo, infoByChain, infoByList],
+  const { getDetail } = useTransfer();
+  const { updateAddition } = useUpdateAddition();
+  const navigate = useNavigate();
+
+  const onFinish = useCallback(
+    async ({ logoUrl, projectImgs, ...value }: any) => {
+      console.log('onUpdate-value', value);
+
+      const isSuccess = await updateAddition(projectId, {
+        ...value,
+        logoUrl: logoUrl.map((file) => file.url).join(),
+        projectImgs: projectImgs.map((file) => file.url).join(),
+      });
+
+      if (isSuccess) {
+        message.success('update success!');
+        navigate(`/project/${projectId}`);
+        return;
+      }
+
+      message.error('update failed');
+    },
+    [navigate, projectId, updateAddition],
   );
-  const [loading, setLoading] = useState<boolean>();
 
-  const [, { setProjectMap }] = useProject();
+  const getProjectInfo = useCallback(async () => {
+    const result = await getDetail(projectId);
 
-  useEffect(() => {
-    if (!projectInfo?.additionalInfo) return;
-    const fromValues = from.getFieldsValue();
-    const isUpdate = !!Object.keys(projectInfo?.additionalInfo || {}).filter(
-      (k) => projectInfo.additionalInfo[k] !== fromValues[k],
-    ).length;
-    isUpdate && from.setFieldsValue(projectInfo.additionalInfo);
-  }, [from, projectInfo.additionalInfo]);
+    if (result?.errMsg) {
+      console.log('getProject-info-error', result.errMsg);
+      return;
+    }
+    const { additionalInfo = '' }: IProjectInfo = result;
+    const { logoUrl, projectImgs, ...info }: IAdditionalInfo = JSON.parse(additionalInfo);
 
-  // account no permission
-  if (account && projectInfo && projectInfo?.creator !== account) return <Navigate to={`/project/${projectId}`} />;
+    setAdditionalInfo({
+      ...info,
+      logoUrl: urlString2FileList(logoUrl),
+      projectImgs: urlString2FileList(projectImgs),
+    });
+  }, [getDetail, projectId, setAdditionalInfo]);
+
+  useEffectOnce(() => {
+    getProjectInfo();
+  });
 
   return (
-    <div className="edit-information">
-      <h2>Change additional project information</h2>
-      <InformationForm
-        form={from}
-        {...layout}
-        disabled={!account}
-        name="information"
-        autoComplete="off"
-        className="vertical-form"
-        onFinish={async (v) => {
-          if (!account) return;
-          setLoading(true);
-          try {
-            const req = await idoContract?.callSendMethod('UpdateAdditionalInfo', account, {
-              projectId,
-              additionalInfo: { data: v },
-            });
-            if (req.error) {
-              message.error(req.error.message);
-            } else {
-              const project = unifyProjectToApi(projectInfo);
-              setProjectMap({
-                [project.projectId]: { ...project, additionalInfo: { ...v, ...project.additionalInfo } },
-              });
-              navigate(-1);
-            }
-          } catch (error) {
-            console.debug(error, '=====UpdateAdditionalInfo');
-          }
-          setLoading(false);
-        }}
-        onPre={() => navigate(-1)}
-        loading={loading}
-      />
+    <div className="common-page-1360 edit-information">
+      <Title level={5} fontWeight={FontWeightEnum.Medium}>
+        Edit Project Information
+      </Title>
+      <div className="project-info" style={{ margin: '48px 0 24px' }}>
+        <Form
+          layout="vertical"
+          name="projectInfo"
+          initialValues={additionalInfo}
+          requiredMark={CustomMark}
+          scrollToFirstError
+          onFinish={onFinish}
+          validateTrigger="onSubmit">
+          {FormFields(ProjectInfoFromJson)}
+          <Form.Item>
+            <Flex justify="center">
+              <Button type="primary" htmlType="submit" style={{ width: 206 }}>
+                Submit
+              </Button>
+            </Flex>
+          </Form.Item>
+        </Form>
+      </div>
     </div>
   );
 }

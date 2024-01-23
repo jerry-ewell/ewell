@@ -1,9 +1,23 @@
-import { Input, Form, Select, FormItemProps as antFormItemProps, DatePicker, TimePicker } from 'antd';
+import {
+  // Input,
+  Form,
+  Select,
+  FormItemProps as antFormItemProps,
+  // DatePicker,
+  TimePicker,
+  Flex,
+  InputNumber,
+  // Upload,
+  // Button,
+} from 'antd';
+import { Input, DatePickerForPC, DatePickerForMobile } from 'aelf-design';
 import { memo } from 'react';
 import CityCascader from './components/CityCascader';
 import FormGroup from './components/FormGroup';
 import FormRadioAndInput from './components/FormRadioAndInput';
 import FormTree from './components/FormTree';
+import Upload from '../Upload';
+import dayjs from 'dayjs';
 import {
   cityCascaderProps,
   datePickerProps,
@@ -20,6 +34,10 @@ import {
   searchSelectProps,
   timePickerProps,
   customizeProps,
+  inputNumberProps,
+  inlineFieldProps,
+  FieldsGroupProps,
+  pureTextProps,
 } from './types';
 export type FormItemProps = (
   | inputProps
@@ -37,6 +55,10 @@ export type FormItemProps = (
   | searchSelectProps
   | timePickerProps
   | customizeProps
+  | inputNumberProps
+  | inlineFieldProps
+  | pureTextProps
+  | FieldsGroupProps
 ) &
   antFormItemProps;
 
@@ -68,14 +90,27 @@ function getChildren(type: FormItemProps['type'], childrenProps: FormItemProps['
     }
     case 'cityCascader':
       return <CityCascader {...(childrenProps as any)} />;
-    case 'datePicker':
-      return <DatePicker style={{ width: '100%' }} {...(childrenProps as datePickerProps['childrenProps'])} />;
+    case 'datePicker': {
+      const customFormat = (value) => {
+        // console.log('datepicker-value', dayjs(value));
+        return `${value.format('YYYY-MM-DD HH:mm:ss [UTC] Z')}`;
+      };
+      return (
+        <DatePickerForPC
+          style={{ width: '100%' }}
+          format={customFormat}
+          {...(childrenProps as datePickerProps['childrenProps'])}
+        />
+      );
+    }
     case 'timePicker':
       return <TimePicker style={{ width: '100%' }} {...(childrenProps as timePickerProps['childrenProps'])} />;
     case 'radioInput':
       return <FormRadioAndInput {...(childrenProps as radioInputProps['childrenProps'])} />;
     case 'row':
       return <div {...(childrenProps as rowProps['childrenProps'])} />;
+    case 'fileUpload':
+      return <Upload {...(childrenProps as fileUploadProps['childrenProps'])}></Upload>;
     case 'searchSelect': {
       const { list, ...props } = childrenProps as selectProps['childrenProps'];
       return (
@@ -90,11 +125,48 @@ function getChildren(type: FormItemProps['type'], childrenProps: FormItemProps['
         </Select>
       );
     }
+    case 'inputNumber':
+      return <InputNumber {...childrenProps} />;
+    case 'pureText': {
+      const { text, ...props } = childrenProps;
+      return <div {...props}>{text}</div>;
+    }
   }
 }
-const FormItem = memo(({ type, childrenProps, ...props }: FormItemProps) => {
+const FormItem = memo(({ type, childrenProps, ...props }: Omit<FormItemProps, 'inlineFieldProps'>) => {
   if (type === 'customize') return <Form.Item {...props}>{props.children}</Form.Item>;
   const children = getChildren(type, childrenProps);
-  return <Form.Item {...props}>{children}</Form.Item>;
+  return type === 'pureText' ? <>{children}</> : <Form.Item {...props}>{children}</Form.Item>;
 });
+
+export const FormFields = (formJson: FormItemProps[]) => {
+  return formJson.map((field, index) => {
+    if (field.type === 'inlineField') {
+      const { type, inlineFieldList, flexProps, ...props } = field;
+      return (
+        <Form.Item {...props} key={`${index}-${type}`}>
+          <Flex align="center" {...flexProps}>
+            {inlineFieldList.map((field, index) => (
+              <FormItem key={index} noStyle {...field} />
+            ))}
+          </Flex>
+        </Form.Item>
+      );
+    }
+
+    if (field.type === 'fieldsGroup') {
+      const { type, fieldsList, ...props } = field;
+      return (
+        <Form.Item key={`${index}-${type}`} style={{ marginBottom: 0 }} {...props}>
+          {fieldsList.map((field, index) => (
+            <FormItem key={index} {...field} />
+          ))}
+        </Form.Item>
+      );
+    }
+
+    return <FormItem key={index} {...field} />;
+  });
+};
+
 export default FormItem;

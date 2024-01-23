@@ -1,8 +1,11 @@
-export type TradingPair = { tokenSymbol: string; tokenName: string; tokenDecimal: number; crowdFundingToken: string };
+export interface CreateStepPorps {
+  onNext?: () => void;
+  onPre?: () => void;
+}
 
-export type ConfirmTradingPair = {
-  tokenSymbol: string;
-  tokenName: string;
-  tokenDecimal: number;
-  acceptedCurrency: string;
-};
+export enum TSteps {
+  ONE,
+  TWO,
+  THREE,
+  FOURE,
+}

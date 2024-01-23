@@ -1,4 +1,5 @@
-import { DependencyList, Dispatch, SetStateAction, useCallback, useEffect, useRef, useState } from 'react';
+import { DependencyList, Dispatch, SetStateAction, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useLocation } from 'react-use';
 import isDeepEqual from 'react-use/lib/misc/isDeepEqual';
 
 /**
@@ -83,4 +84,13 @@ export function useLockCallback<T extends (...args: any[]) => any>(callback: T, 
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, deps);
+}
+
+export function useCheckRoute(route: string | string[]) {
+  const { pathname } = useLocation();
+  return useMemo(() => {
+    const _pathname = (pathname || '').split('/')[1] || '';
+    if (typeof route === 'string') return _pathname === route;
+    return route.includes(_pathname);
+  }, [pathname, route]);
 }

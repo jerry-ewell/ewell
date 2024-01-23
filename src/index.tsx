@@ -1,65 +1,50 @@
 import ReactDOM from 'react-dom';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import { createWeb3ReactRoot, Web3ReactProvider } from '@web3-react/core';
-import { NetworkContextName } from 'constants/index';
-import { useLanguage } from 'i18n';
-import { ANTD_LOCAL } from 'i18n/config';
-import { ConfigProvider } from 'antd';
-import getLibrary from 'utils/getLibrary';
-import ModalProvider from './contexts/useModal';
-import ChainProvider from 'contexts/useChain';
-import StoreProvider from 'contexts/useStore';
-import AElfContractProvider from 'contexts/useAElfContract';
-import ProjectProvider from 'contexts/useProject';
-import './index.css';
+
 import { prefixCls } from 'constants/theme';
-import { WhiteListProvider } from 'components/WhitelistService';
-import ProjectInfoContext from 'contexts/useProjectInfo';
-import { APP_NAME } from 'constants/aelf';
-import { AElfReactProvider } from '@aelf-react/core';
-import AElfReactManager from 'components/AElfReactManager';
-const Web3ProviderNetwork = createWeb3ReactRoot(NetworkContextName);
+import WalletProvider from './contexts/useWallet';
+
+import './assets/theme/antd.css';
+import 'aelf-web-login/dist/assets/index.css';
+import '@portkey/did-ui-react/dist/assets/index.css';
+import './index.css';
+import { ReactNode } from 'react';
+import StoreProvider from './contexts/useStore';
+import ViewContractProvider from 'contexts/useViewContract';
+import { ConfigProvider } from 'antd';
+import { AELFDProvider } from 'aelf-design';
+import { AELFD_CUSTOM_TOKEN_CONFIG, AELFD_THEME_CONFIG, ANTD_THEME_CONFIG } from 'themTokenConfig';
+import { BrowserRouter } from 'react-router-dom';
+import 'aelf-design/css';
+import AssetsProvider from 'contexts/useAssets';
+
 ConfigProvider.config({
   prefixCls,
 });
 
-function ContextProviders({ children }: { children?: React.ReactNode }) {
-  const { language } = useLanguage();
+function ContextProviders({ children }: { children?: ReactNode }) {
   return (
-    <ConfigProvider locale={ANTD_LOCAL[language]} autoInsertSpaceInButton={false} prefixCls={prefixCls}>
-      <ProjectProvider>
-        <ModalProvider>
-          <WhiteListProvider>
-            <ProjectInfoContext>{children}</ProjectInfoContext>
-          </WhiteListProvider>
-        </ModalProvider>
-      </ProjectProvider>
-    </ConfigProvider>
+    <BrowserRouter>
+      <AELFDProvider customToken={AELFD_CUSTOM_TOKEN_CONFIG} prefixCls={prefixCls} theme={AELFD_THEME_CONFIG}>
+        <ConfigProvider prefixCls={prefixCls} theme={ANTD_THEME_CONFIG}>
+          <StoreProvider>
+            <ViewContractProvider>
+              <AssetsProvider>
+                <WalletProvider>{children}</WalletProvider>
+              </AssetsProvider>
+            </ViewContractProvider>
+          </StoreProvider>
+        </ConfigProvider>
+      </AELFDProvider>
+    </BrowserRouter>
   );
 }
 ReactDOM.render(
-  <Web3ReactProvider getLibrary={getLibrary}>
-    <Web3ProviderNetwork getLibrary={getLibrary}>
-      <AElfReactProvider appName={APP_NAME || ''}>
-        <AElfReactManager>
-          <AElfContractProvider>
-            <ChainProvider>
-              <StoreProvider>
-                <ContextProviders>
-                  <App />
-                </ContextProviders>
-              </StoreProvider>
-            </ChainProvider>
-          </AElfContractProvider>
-        </AElfReactManager>
-      </AElfReactProvider>
-    </Web3ProviderNetwork>
-  </Web3ReactProvider>,
+  <ContextProviders>
+    <App />
+  </ContextProviders>,
   document.getElementById('root'),
 );
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
 reportWebVitals();

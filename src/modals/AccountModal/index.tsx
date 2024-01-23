@@ -60,7 +60,7 @@ function AccountModal() {
 
   return (
     <CommonModal
-      visible={accountModal}
+      open={accountModal}
       title="Account"
       width="auto"
       className={clsx('modals', 'account-modal')}

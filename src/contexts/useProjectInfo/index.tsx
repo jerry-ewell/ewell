@@ -1,6 +1,6 @@
 import { BasicActions } from 'contexts/utils';
 import { useIDOContract } from 'hooks/useContract';
-import { createContext, useContext, useMemo, useReducer } from 'react';
+import { ReactNode, createContext, useContext, useMemo, useReducer } from 'react';
 import { basicProjectInfoView, ProjectInfoState } from './actions';
 
 const INITIAL_STATE: ProjectInfoState = {
@@ -9,8 +9,11 @@ const INITIAL_STATE: ProjectInfoState = {
 };
 const InfoContext = createContext<any>(INITIAL_STATE);
 
+const temp: [ProjectInfoState, BasicActions] = [{} as any, { dispatch: (...args: any) => void 0 } as any];
+
 export function useProjectInfo(): [ProjectInfoState, BasicActions] {
-  return useContext(InfoContext);
+  return temp;
+  // return useContext(InfoContext);
 }
 
 //reducer
@@ -32,7 +35,7 @@ function reducer(state: ProjectInfoState, { type, payload }: any) {
     }
   }
 }
-export default function Provider({ children }: { children: React.ReactNode }) {
+export default function Provider({ children }: { children: ReactNode }) {
   const [state, dispatch] = useReducer(reducer, INITIAL_STATE);
   const idoContract = useIDOContract();
 

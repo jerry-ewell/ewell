@@ -1,7 +1,8 @@
 import { Statistic, StatisticProps } from 'antd';
 import { formatCountdown, countdownValueType, FormatConfig, Formatter } from 'antd/lib/statistic/utils';
 import clsx from 'clsx';
-import moment from 'moment';
+// import moment from 'moment';
+import dayjs from 'dayjs';
 import * as React from 'react';
 import './index.less';
 
@@ -81,7 +82,8 @@ class BaseCountdown extends React.Component<CountdownProps, {}> {
 
   formatCountdown = (value: countdownValueType, config: FormatConfig) => {
     const { format } = this.props;
-    if (!moment(value).isValid()) return <div>error</div>;
+    // if (!moment(value).isValid()) return <div>error</div>;
+    if (!dayjs(value).isValid()) return <div>error</div>;
     const formatData = formatCountdown(value, { ...config, format });
     const formatDataArr = formatData.split('/');
 

@@ -1,6 +1,7 @@
 import { DEFAULT_METHOD } from 'api/list';
 import { BaseConfig, UrlObj, requestConfig } from 'api/types';
-import { spliceUrl, service, getRequestConfig } from 'api/utils';
+import { spliceUrl, service } from 'api/axios';
+import { getRequestConfig } from 'api/utils';
 
 const myServer = new Function();
 

@@ -113,7 +113,7 @@ export default function RemoveTable({ contract, whitelistId }: RemoveTableProps)
     [onSelectChange, selectedRowKeys],
   );
   const columns: ColumnsType<ProjectWhiteListItem> = useMemo(() => {
-    const arr = [];
+    const arr: any[] = [];
     if (whitelistInfo?.strategyType !== StrategyType.Basic) {
       arr.push({
         title: 'tagName',

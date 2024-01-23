@@ -16,5 +16,10 @@ export const isEffectiveNumber = (v: any) => {
   return !val.isNaN() && !val.lte(0);
 };
 
+export const AELF_TOKEN_INFO = {
+  symbol: 'ELF',
+  decimals: 8,
+};
+
 export const PriceDecimal = 8;
 export const InstallmentDecimal = 8;

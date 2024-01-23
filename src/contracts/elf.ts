@@ -4,7 +4,6 @@ import { isUserDenied } from '../utils';
 import { message } from 'antd';
 import { ChainConstants } from 'constants/ChainConstants';
 import { LANG_MAX, REQ_CODE } from 'constants/misc';
-import i18n from 'i18n';
 import { timesDecimals } from 'utils/calculate';
 // elf
 export const getELFChainBalance = async (tokenContract: ContractBasic, symbol: string, account: string) => {
@@ -79,7 +78,7 @@ export const checkELFApprove = async (
   });
 
   if (typeof approveResult !== 'boolean' && approveResult.error) {
-    message.error(i18n.t('Approval Failed'));
+    message.error('Approval Failed');
     message.error(approveResult.error.message);
     if (isUserDenied(approveResult.error.message)) return REQ_CODE.UserDenied;
     return REQ_CODE.Fail;

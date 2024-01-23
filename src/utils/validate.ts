@@ -1,9 +1,9 @@
 import { ZERO } from 'constants/misc';
-import { gtTip } from 'pages/CreateProject/utils';
+import { gtTip } from 'pages/CreateProjectOld/utils';
 
 export const numberValidator = async (_: any, v: any) => {
   const bigV = ZERO.plus(v);
-  if (!v || bigV.isNaN()) return Promise.reject('Please enter the correct value');
+  if (bigV.isNaN()) return Promise.reject('Please enter the correct value');
   return Promise.resolve(false);
 };
 

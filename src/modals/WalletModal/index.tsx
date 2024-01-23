@@ -11,7 +11,7 @@ export default function WalletModal() {
   return (
     <CommonModal
       width="auto"
-      visible={walletModal}
+      open={walletModal}
       title={t('connectWallet')}
       onCancel={() => dispatch(basicModalView.setWalletModal.actions(false))}
       className={clsx('modals', 'wallet-modal')}>

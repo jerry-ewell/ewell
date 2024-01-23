@@ -12,12 +12,12 @@ import { timesDecimals } from './calculate';
 import { isSymbol } from './reg';
 import { SupportedELFChainId } from 'constants/chain';
 import { isMobile } from 'react-device-detect';
+import { NETWORK_CONFIG } from 'constants/network';
 const Wallet = AElf.wallet;
 
 let wallet: any = null;
 const httpProviders: any = {};
-export function getAElf() {
-  const rpc = ChainConstants.constants.CHAIN_INFO.rpcUrl;
+export function getAElf(rpc = NETWORK_CONFIG.sideChainInfo.endPoint) {
   if (!httpProviders[rpc]) httpProviders[rpc] = new AElf(new AElf.providers.HttpProvider(rpc));
   return httpProviders[rpc];
 }
@@ -52,16 +52,18 @@ export function getBlockHeight() {
 export function getSerializedDataFromLog(log: any) {
   return AElf.pbUtils.getSerializedDataFromLog(log);
 }
-export async function getTxResult(TransactionId: string, reGetCount = 0): Promise<any> {
-  const txFun = isMobile ? getAElf().chain.getTxResult : ChainConstants.aelfInstance.chain.getTxResult;
-  console.log(TransactionId, txFun, '====txFun');
+export async function getTxResult(TransactionId: string, reGetCount = 0, rpc?: string): Promise<any> {
+  const txFun = getAElf(rpc).chain.getTxResult;
 
-  const txResult = await txFun(TransactionId);
-  console.log(txResult, TransactionId, 'compBalanceMetadata====txResult');
-
-  if (txResult.error && txResult.errorMessage) {
-    throw Error(txResult.errorMessage.message || txResult.errorMessage.Message);
+  let txResult;
+  try {
+    txResult = await txFun(TransactionId);
+  } catch (error) {
+    console.log('getTxResult:error', error);
+    throw { error: handleContractError(error), transactionId: TransactionId };
   }
+
+  console.log(txResult, TransactionId, 'compBalanceMetadata====txResult');
   const result = txResult?.result || txResult;
 
   if (!result) {
@@ -74,7 +76,7 @@ export async function getTxResult(TransactionId: string, reGetCount = 0): Promis
     }
     await sleep(1000);
     reGetCount++;
-    return getTxResult(TransactionId, reGetCount);
+    return getTxResult(TransactionId, reGetCount, rpc);
   }
 
   if (result.Status.toLowerCase() === 'mined') {
@@ -83,6 +85,22 @@ export async function getTxResult(TransactionId: string, reGetCount = 0): Promis
 
   throw Error(result.Error || `Transaction: ${result.Status}`);
 }
+
+export function handleContractError(error?: any, req?: any) {
+  if (typeof error === 'string') return { message: error };
+  if (error?.message) return error;
+  if (error.Error) {
+    return {
+      message: error.Error.Details || error.Error.Message || error.Error || error.Status,
+      code: error.Error.Code,
+    };
+  }
+  return {
+    code: req?.error?.message?.Code || req?.error,
+    message: req?.errorMessage?.message || req?.error?.message?.Message,
+  };
+}
+
 export function messageHTML(txId: string, type: 'success' | 'error' | 'warning' = 'success', moreMessage = '') {
   const aProps = isMobile ? {} : { target: '_blank', rel: 'noreferrer' };
   const explorerHref = getExploreLink(txId, 'transaction');

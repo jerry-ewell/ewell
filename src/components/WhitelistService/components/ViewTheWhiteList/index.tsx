@@ -125,7 +125,7 @@ export default function ViewTheWhiteList({ whiteListModal }: ViewTheWhiteListPro
   );
 
   const columns: ColumnsType<any> = useMemo(() => {
-    const arr = [];
+    const arr: any = [];
     if (whitelistInfo?.strategyType !== StrategyType.Basic) {
       arr.push({
         title: 'tagName',

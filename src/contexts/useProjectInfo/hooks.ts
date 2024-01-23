@@ -6,9 +6,12 @@ import { useProjectInfo } from '.';
 import { ProjectItemExt } from './actions';
 import { getProjectProgress } from './utils';
 
+const temp = (...args: any) => {};
+
 export function useProjectInfoDispatch() {
-  const [, { dispatch }] = useProjectInfo();
-  return useCallback(dispatch, [dispatch]);
+  return temp;
+  // const [, { dispatch }] = useProjectInfo();
+  // return useCallback(dispatch, [dispatch]);
 }
 
 export function useProjectInfoByFetch(timeStamp?: number) {
@@ -18,7 +21,7 @@ export function useProjectInfoByFetch(timeStamp?: number) {
   const getProjectInfo = useCallback(async () => {
     if (!projectId) return;
     // TODO
-    const res = await request.project.list({
+    const res = await request.project.getProjectList({
       params: {
         chainId: apiChainId,
         hash: projectId,

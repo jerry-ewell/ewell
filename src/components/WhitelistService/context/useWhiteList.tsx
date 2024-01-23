@@ -1,5 +1,5 @@
 import { BasicActions } from './utils';
-import { createContext, useContext, useMemo, useReducer } from 'react';
+import { ReactNode, createContext, useContext, useMemo, useReducer } from 'react';
 import { basicWhiteListView, WhiteListState } from './actions';
 import { useModalAction } from '../hooks/useModalAction';
 import { getUpdateList } from '../utils';
@@ -21,8 +21,11 @@ const INITIAL_STATE: WhiteListState = {
 };
 const WhiteListContext = createContext<any>(INITIAL_STATE);
 
+const temp: [WhiteListState, BasicActions] = [{} as any, { dispatch: (...args: any) => void 0 } as any];
+
 export function useWhiteList(): [WhiteListState, BasicActions] {
-  return useContext(WhiteListContext);
+  return temp;
+  // return useContext(WhiteListContext);
 }
 
 //reducer
@@ -59,7 +62,7 @@ function reducer(state: WhiteListState, { type, payload }: any) {
   }
 }
 
-export default function Provider({ children }: { children?: React.ReactNode }) {
+export default function Provider({ children }: { children?: ReactNode }) {
   const [state, dispatch] = useReducer(reducer, INITIAL_STATE);
   const { handleModalAction, handleModalDestroy, modalAction } = useModalAction<any>();
   console.log(state, 'state====');

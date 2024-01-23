@@ -73,7 +73,7 @@ export default function UserLevelSetting({ whiteListModal, customizeAddTagFormIt
   );
 
   const columns: ColumnsType<UserLevelItem> = useMemo(() => {
-    const arr = [];
+    const arr: any[] = [];
     if (whitelistInfo?.strategyType !== StrategyType.Basic) {
       arr.push({
         title: 'name',

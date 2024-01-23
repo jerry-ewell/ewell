@@ -1,3 +1,4 @@
+import BigNumber from 'bignumber.js';
 import type { FormItemProps } from '..';
 import type { inputProps, passwordProps, textAreaProps } from '../types';
 import type { FormItemProps as antFormItemProps } from 'antd';
@@ -32,7 +33,7 @@ export function getInputOptions(
     type: 'input',
     label: label,
     name: name || label,
-    rules: required ? [{ required: true, message: `Please enter ${label}!` }] : [],
+    rules: required ? [{ required: true, message: 'Please enter the necessary information' }] : [],
     childrenProps: {
       placeholder: `Please enter`,
       ...childrenProps,
@@ -64,4 +65,22 @@ export function getPasswordOptions(option: string | Options): passwordProps & Fo
       placeholder: '6 - 16位 数字、字母、符号两种及以上！',
     },
   };
+}
+
+export function integeNumberFormat(val: string) {
+  console.log('integeNumberFormat', typeof val);
+  if (!val) return '';
+  return new BigNumber(val).toFormat(0);
+}
+
+export function formatNumberParser(val: string) {
+  console.log('formatInterNumberParser', val);
+  return val.replace(/,*/g, '');
+}
+
+export function normFile(e: any) {
+  if (Array.isArray(e)) {
+    return e;
+  }
+  return e?.fileList;
 }

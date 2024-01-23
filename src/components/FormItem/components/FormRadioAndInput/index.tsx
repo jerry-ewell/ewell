@@ -1,4 +1,5 @@
 import { Input, Radio } from 'antd';
+import { ReactNode } from 'react';
 export default function FormRadioAndInput({
   value,
   onChange,
@@ -7,7 +8,7 @@ export default function FormRadioAndInput({
 }: {
   value?: any;
   onChange?: (value: any) => void;
-  suffix?: React.ReactNode;
+  suffix?: ReactNode;
 }) {
   const isRadio = value === 'radio';
   return (

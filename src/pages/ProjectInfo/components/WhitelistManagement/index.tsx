@@ -50,7 +50,7 @@ export default function WhitelistManagement() {
   console.log(whitelist, 'whitelist====');
 
   const switchChange = useCallback(
-    async (checked, e) => {
+    async (checked: any, e: any) => {
       e.preventDefault();
       setSwitchLoading(true);
       const res = await (whitelist?.isAvailable ? disableWhiteList() : enableWhiteList());
@@ -184,7 +184,6 @@ export default function WhitelistManagement() {
                       width: isMobile ? '22.8571rem' : 600,
                       className: 'project-manner-modal',
                       content: 'Confirm to cancel the IDO and return received funds to investors.',
-                      closeIcon: () => null,
                       onOk,
                     });
                   }}>

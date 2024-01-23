@@ -4,7 +4,7 @@ import ToTop from 'components/ToTop';
 import { Icons } from 'constants/iconfont';
 import { InstallmentDecimal, ZERO } from 'constants/misc';
 import { useMobile } from 'contexts/useStore/hooks';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import { useCallback, useMemo } from 'react';
 import { ProjectItem } from 'types/project';
 import { getPriceDecimal } from 'utils';
@@ -59,12 +59,12 @@ export default function IDOInfoPage({ idoInfo, isCreate }: { idoInfo?: ProjectIt
       {
         title: 'IDO starts at',
         key: 'startTime',
-        value: idoInfo?.startTime ? moment((idoInfo?.startTime ?? 0) * 1000).format('YYYY.MM.DD HH:mm') : '--',
+        value: idoInfo?.startTime ? dayjs((idoInfo?.startTime ?? 0) * 1000).format('YYYY.MM.DD HH:mm') : '--',
       },
       {
         title: 'IDO ends at',
         key: 'endTime',
-        value: idoInfo?.endTime ? moment((idoInfo?.endTime ?? 0) * 1000).format('YYYY.MM.DD HH:mm') : '--',
+        value: idoInfo?.endTime ? dayjs((idoInfo?.endTime ?? 0) * 1000).format('YYYY.MM.DD HH:mm') : '--',
       },
       // TODO
       {

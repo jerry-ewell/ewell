@@ -6,7 +6,7 @@ import en from './languages/en.json';
 import zh from './languages/zh.json';
 import { LANGUAGE, LOCAL_LANGUAGE_LIST, DEFAULT_LANGUAGE } from './config';
 
-import moment from 'moment';
+import dayjs from 'dayjs';
 import './moment/zh-cn';
 const resources = { en, zh };
 function initLanguage() {
@@ -35,7 +35,7 @@ function initLanguage() {
         escapeValue: false, // react already safes from xss
       },
     });
-  moment.locale(lng.replace('_', '-'));
+  dayjs.locale(lng.replace('_', '-'));
 }
 initLanguage();
 export function useLanguage(): {
@@ -44,12 +44,12 @@ export function useLanguage(): {
 } {
   const { i18n } = useTranslation();
   const changeLanguage = useCallback(
-    (value) => {
+    (value: any) => {
       if (i18n.language !== value && LOCAL_LANGUAGE_LIST.includes(value)) {
         if (value === 'zh') {
-          moment.locale('zh-cn');
+          dayjs.locale('zh-cn');
         } else {
-          moment.locale(value);
+          dayjs.locale(value);
         }
         i18n.changeLanguage(value);
         localStorage.setItem(LANGUAGE, value);

@@ -1,26 +1,41 @@
-import type { CascaderProps, DatePickerProps, InputProps, RadioProps, RowProps, SelectProps, UploadProps } from 'antd';
-import type { PasswordProps, TextAreaProps } from 'antd/lib/input';
+import React from 'react';
+import type {
+  CascaderProps,
+  DatePickerProps,
+  // InputProps,
+  // RadioProps,
+  RowProps,
+  SelectProps,
+  // UploadProps,
+  InputNumberProps,
+  FlexProps,
+} from 'antd';
+import type { IInputProps, InputTextAreaProps, InputPasswordProps, IRadioProps } from 'aelf-design';
+// import type { PasswordProps, TextAreaProps } from 'antd/lib/input';
 import type { FormTreeProps } from './components/FormTree';
 import type { CommonSelectItem } from 'components/CommonSelect';
+import { FormItemProps } from './index';
+import { IFUploadProps } from '../Upload';
+import { ReactHTML, ReactHTMLElement } from 'react';
 
 export type inputProps = {
   type: 'input';
-  childrenProps?: InputProps;
+  childrenProps?: IInputProps;
 };
 export type passwordProps = {
   type: 'password';
-  childrenProps?: PasswordProps;
+  childrenProps?: InputPasswordProps;
 };
 export type textAreaProps = {
   type: 'textArea';
-  childrenProps?: TextAreaProps;
+  childrenProps?: InputTextAreaProps;
 };
 
 export type groupProps = {
   type: 'group';
   childrenProps: {
     disabled?: boolean;
-    radioList: RadioProps[];
+    radioList: IRadioProps[];
   };
 };
 
@@ -51,16 +66,16 @@ export type timePickerProps = {
 };
 export type fileUploadProps = {
   type: 'fileUpload';
-  childrenProps?: UploadProps;
+  childrenProps?: IFUploadProps;
 };
 
 export type idCardUploadProps = {
   type: 'idCardUpload';
-  childrenProps?: UploadProps;
+  childrenProps?: IFUploadProps;
 };
 export type radioInputProps = {
   type: 'radioInput';
-  childrenProps?: InputProps;
+  childrenProps?: IInputProps;
 };
 
 export type rowProps = {
@@ -77,6 +92,30 @@ export type searchSelectProps = {
 
 export type customizeProps = {
   type: 'customize';
-  children?: JSX.Element;
+  children?: React.JSX.Element;
+  childrenProps?: any;
+};
+
+export type inputNumberProps = {
+  type: 'inputNumber';
+  childrenProps?: InputNumberProps;
+};
+export type FieldsGroupProps = {
+  type: 'fieldsGroup';
+  label: string;
+  name?: string;
+  fieldsList: FormItemProps[];
+  childrenProps?: any;
+};
+
+export type inlineFieldProps = {
+  type: 'inlineField';
+  inlineFieldList: Omit<FormItemProps, 'inlineFieldProps'>[];
+  flexProps?: FlexProps;
+  childrenProps?: any;
+};
+export type pureTextProps = {
+  type: 'pureText';
+  text?: string;
   childrenProps?: any;
 };
