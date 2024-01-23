@@ -7,7 +7,7 @@ import ProjectLogo from 'components/ProjectLogo';
 import SuccessModal from '../SuccessModal';
 import { wallet as walletIcon } from 'assets/images';
 import { IProjectInfo } from 'types/project';
-import { NETWORK_CONFIG } from 'constants/network';
+import { DEFAULT_CHAIN_ID, NETWORK_CONFIG } from 'constants/network';
 import { divDecimals, divDecimalsStr } from 'utils/calculate';
 import { getPriceDecimal } from 'utils';
 import { useWallet } from 'contexts/useWallet/hooks';
@@ -174,6 +174,7 @@ export default function PurchaseButton({ buttonDisabled, projectInfo, purchaseAm
                 className="hash-address-small"
                 preLen={8}
                 endLen={9}
+                chain={DEFAULT_CHAIN_ID}
                 address={NETWORK_CONFIG.ewellContractAddress}
               />
             </Flex>
