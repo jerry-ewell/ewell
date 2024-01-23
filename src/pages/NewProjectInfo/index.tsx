@@ -1,7 +1,8 @@
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import { request } from 'api';
-import { message } from 'antd';
+import { Flex, message } from 'antd';
+import { Typography } from 'aelf-design';
 import ActionCard from './components/ActionCard';
 import InfoWrapper from './components/InfoWrapper';
 import { useMobile } from 'contexts/useStore/hooks';
@@ -12,11 +13,14 @@ import { IProjectInfo } from 'types/project';
 import myEvents from 'utils/myEvent';
 import { mockDetail, mockWhitelistInfo, mockPreviewData } from './mock';
 import { emitLoading } from 'utils/events';
+import { tableEmpty } from 'assets/images';
 import './styles.less';
 
 interface IProjectInfoProps {
   previewData?: IProjectInfo;
 }
+
+const { Text } = Typography;
 
 export default function ProjectInfo({ previewData }: IProjectInfoProps) {
   const isMobile = useMobile();
@@ -101,11 +105,17 @@ export default function ProjectInfo({ previewData }: IProjectInfoProps) {
     <>
       {contextHolder}
       <div className="common-page-1360 min-height-container project-info-wrapper">
-        {showInfo && (
+        {showInfo ? (
           <div className="flex project-info-content">
             <InfoWrapper projectInfo={info} />
             {!isMobile && <ActionCard projectInfo={info} isPreview={isPreview} handleRefresh={getProjectInfo} />}
           </div>
+        ) : (
+          // TODO: adjust ui
+          <Flex className="min-height-container" vertical justify="center" align="center" gap={16}>
+            <img src={tableEmpty} alt="empty" />
+            <Text>Empty</Text>
+          </Flex>
         )}
       </div>
     </>
