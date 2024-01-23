@@ -53,4 +53,5 @@ export interface IProjectInfo {
   whitelistInfo?: {
     url?: string;
   };
+  tokenReleaseTime?: string;
 }
