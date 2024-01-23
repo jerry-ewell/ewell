@@ -63,7 +63,7 @@ const MyProjects: React.FC<ProjectListProps> = () => {
   }, []);
 
   return (
-    <div className="project-page" id="project-list-scroll">
+    <div className="project-page">
       {!createdItems.length && !participateItems.length && (
         <>
           <div className="project-type"> No Projects</div>
@@ -86,7 +86,6 @@ const MyProjects: React.FC<ProjectListProps> = () => {
         showScrollToTop={false}
         loaded={loadAllParticipateItems}
         loadMoreData={getParticipateProject}
-        id="project-list-scroll"
         dataLength={participateItems.length}>
         {!!participateItems.length && <div className="project-type">Participate</div>}
         <Row gutter={[24, 24]}>
