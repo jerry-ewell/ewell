@@ -13,6 +13,9 @@ import NewProjectInfo from 'pages/NewProjectInfo';
 import { getInfo } from '../utils';
 import { AELF_TOKEN_INFO } from 'constants/misc';
 import { Typography, FontWeightEnum } from 'aelf-design';
+import BigNumber from 'bignumber.js';
+import dayjs from 'dayjs';
+import { ProjectStatus } from 'types/project';
 
 interface SuccessInfo {
   supply?: number;
@@ -35,6 +38,15 @@ const Transfer: React.FC<CreateStepPorps> = ({ onPre }) => {
   const previewData = useMemo(() => {
     const { additionalInfo, ...data } = getInfo(tradingPair, idoInfo, additional);
     const { startTime, endTime, tokenReleaseTime } = idoInfo;
+    let status = ProjectStatus.UPCOMING;
+    const now = Date.now();
+    if (dayjs(tokenReleaseTime).valueOf() < now) {
+      status = ProjectStatus.ENDED;
+    } else if (dayjs(endTime).valueOf() < now) {
+      status = ProjectStatus.UNLOCKED;
+    } else if (dayjs(startTime).valueOf() < now) {
+      status = ProjectStatus.PARTICIPATORY;
+    }
     return {
       ...data,
       additionalInfo: additionalInfo.data,
@@ -44,6 +56,8 @@ const Transfer: React.FC<CreateStepPorps> = ({ onPre }) => {
       endTime,
       tokenReleaseTime,
       unlockTime: tokenReleaseTime,
+      toRaisedAmount: new BigNumber(data.crowdFundingIssueAmount).div(data.preSalePrice).toString(),
+      status,
     } as any;
   }, [additional, idoInfo, tradingPair]);
 
