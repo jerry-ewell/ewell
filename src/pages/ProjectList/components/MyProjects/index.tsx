@@ -32,7 +32,7 @@ const MyProjects: React.FC<ProjectListProps> = () => {
 
       const list = await getList({
         types: ProjectType.PARTICIPATE,
-        skipCount: participateListPageNum,
+        skipCount: participateItems.length,
         maxResultCount: colNum * 3,
         // maxResultCount: 3,
       });
