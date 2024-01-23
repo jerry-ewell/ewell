@@ -1,16 +1,18 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import BigNumber from 'bignumber.js';
 import clsx from 'clsx';
-import { Flex } from 'antd';
+import { Flex, message } from 'antd';
 import { Button, Modal, Typography, FontWeightEnum, HashAddress } from 'aelf-design';
 import SuccessModal from '../SuccessModal';
 import { IProjectInfo } from 'types/project';
-import { divDecimalsStr } from 'utils/calculate';
+import { divDecimalsStr, timesDecimals } from 'utils/calculate';
 import { useWallet } from 'contexts/useWallet/hooks';
-import { useBalances } from 'hooks/useBalances';
-import { emitLoading } from 'utils/events';
+import { emitLoading, emitSyncTipsModal } from 'utils/events';
 import { NETWORK_CONFIG } from 'constants/network';
+import { useTokenPrice, useTxFee } from 'contexts/useAssets/hooks';
+import { useBalance } from 'hooks/useBalance';
+import { renderTokenPrice } from 'utils/project';
 
 const { Title, Text } = Typography;
 
@@ -18,24 +20,31 @@ interface ICreatorClaimTokenButtonProps {
   projectInfo?: IProjectInfo;
 }
 
-// TODO: get estimatedTransactionFee
-const estimatedTransactionFee = '366';
-
-// TODO: convert to USD
-
 export default function CreatorClaimTokenButton({ projectInfo }: ICreatorClaimTokenButtonProps) {
   const { projectId } = useParams();
-
+  const { tokenPrice } = useTokenPrice();
+  const { txFee } = useTxFee();
+  const [messageApi, contextHolder] = message.useMessage();
   const { wallet, checkManagerSyncState } = useWallet();
-
-  const [balances] = useBalances(projectInfo?.toRaiseToken?.symbol);
+  const { balance, updateBalance } = useBalance(projectInfo?.toRaiseToken?.symbol);
 
   const [isSubmitModalOpen, setIsSubmitModalOpen] = useState(false);
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
+  const [transactionId, setTransactionId] = useState('');
+
+  useEffect(() => {
+    if (isSubmitModalOpen) {
+      updateBalance();
+    }
+  }, [updateBalance, isSubmitModalOpen]);
+
+  const txFeeAmount = useMemo(() => {
+    return timesDecimals(txFee, projectInfo?.toRaiseToken?.decimals);
+  }, [txFee, projectInfo?.toRaiseToken?.decimals]);
 
   const notEnoughTokens = useMemo(() => {
-    return new BigNumber(balances?.[0] ?? 0).lt(estimatedTransactionFee);
-  }, [balances]);
+    return new BigNumber(balance).lt(txFeeAmount);
+  }, [balance, txFeeAmount]);
 
   const handleSubmit = async () => {
     setIsSubmitModalOpen(false);
@@ -43,11 +52,11 @@ export default function CreatorClaimTokenButton({ projectInfo }: ICreatorClaimTo
     const isManagerSynced = await checkManagerSyncState();
     if (!isManagerSynced) {
       emitLoading(false);
-      // TODO: show tips modal
+      emitSyncTipsModal(true);
       return;
     }
     try {
-      const result = await wallet?.callContract({
+      const result = await wallet?.callContract<any, any>({
         contractAddress: NETWORK_CONFIG.ewellContractAddress,
         methodName: 'Claim',
         args: {
@@ -56,10 +65,15 @@ export default function CreatorClaimTokenButton({ projectInfo }: ICreatorClaimTo
         },
       });
       console.log('Claim result', result);
-      // TODO: polling get Transaction ID
+      const { TransactionId } = result;
+      setTransactionId(TransactionId);
       setIsSuccessModalOpen(true);
-    } catch (error) {
+    } catch (error: any) {
       console.log('Claim error', error);
+      messageApi.open({
+        type: 'error',
+        content: error?.message || 'Claim failed',
+      });
     } finally {
       emitLoading(false);
     }
@@ -67,6 +81,7 @@ export default function CreatorClaimTokenButton({ projectInfo }: ICreatorClaimTo
 
   return (
     <>
+      {contextHolder}
       <Button
         type="primary"
         onClick={() => {
@@ -86,23 +101,28 @@ export default function CreatorClaimTokenButton({ projectInfo }: ICreatorClaimTo
           <Text>
             Click to extract ELF from EWELL contract. If you have any token left, it will be withdrawn as well.
           </Text>
-          <Flex vertical>
+          <Flex vertical align="center">
             <Flex align="baseline" gap={8}>
-              {/* TODO: check fieldName */}
-              <Title className="half-width text-right" fontWeight={FontWeightEnum.Medium} level={4}>
-                3
+              <Title fontWeight={FontWeightEnum.Medium} level={4}>
+                {divDecimalsStr(
+                  new BigNumber(projectInfo?.currentRaisedAmount || '').plus(
+                    projectInfo?.receivableLiquidatedDamageAmount || '',
+                  ),
+                  projectInfo?.toRaiseToken?.decimals,
+                )}
               </Title>
-              <Title className="half-width" fontWeight={FontWeightEnum.Medium}>
-                {projectInfo?.toRaiseToken?.symbol || '--'}
-              </Title>
+              <Title fontWeight={FontWeightEnum.Medium}>{projectInfo?.toRaiseToken?.symbol || '--'}</Title>
             </Flex>
             <Flex align="baseline" gap={8}>
-              <Title className="half-width text-right" fontWeight={FontWeightEnum.Medium} level={4}>
-                80
+              <Title fontWeight={FontWeightEnum.Medium} level={4}>
+                {divDecimalsStr(
+                  new BigNumber(projectInfo?.crowdFundingIssueAmount || '').minus(
+                    projectInfo?.currentCrowdFundingIssueAmount || '',
+                  ),
+                  projectInfo?.crowdFundingIssueToken?.decimals,
+                )}
               </Title>
-              <Title className="half-width" fontWeight={FontWeightEnum.Medium}>
-                {projectInfo?.crowdFundingIssueToken?.symbol || '--'}
-              </Title>
+              <Title fontWeight={FontWeightEnum.Medium}>{projectInfo?.crowdFundingIssueToken?.symbol || '--'}</Title>
             </Flex>
           </Flex>
           <Flex className="modal-box-data-wrapper" justify="space-between">
@@ -118,14 +138,26 @@ export default function CreatorClaimTokenButton({ projectInfo }: ICreatorClaimTo
             <Text>Estimated Transaction Fee</Text>
             <Flex gap={8} align="baseline">
               <Text>
-                {divDecimalsStr(estimatedTransactionFee, projectInfo?.toRaiseToken?.decimals)}{' '}
-                {projectInfo?.toRaiseToken?.symbol ?? '--'}
+                {txFee} {projectInfo?.toRaiseToken?.symbol ?? '--'}
               </Text>
-              <Text size="small">$ 0.19</Text>
+              {renderTokenPrice({
+                textProps: {
+                  size: 'small',
+                },
+                amount: txFee,
+                decimals: 0,
+                tokenPrice,
+              })}
             </Flex>
           </Flex>
+          <Text
+            className={clsx('error-text', 'text-center', { ['display-none']: !notEnoughTokens })}
+            fontWeight={FontWeightEnum.Medium}>
+            Please deposit enough ELF in your wallet to pay for Gas! Estimated Gas is {txFee}{' '}
+            {projectInfo?.toRaiseToken?.symbol ?? '--'}
+          </Text>
           <Flex justify="center">
-            <Button className="modal-single-button" type="primary" onClick={handleSubmit}>
+            <Button className="modal-single-button" type="primary" disabled={notEnoughTokens} onClick={handleSubmit}>
               Submit
             </Button>
           </Flex>
@@ -145,18 +177,28 @@ export default function CreatorClaimTokenButton({ projectInfo }: ICreatorClaimTo
         data={{
           amountList: [
             {
-              amount: '30',
-              symbol: 'ELF',
+              amount: divDecimalsStr(
+                new BigNumber(projectInfo?.currentRaisedAmount || '').plus(
+                  projectInfo?.receivableLiquidatedDamageAmount || '',
+                ),
+                projectInfo?.toRaiseToken?.decimals,
+              ),
+              symbol: projectInfo?.toRaiseToken?.symbol || '--',
             },
             {
-              amount: '30,000',
-              symbol: 'PIGE',
+              amount: divDecimalsStr(
+                new BigNumber(projectInfo?.crowdFundingIssueAmount || '').minus(
+                  projectInfo?.currentCrowdFundingIssueAmount || '',
+                ),
+                projectInfo?.crowdFundingIssueToken?.decimals,
+              ),
+              symbol: projectInfo?.crowdFundingIssueToken?.symbol || '--',
             },
           ],
           description: 'Congratulations, transfer success!',
           boxData: {
             label: 'Transaction ID',
-            value: 'ELF_0x00…14dC_AELF',
+            value: transactionId,
           },
         }}
       />

@@ -1,14 +1,16 @@
 // TODO: check whether the operation is automatic
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { Flex } from 'antd';
+import { Flex, message } from 'antd';
 import { Button, Typography, FontWeightEnum, Modal, HashAddress } from 'aelf-design';
 import SuccessModal from '../SuccessModal';
 import { IProjectInfo } from 'types/project';
 import { divDecimalsStr } from 'utils/calculate';
 import { useWallet } from 'contexts/useWallet/hooks';
-import { emitLoading } from 'utils/events';
+import { emitLoading, emitSyncTipsModal } from 'utils/events';
 import { NETWORK_CONFIG } from 'constants/network';
+import { useTokenPrice, useTxFee } from 'contexts/useAssets/hooks';
+import { renderTokenPrice } from 'utils/project';
 
 const { Text, Title } = Typography;
 
@@ -16,19 +18,17 @@ interface IClaimTokenButtonProps {
   projectInfo?: IProjectInfo;
 }
 
-// TODO: get estimatedTransactionFee
-const estimatedTransactionFee = '366';
-
-// TODO: convert to USD
-
 export default function RevokeFineButton({ projectInfo }: IClaimTokenButtonProps) {
   const { projectId } = useParams();
-
   const { wallet, checkManagerSyncState } = useWallet();
+  const { tokenPrice } = useTokenPrice();
+  const { txFee } = useTxFee();
+  const [messageApi, contextHolder] = message.useMessage();
 
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
-  const [isSubmitModalOpen, setIsSubmitModalOpen] = useState(true);
+  const [isSubmitModalOpen, setIsSubmitModalOpen] = useState(false);
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
+  const [transactionId, setTransactionId] = useState('');
 
   const handleSubmit = async () => {
     setIsSubmitModalOpen(false);
@@ -36,22 +36,25 @@ export default function RevokeFineButton({ projectInfo }: IClaimTokenButtonProps
     const isManagerSynced = await checkManagerSyncState();
     if (!isManagerSynced) {
       emitLoading(false);
-      // TODO: show tips modal
+      emitSyncTipsModal(true);
       return;
     }
     try {
-      const result = await wallet?.callContract({
+      const result = await wallet?.callContract<any, any>({
         contractAddress: NETWORK_CONFIG.ewellContractAddress,
         methodName: 'ClaimLiquidatedDamage',
-        args: {
-          projectId,
-        },
+        args: projectId,
       });
       console.log('ClaimLiquidatedDamage result', result);
-      // TODO: polling get Transaction ID
+      const { TransactionId } = result;
+      setTransactionId(TransactionId);
       setIsSuccessModalOpen(true);
-    } catch (error) {
+    } catch (error: any) {
       console.log('ClaimLiquidatedDamage error', error);
+      messageApi.open({
+        type: 'error',
+        content: error?.message || 'ClaimLiquidatedDamage failed',
+      });
     } finally {
       emitLoading(false);
     }
@@ -59,6 +62,7 @@ export default function RevokeFineButton({ projectInfo }: IClaimTokenButtonProps
 
   return (
     <>
+      {contextHolder}
       <Button type="primary" onClick={() => setIsConfirmModalOpen(true)}>
         Revoke Token
       </Button>
@@ -103,8 +107,7 @@ export default function RevokeFineButton({ projectInfo }: IClaimTokenButtonProps
           <Text>After clicking “Submit”, EWELL transfer ELF to the designated account.</Text>
           <Flex gap={8} justify="center" align="baseline">
             <Title fontWeight={FontWeightEnum.Medium} level={4}>
-              {/* TODO: check fieldName */}
-              3.3604
+              {divDecimalsStr(projectInfo?.liquidatedDamageAmount, projectInfo?.toRaiseToken?.decimals)}
             </Title>
             <Title fontWeight={FontWeightEnum.Medium}>{projectInfo?.toRaiseToken?.symbol || '--'}</Title>
           </Flex>
@@ -122,10 +125,16 @@ export default function RevokeFineButton({ projectInfo }: IClaimTokenButtonProps
               <Text>Estimated Transaction Fee</Text>
               <Flex gap={8} align="baseline">
                 <Text>
-                  {divDecimalsStr(estimatedTransactionFee, projectInfo?.toRaiseToken?.decimals)}{' '}
-                  {projectInfo?.toRaiseToken?.symbol ?? '--'}
+                  {txFee} {projectInfo?.toRaiseToken?.symbol ?? '--'}
                 </Text>
-                <Text size="small">$ 0.19</Text>
+                {renderTokenPrice({
+                  textProps: {
+                    size: 'small',
+                  },
+                  amount: txFee,
+                  decimals: 0,
+                  tokenPrice,
+                })}
               </Flex>
             </Flex>
           </Flex>
@@ -150,14 +159,14 @@ export default function RevokeFineButton({ projectInfo }: IClaimTokenButtonProps
         data={{
           amountList: [
             {
-              amount: '3.3604',
-              symbol: 'ELF',
+              amount: divDecimalsStr(projectInfo?.liquidatedDamageAmount, projectInfo?.toRaiseToken?.decimals),
+              symbol: projectInfo?.toRaiseToken?.symbol || '--',
             },
           ],
           description: 'Congratulations, your token has been revoked successfully!',
           boxData: {
             label: 'Transaction ID',
-            value: 'ELF_0x00…14dC_AELF',
+            value: transactionId,
           },
         }}
       />

@@ -79,6 +79,13 @@ export interface IProjectInfo {
   whitelistInfo?: {
     url?: string;
   };
+  isCreator?: boolean;
+  isInWhitelist?: boolean;
+  liquidatedDamageAmount?: string;
+  receivableLiquidatedDamageAmount?: string;
+  currentCrowdFundingIssueAmount?: string;
+  claimedLiquidatedDamage?: boolean;
+  isWithdraw?: boolean;
 }
 
 export interface ProjectItem {

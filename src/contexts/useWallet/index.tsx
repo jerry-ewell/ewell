@@ -88,7 +88,7 @@ function reducer(state: any, { type, payload }: any) {
   }
 }
 
-const LOGOUT_STAY_PATH = ['example'];
+const LOGOUT_STAY_PATH = ['example', 'project'];
 export function WalletProvider({ children }: { children: React.ReactNode }) {
   const [state, dispatch] = useReducer(reducer, INITIAL_STATE);
   const webLoginContext = useWebLoginContext();
@@ -140,8 +140,9 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
   }, [navigate]);
   useWebLoginEvent(WebLoginEvents.LOGOUT, onLogout);
 
+  // TODO: remove
   useEffect(() => {
-    console.log('state', state);
+    console.log('wallet state', state);
   }, [state]);
 
   useEffect(() => {
@@ -153,15 +154,6 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
       remove();
     };
   }, [wallet]);
-
-  useEffect(() => {
-    const { remove } = myEvents.RefuseAuth.addListener(() => {
-      logout();
-    });
-    return () => {
-      remove();
-    };
-  }, [logout]);
 
   return (
     <WalletContext.Provider value={useMemo(() => [state, dispatch], [state, dispatch])}>

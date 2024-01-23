@@ -1,24 +1,6 @@
 @font-face {
-  font-family: Poppins;
-  src: url('./assets/fonts/Poppins-Medium.otf');
-  font-weight: 500;
-  font-display: swap;
-}
-@font-face {
-  font-family: Poppins-Bold;
-  src: url('./assets/fonts/Poppins-Bold.otf');
-  font-display: swap;
-}
-@font-face {
-  font-family: Poppins;
-  src: url('./assets/fonts/Poppins-SemiBold.otf');
-  font-weight: 600;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: Poppins;
-  src: url('./assets/fonts/Poppins-Regular.otf');
+  font-family: D-DIN-Bold;
+  src: url('./assets/fonts/D-DIN-Bold.ttf');
   font-weight: 400;
   font-display: swap;
 }
@@ -26,7 +8,7 @@
 body {
   margin: 0;
   /* stylelint-disable-next-line font-family-no-missing-generic-family-keyword */
-  font-family: Poppins;
+  font-family: Roboto;
   font-weight: 400;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;

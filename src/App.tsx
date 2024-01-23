@@ -4,8 +4,13 @@ import ScrollToTop from 'components/ScrollToTop';
 import Header from 'components/Header';
 import Footer from 'components/Footer';
 import PageLoading from 'components/PageLoading';
+import PageSyncTipsModal from 'components/PageSyncTipsModal';
+import { useInit } from 'hooks/useInit';
 // import { Suspense } from 'react';
+
 function App() {
+  useInit();
+
   return (
     <>
       {/* <Modals /> */}
@@ -18,6 +23,7 @@ function App() {
           <Footer />
         </div>
         <PageLoading />
+        <PageSyncTipsModal />
       </div>
       {/* </Suspense> */}
     </>

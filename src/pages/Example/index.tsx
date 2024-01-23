@@ -17,15 +17,26 @@ import { InboxOutlined } from '@ant-design/icons';
 import { useParseWhitelist } from 'hooks/useParseWhitelist';
 import { identifyWhitelistData } from 'hooks/useParseWhitelist/utils';
 import { UpdateType } from 'components/UpdateWhitelistUsersButton/types';
+import { useTokenPrice, useTxFee } from 'contexts/useAssets/hooks';
 
 const { Dragger } = Upload;
 
 export default function Example() {
   const { login, logout, wallet, checkManagerSyncState } = useWallet();
 
-  const { getTokenContract, getEwellContract, getWhitelistContract } = useViewContract();
+  const { getTokenContract, getEwellContract, getWhitelistContract, getApproveAmount } = useViewContract();
   const [projectId, setProjectId] = useState('15d556a57222ef06ea9a46a6fb9db416bffb98b8de60ccef6bcded8ca851f407');
   const { updateFile } = useParseWhitelist();
+
+  const { tokenPrice } = useTokenPrice();
+  const { txFee } = useTxFee();
+  useEffect(() => {
+    console.log('tokenPrice', tokenPrice);
+  }, [tokenPrice]);
+
+  useEffect(() => {
+    console.log('txFee', txFee);
+  }, [txFee]);
 
   const transfer = useCallback(async () => {
     try {
@@ -72,34 +83,44 @@ export default function Example() {
     [getEwellContract, wallet],
   );
 
+  const [endTime, setEndTime] = useState('');
   const create = useCallback(async () => {
+    const endTimePb = getProtobufTime(Date.now() + (endTime === '' ? 40 * 60 : Number(endTime)) * 60 * 1000);
     const registerInput = {
       acceptedCurrency: 'ELF',
       projectCurrency: 'LINHONG',
       crowdFundingType: 'Sell at the set price',
-      crowdFundingIssueAmount: '1000000000',
-      preSalePrice: '100000000',
+      crowdFundingIssueAmount: '1000',
+      preSalePrice: '1000',
       startTime: getProtobufTime(Date.now() + 60 * 1000),
-      endTime: getProtobufTime(Date.now() + 40 * 60 * 60 * 1000),
+      endTime: endTimePb,
       minSubscription: 1,
       maxSubscription: '1000000000',
       publicSalePrice: ZERO.plus('100000000').div(1.05).toFixed(), // preSalePrice / 1.05
       listMarketInfo: [], // fixed
       liquidityLockProportion: 0, // fixed
-      unlockTime: getProtobufTime(Date.now() + 45 * 60 * 60 * 1000), // fixed
+      unlockTime: endTimePb, // fixed
       isEnableWhitelist: false,
       isBurnRestToken: true,
       totalPeriod: 1, // fixed
       additionalInfo: {
         data: {
-          name: 'test1',
-          value: 'test2',
+          projectName: 'Citizen Conflict',
+          projectSummary:
+            'The mobile game immerses players in a metaverse that bridges the virtual and physical worlds, DEFY fuses hyper casual code-breaking gameplay, with real world exploration and Augmented Reality (AR) adventures.',
+          projectDescription:
+            'The DEFY team believes that in order to make P&E sustainable for the long term, it is critical to wrap the earning mechanics in a fun, highly engaging game which is rewarding beyond just playing to earn. Using a rich narrative and introducing novel new features into the game, DEFY is built for the long term. Furthermore, the DEFY game economy has been built to harness the creativity of the community, via the upcoming creators platform which will allow users to burn $DEFY tokens in order to forge and create new NFT game assets which may be sold via a native marketplace. By doing this, DEFY is creating a platform that has the ability to absorb and distribute value in multiple ways. Location based play and earn game DEFY fuses hyper casual code breaking gameplay, real world exploration and AR adventures The mobile game immerses players in a metaverse that bridges the virtual and physical worlds, DEFY fuses hyper casual code-breaking gameplay, with real world exploration and Augmented Reality (AR) adventures. DEFY Labs is proud to announce the completion of their US$3.5m seed round led by Animoca Brands, liveXThe Spartan Group, GameFi Ventures, BIXIN, Polygon Studios, Unanimous Capital, PathDAO andPlay It Forward DAO DEFY’s in-game economy has been designed with scale and longevity in mind. A dual currency model is combined with an extensive set of customisable tradable game assets as well as multiple active and passive earning mechanisms that can be leveraged by the players. A creators platform will be added for content creators to collaborate with DEFY and bring NFTs into Augmented Reality. DEFY intends to bring PvP into DEFY which creates huge longevity.',
+          x: 'https://www.google.com/',
+          telegram: 'https://www.google.com/',
+          medium: 'https://www.google.com/',
+          logoUrl: '',
+          projectImgs: 'url1,url2',
         },
       },
       firstDistributeProportion: '100000000', // fixed 100%
       restDistributeProportion: 0, // fixed
       periodDuration: 0, // fixed
-      tokenReleaseTime: getProtobufTime(Date.now() + 45 * 60 * 60 * 1000),
+      tokenReleaseTime: endTimePb,
     };
     console.log('registerInput', registerInput);
 
@@ -116,7 +137,7 @@ export default function Example() {
     } catch (error) {
       console.log('error', error);
     }
-  }, [wallet]);
+  }, [endTime, wallet]);
 
   const getBalance = useCallback(async () => {
     const tokenContract = await getTokenContract();
@@ -130,7 +151,7 @@ export default function Example() {
   const getList = useCallback(async () => {
     try {
       const result = await request.project.getProjectList({
-        params: { chainId: DEFAULT_CHAIN_ID, types: 3 },
+        params: { chainId: DEFAULT_CHAIN_ID, types: '1' },
       });
       console.log('getList', result);
     } catch (error) {
@@ -332,7 +353,11 @@ export default function Example() {
           value: [
             {
               addressList: {
-                value: ['ELF_2R7QtJp7e1qUcfh2RYYJzti9tKpPheNoAGD7dTVFd4m9NaCh27_tDVV', ...walletAddressList],
+                value: ['ELF_2R7QtJp7e1qUcfh2RYYJzti9tKpPheNoAGD7dTVFd4m9NaCh27_tDVV', ...walletAddressList].map(
+                  (item) => ({
+                    address: item,
+                  }),
+                ),
               },
             },
           ],
@@ -347,9 +372,19 @@ export default function Example() {
     const whitelistId = await ewellContract.GetWhitelistId.call(projectId);
     console.log('whitelistId', whitelistId);
     const whitelistContract = await getWhitelistContract();
+    console.log('whitelistContract', whitelistContract);
     const whitelistDetail = await whitelistContract.GetWhitelistDetail.call(whitelistId);
     console.log('getWhitelistDetail ', whitelistDetail);
   }, [getEwellContract, getWhitelistContract, projectId]);
+
+  const shouldApproveLocal = useCallback(async () => {
+    const result = await getApproveAmount({
+      symbol: 'ELF',
+      owner: wallet?.walletInfo.address || '',
+      amount: '1000000000',
+    });
+    console.log('shouldApproveLocal', result);
+  }, [getApproveAmount, wallet?.walletInfo.address]);
 
   return (
     <div>
@@ -363,6 +398,12 @@ export default function Example() {
         value={projectId}
         onChange={(e) => {
           setProjectId(e.target.value);
+        }}></Input>
+      <Input
+        value={endTime}
+        placeholder="endTime: min"
+        onChange={(e) => {
+          setEndTime(e.target.value);
         }}></Input>
       <div>
         <Button
@@ -394,11 +435,15 @@ export default function Example() {
         <Button type="primary" onClick={getProjectUserList}>
           getProjectUserList
         </Button>
+        <Button type="primary" onClick={shouldApproveLocal}>
+          getApproveAmount
+        </Button>
       </div>
       <div>
         <Button onClick={addWhitelist}>addWhitelist</Button>
         <Button onClick={getWhitelistDetail}>getWhitelistDetail</Button>
       </div>
+
       <div>
         <Dragger
           accept=".xlsx,.csv"

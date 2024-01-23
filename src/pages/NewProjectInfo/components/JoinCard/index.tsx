@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import clsx from 'clsx';
 import dayjs from 'dayjs';
 import BigNumber from 'bignumber.js';
@@ -14,36 +14,63 @@ import { IProjectInfo, ProjectStatus } from 'types/project';
 import { PROJECT_STATUS_TEXT_MAP } from 'constants/project';
 import { useWallet } from 'contexts/useWallet/hooks';
 import { ZERO } from 'constants/misc';
-import { divDecimals, divDecimalsStr } from 'utils/calculate';
+import { divDecimals, divDecimalsStr, timesDecimals } from 'utils/calculate';
 import { getPriceDecimal } from 'utils';
 import { parseInputNumberChange } from 'utils/input';
-import { useBalances } from 'hooks/useBalances';
-import { tempInfo } from '../temp';
+import { useBalance } from 'hooks/useBalance';
+import { useTxFee } from 'contexts/useAssets/hooks';
 import './styles.less';
 
 const { Title, Text } = Typography;
 
 interface IJoinCardProps {
   projectInfo?: IProjectInfo;
+  isPreview?: boolean;
+  handleRefresh?: () => void;
 }
 
-export default function JoinCard({ projectInfo }: IJoinCardProps) {
-  const info = tempInfo;
+export default function JoinCard({ projectInfo, isPreview, handleRefresh }: IJoinCardProps) {
   const { wallet } = useWallet();
   const isLogin = !!wallet;
 
-  const [balances] = useBalances(projectInfo?.toRaiseToken?.symbol);
-  console.log('balance: ', balances[0].toNumber());
+  const { txFee } = useTxFee();
+  const { balance } = useBalance(projectInfo?.toRaiseToken?.symbol);
 
-  const [purchaseInputValue, setPurchaseInputValue] = useState('1');
+  const [purchaseInputValue, setPurchaseInputValue] = useState('');
   const [purchaseInputErrorMessage, setPurchaseInputErrorMessage] = useState('');
+  const [isPurchaseInputting, setIsPurchaseInputting] = useState(false);
+  const [isPurchaseButtonDisabled, setIsPurchaseButtonDisabled] = useState(true);
+
+  const txFeeAmount = useMemo(() => {
+    return timesDecimals(txFee, projectInfo?.toRaiseToken?.decimals);
+  }, [txFee, projectInfo?.toRaiseToken?.decimals]);
+
+  const canPurchaseAmount = useMemo(() => {
+    return ZERO.plus(balance).minus(txFeeAmount);
+  }, [balance, txFeeAmount]);
 
   const maxCanInvestAmount = useMemo(() => {
-    const maxInvest = ZERO.plus(projectInfo?.toRaisedAmount ?? 0).minus(projectInfo?.currentRaisedAmount ?? 0);
-    const canInput = ZERO.plus(projectInfo?.maxSubscription ?? 0).minus(projectInfo?.investAmount ?? 0);
-    const arr = [maxInvest, canInput, balances?.[0]];
+    const remainingToRaisedAmount = ZERO.plus(projectInfo?.toRaisedAmount ?? 0).minus(
+      projectInfo?.currentRaisedAmount ?? 0,
+    );
+    const currentMaxSubscription = ZERO.plus(projectInfo?.maxSubscription ?? 0).minus(projectInfo?.investAmount ?? 0);
+    const arr = [remainingToRaisedAmount, currentMaxSubscription, canPurchaseAmount];
     return BigNumber.min.apply(null, arr);
-  }, [projectInfo, balances]);
+  }, [
+    canPurchaseAmount,
+    projectInfo?.currentRaisedAmount,
+    projectInfo?.investAmount,
+    projectInfo?.maxSubscription,
+    projectInfo?.toRaisedAmount,
+  ]);
+
+  const minCanInvestAmount = useMemo(() => {
+    return new BigNumber(projectInfo?.minSubscription || '');
+  }, [projectInfo?.minSubscription]);
+
+  const notEnoughTokens = useMemo(() => {
+    return canPurchaseAmount.lt(minCanInvestAmount);
+  }, [canPurchaseAmount, minCanInvestAmount]);
 
   const progressPercent = useMemo(() => {
     const percent = ZERO.plus(projectInfo?.currentRaisedAmount ?? 0)
@@ -52,45 +79,81 @@ export default function JoinCard({ projectInfo }: IJoinCardProps) {
     return percent.isNaN() ? ZERO : percent;
   }, [projectInfo?.currentRaisedAmount, projectInfo?.toRaisedAmount]);
 
+  const showViewWhitelistTasks = useMemo(() => {
+    return projectInfo?.isEnableWhitelist && projectInfo?.whitelistInfo?.url && !projectInfo?.isInWhitelist;
+  }, [projectInfo?.isEnableWhitelist, projectInfo?.isInWhitelist, projectInfo?.whitelistInfo?.url]);
+
+  const shoeWhitelistJoined = useMemo(() => {
+    return projectInfo?.isEnableWhitelist && projectInfo?.isInWhitelist;
+  }, [projectInfo?.isEnableWhitelist, projectInfo?.isInWhitelist]);
+
+  const showOperation = useMemo(() => {
+    return isLogin && (!projectInfo?.isEnableWhitelist || projectInfo?.isInWhitelist);
+  }, [isLogin, projectInfo?.isEnableWhitelist, projectInfo?.isInWhitelist]);
+
+  useEffect(() => {
+    setIsPurchaseButtonDisabled((pre) => {
+      if (isPreview) {
+        return true;
+      } else if (isPurchaseInputting) {
+        return pre;
+      } else {
+        return !!purchaseInputErrorMessage || !purchaseInputValue;
+      }
+    });
+  }, [isPreview, isPurchaseInputting, purchaseInputErrorMessage, purchaseInputValue]);
+
   const renderRemainder = () => {
-    if (projectInfo?.status === ProjectStatus.ENDED) {
+    if (projectInfo?.status === ProjectStatus.UPCOMING) {
       return (
-        <Text fontWeight={FontWeightEnum.Medium}>
-          {projectInfo?.endTime ? dayjs(projectInfo?.endTime).format('DD-MM-YYYY\nH:mm [UTC] Z') : '-'}
-        </Text>
-      );
-    } else if (projectInfo?.status === ProjectStatus.CANCELED) {
-      return (
-        <Text fontWeight={FontWeightEnum.Medium}>
-          {projectInfo?.cancelTime ? dayjs(projectInfo?.cancelTime).format('DD-MM-YYYY\nH:mm [UTC] Z') : '-'}
-        </Text>
-      );
-    } else if (projectInfo?.status === ProjectStatus.UPCOMING) {
-      return (
-        <NewBaseCountdown
-          value={projectInfo?.startTime ? dayjs(projectInfo.startTime).valueOf() : 0}
-          format="HH/mm/ss"
-          // TODO: refresh
-          onFinish={() => {}}
-        />
+        <>
+          <Text>Remainder</Text>
+          <NewBaseCountdown
+            className="countdown-wrapper"
+            value={projectInfo?.startTime ? dayjs(projectInfo.startTime).valueOf() : 0}
+            onFinish={handleRefresh}
+          />
+        </>
       );
     } else if (projectInfo?.status === ProjectStatus.PARTICIPATORY) {
       return (
-        <NewBaseCountdown
-          value={projectInfo?.endTime ? dayjs(projectInfo.endTime).valueOf() : 0}
-          format="HH/mm/ss"
-          // TODO: refresh
-          onFinish={() => {}}
-        />
+        <>
+          <Text>Remainder</Text>
+          <NewBaseCountdown
+            className="countdown-wrapper"
+            value={projectInfo?.endTime ? dayjs(projectInfo.endTime).valueOf() : 0}
+            onFinish={handleRefresh}
+          />
+        </>
       );
     } else if (projectInfo?.status === ProjectStatus.UNLOCKED) {
       return (
-        <NewBaseCountdown
-          value={projectInfo?.unlockTime ? dayjs(projectInfo.unlockTime).valueOf() : 0}
-          format="HH/mm/ss"
-          // TODO: refresh
-          onFinish={() => {}}
-        />
+        <>
+          <Text>Remainder</Text>
+          <NewBaseCountdown
+            className="countdown-wrapper"
+            value={projectInfo?.unlockTime ? dayjs(projectInfo.unlockTime).valueOf() : 0}
+            onFinish={handleRefresh}
+          />
+        </>
+      );
+    } else if (projectInfo?.status === ProjectStatus.CANCELED) {
+      return (
+        <>
+          <Text>Canceled Time</Text>
+          <Text fontWeight={FontWeightEnum.Medium}>
+            {projectInfo?.cancelTime ? dayjs(projectInfo?.cancelTime).format('DD MMM YYYY') : '--'}
+          </Text>
+        </>
+      );
+    } else if (projectInfo?.status === ProjectStatus.ENDED) {
+      return (
+        <>
+          <Text>Ended Time</Text>
+          <Text fontWeight={FontWeightEnum.Medium}>
+            {projectInfo?.endTime ? dayjs(projectInfo?.endTime).format('DD MMM YYYY') : '--'}
+          </Text>
+        </>
       );
     } else {
       return '--';
@@ -99,7 +162,7 @@ export default function JoinCard({ projectInfo }: IJoinCardProps) {
 
   return (
     <CommonCard className="join-card-wrapper">
-      <div className="swap-progress-wrapper">
+      <Flex className="swap-progress-wrapper" vertical gap={8}>
         <Flex align="center" justify="space-between">
           <Title fontWeight={FontWeightEnum.Medium}>Swap Progress</Title>
           {!!projectInfo?.status && (
@@ -112,7 +175,6 @@ export default function JoinCard({ projectInfo }: IJoinCardProps) {
             </div>
           )}
         </Flex>
-        {/* TODO: adjust the height */}
         <Progress
           size={['100%', 12]}
           percent={progressPercent.toNumber()}
@@ -120,20 +182,17 @@ export default function JoinCard({ projectInfo }: IJoinCardProps) {
           trailColor="#F5F5F6"
         />
         <div className="flex-between-center">
-          <Title fontWeight={FontWeightEnum.Medium}>{progressPercent.toNumber()}%</Title>
+          <Title fontWeight={FontWeightEnum.Medium}>{progressPercent.toFixed(0)}%</Title>
           <Title fontWeight={FontWeightEnum.Medium}>
-            {divDecimalsStr(projectInfo?.currentRaisedAmount ?? 0, projectInfo?.toRaiseToken?.decimals)}/
+            {divDecimalsStr(projectInfo?.currentRaisedAmount ?? 0, projectInfo?.toRaiseToken?.decimals, '0')}/
             {divDecimalsStr(projectInfo?.toRaisedAmount, projectInfo?.toRaiseToken?.decimals)}{' '}
             {projectInfo?.toRaiseToken?.symbol || '--'}
           </Title>
         </div>
-      </div>
+      </Flex>
       <div className="divider" />
       <Flex vertical gap={12}>
-        <div className="flex-between-center">
-          <Text>Remainder</Text>
-          {renderRemainder()}
-        </div>
+        <div className="flex-between-center">{renderRemainder()}</div>
         <div className="flex-between-center">
           <Text>Sale Price</Text>
           <Text fontWeight={FontWeightEnum.Medium}>
@@ -158,9 +217,9 @@ export default function JoinCard({ projectInfo }: IJoinCardProps) {
           )} ${projectInfo?.toRaiseToken?.symbol ?? '--'}`}</Text>
         </div>
       </Flex>
-      <div className="divider" />
+      {(showViewWhitelistTasks || shoeWhitelistJoined || showOperation) && <div className="divider" />}
       <Flex vertical gap={12}>
-        {projectInfo?.isEnableWhitelist && info.hasWhitelistTasks && !info.isFinishWhitelist && (
+        {showViewWhitelistTasks && (
           <>
             {(projectInfo?.status === ProjectStatus.UPCOMING ||
               projectInfo?.status === ProjectStatus.PARTICIPATORY) && (
@@ -178,7 +237,7 @@ export default function JoinCard({ projectInfo }: IJoinCardProps) {
             </Flex>
           </>
         )}
-        {projectInfo?.isEnableWhitelist && info.isFinishWhitelist && (
+        {shoeWhitelistJoined && (
           <div className="flex-between-center">
             <Text>Whitelist</Text>
             <Text className="purple-text" fontWeight={FontWeightEnum.Medium}>
@@ -186,7 +245,7 @@ export default function JoinCard({ projectInfo }: IJoinCardProps) {
             </Text>
           </div>
         )}
-        {isLogin && (!projectInfo?.isEnableWhitelist || info.isFinishWhitelist) && (
+        {showOperation && (
           <>
             {(projectInfo?.status === ProjectStatus.PARTICIPATORY ||
               projectInfo?.status === ProjectStatus.UNLOCKED ||
@@ -194,9 +253,7 @@ export default function JoinCard({ projectInfo }: IJoinCardProps) {
               <div className="flex-between-center">
                 <Text>My Allocation</Text>
                 <Text fontWeight={FontWeightEnum.Medium}>
-                  {projectInfo?.investAmount
-                    ? divDecimalsStr(projectInfo?.investAmount, projectInfo?.toRaiseToken?.decimals ?? 8)
-                    : 0}{' '}
+                  {divDecimalsStr(projectInfo?.investAmount, projectInfo?.toRaiseToken?.decimals ?? 8, '0')}{' '}
                   {projectInfo?.toRaiseToken?.symbol ?? '--'}
                 </Text>
               </div>
@@ -206,19 +263,10 @@ export default function JoinCard({ projectInfo }: IJoinCardProps) {
               projectInfo?.status === ProjectStatus.ENDED) && (
               <div className="flex-between-center">
                 <Text>
-                  {projectInfo?.status === ProjectStatus.ENDED && info.hasClaimedToken ? 'Receive' : 'To Receive'}
+                  {projectInfo?.status === ProjectStatus.ENDED && projectInfo?.isWithdraw ? 'Receive' : 'To Receive'}
                 </Text>
                 <Text fontWeight={FontWeightEnum.Medium}>
-                  {projectInfo?.investAmount
-                    ? divDecimals(projectInfo?.investAmount, projectInfo?.toRaiseToken?.decimals)
-                        .times(
-                          divDecimals(
-                            projectInfo?.preSalePrice ?? 0,
-                            getPriceDecimal(projectInfo?.crowdFundingIssueToken, projectInfo?.toRaiseToken),
-                          ),
-                        )
-                        .toFixed()
-                    : 0}{' '}
+                  {divDecimalsStr(projectInfo?.toClaimAmount, projectInfo?.crowdFundingIssueToken?.decimals, '0')}{' '}
                   {projectInfo?.crowdFundingIssueToken?.symbol ?? '--'}
                 </Text>
               </div>
@@ -236,40 +284,65 @@ export default function JoinCard({ projectInfo }: IJoinCardProps) {
                     stringMode
                     addonAfter={
                       <div className="max-operation-wrapper">
-                        <Title className="max-operation purple-text cursor-pointer" fontWeight={FontWeightEnum.Medium}>
+                        <Title
+                          className="max-operation purple-text cursor-pointer"
+                          fontWeight={FontWeightEnum.Medium}
+                          onClick={() => {
+                            setPurchaseInputValue(
+                              divDecimals(maxCanInvestAmount, projectInfo?.toRaiseToken?.decimals).toString(),
+                            );
+                          }}
+                          disabled={isPreview || notEnoughTokens}>
                           MAX
                         </Title>
                       </div>
                     }
+                    disabled={isPreview}
+                    min="0"
                     value={purchaseInputValue}
                     onChange={(value) => {
                       setPurchaseInputValue(parseInputNumberChange(value || '', projectInfo?.toRaiseToken?.decimals));
                     }}
+                    onFocus={() => {
+                      setIsPurchaseInputting(true);
+                    }}
                     onBlur={() => {
-                      // TODO: validate
+                      const value = new BigNumber(purchaseInputValue);
+                      if (value.gt(divDecimals(maxCanInvestAmount, projectInfo?.toRaiseToken?.decimals))) {
+                        setPurchaseInputErrorMessage(
+                          `Max Amount ${divDecimalsStr(maxCanInvestAmount, projectInfo?.toRaiseToken?.decimals)}`,
+                        );
+                      } else if (value.lt(divDecimals(minCanInvestAmount, projectInfo?.toRaiseToken?.decimals))) {
+                        setPurchaseInputErrorMessage(
+                          `Min Amount ${divDecimalsStr(minCanInvestAmount, projectInfo?.toRaiseToken?.decimals)}`,
+                        );
+                      } else {
+                        setPurchaseInputErrorMessage('');
+                      }
+                      setIsPurchaseInputting(false);
                     }}
                   />
                 </Form.Item>
                 <PurchaseButton
-                  buttonDisabled={!!purchaseInputErrorMessage}
+                  buttonDisabled={isPurchaseButtonDisabled}
                   projectInfo={projectInfo}
                   purchaseAmount={purchaseInputValue}
-                  info={info}
                 />
               </>
             )}
-            {projectInfo?.status === ProjectStatus.PARTICIPATORY && info.myAllocation.amount > 0 && (
-              <RevokeInvestmentButton projectInfo={projectInfo} />
-            )}
-            {projectInfo?.status === ProjectStatus.UNLOCKED && info.myAllocation.amount > 0 && (
+            {projectInfo?.status === ProjectStatus.PARTICIPATORY &&
+              new BigNumber(projectInfo?.investAmount || '').gt(0) && (
+                <RevokeInvestmentButton projectInfo={projectInfo} />
+              )}
+            {projectInfo?.status === ProjectStatus.UNLOCKED && new BigNumber(projectInfo?.investAmount || '').gt(0) && (
               <Text className="text-center" fontWeight={FontWeightEnum.Medium}>
                 Claim Token when it's time to unlock!
               </Text>
             )}
-            {projectInfo?.status === ProjectStatus.ENDED && info.myAllocation.amount > 0 && !info.hasClaimedToken && (
-              <ClaimTokenButton projectInfo={projectInfo} />
-            )}
-            {projectInfo?.status === ProjectStatus.CANCELED && info.hasNotRedeemedDefault && (
+            {projectInfo?.status === ProjectStatus.ENDED &&
+              new BigNumber(projectInfo?.investAmount || '').gt(0) &&
+              !projectInfo?.isWithdraw && <ClaimTokenButton projectInfo={projectInfo} />}
+            {projectInfo?.status === ProjectStatus.CANCELED && !projectInfo?.claimedLiquidatedDamage && (
               <RevokeFineButton projectInfo={projectInfo} />
             )}
           </>

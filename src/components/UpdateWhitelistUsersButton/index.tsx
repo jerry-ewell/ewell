@@ -47,21 +47,21 @@ export default function UpdateWhitelistUsers({
     [validationData],
   );
 
-  const { getWhitelistUserAddressList } = useViewContract();
+  const { getWhitelistUserList } = useViewContract();
   const onUpdateSubmit = useCallback(
     async (uploadAddressList: string[]) => {
       setIsUpdateModalOpen(false);
 
       emitLoading(true);
       try {
-        const userAddressList = await getWhitelistUserAddressList(whitelistId || '');
+        const userList = await getWhitelistUserList(whitelistId || '');
+        const userAddressList = userList.map((item) => item.address);
 
         const _validationData = await identifyWhitelistData({
           originData: userAddressList,
           identifyData: uploadAddressList,
           type: updateType,
         });
-        console.log('onUpdateSubmit', userAddressList, uploadAddressList, _validationData);
         setValidationData(_validationData);
       } catch (error) {
         // TODO: toast error
@@ -71,7 +71,7 @@ export default function UpdateWhitelistUsers({
 
       setIsAddressValidationModalOpen(true);
     },
-    [getWhitelistUserAddressList, updateType, whitelistId],
+    [getWhitelistUserList, updateType, whitelistId],
   );
 
   const onValidationConfirm = useCallback(async () => {
@@ -88,7 +88,9 @@ export default function UpdateWhitelistUsers({
             value: [
               {
                 addressList: {
-                  value: activeAddressList,
+                  value: activeAddressList.map((item) => ({
+                    address: item,
+                  })),
                 },
               },
             ],

@@ -1,18 +1,19 @@
-import { useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import BigNumber from 'bignumber.js';
 import clsx from 'clsx';
 import { useParams } from 'react-router-dom';
-import { Flex } from 'antd';
+import { Flex, message } from 'antd';
 import { Button, Typography, FontWeightEnum, Modal, HashAddress } from 'aelf-design';
 import SuccessModal from '../SuccessModal';
 import { useWallet } from 'contexts/useWallet/hooks';
-import { useBalances } from 'hooks/useBalances';
 import { IProjectInfo } from 'types/project';
-import { divDecimalsStr } from 'utils/calculate';
+import { divDecimals, divDecimalsStr, timesDecimals } from 'utils/calculate';
 import { ZERO } from 'constants/misc';
-import { emitLoading } from 'utils/events';
+import { emitLoading, emitSyncTipsModal } from 'utils/events';
 import { NETWORK_CONFIG } from 'constants/network';
-
+import { useTokenPrice, useTxFee } from 'contexts/useAssets/hooks';
+import { renderTokenPrice } from 'utils/project';
+import { useBalance } from 'hooks/useBalance';
 import './styles.less';
 
 const { Text } = Typography;
@@ -20,42 +21,46 @@ const { Text } = Typography;
 interface IRevokeInvestmentButtonProps {
   projectInfo?: IProjectInfo;
 }
-// TODO: get estimatedTransactionFee
-const estimatedTransactionFee = '0';
-
-// TODO: convert to USD
 
 export default function RevokeInvestmentButton({ projectInfo }: IRevokeInvestmentButtonProps) {
   const { wallet, checkManagerSyncState } = useWallet();
-
-  const [balances] = useBalances(projectInfo?.toRaiseToken?.symbol);
-
+  const { tokenPrice } = useTokenPrice();
+  const { txFee } = useTxFee();
+  const [messageApi, contextHolder] = message.useMessage();
   const { projectId } = useParams();
+  const { balance, updateBalance } = useBalance(projectInfo?.toRaiseToken?.symbol);
 
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [isSubmitModalOpen, setIsSubmitModalOpen] = useState(false);
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
+  const [transactionId, setTransactionId] = useState('');
+
+  useEffect(() => {
+    if (isSubmitModalOpen) {
+      updateBalance();
+    }
+  }, [updateBalance, isSubmitModalOpen]);
+
+  const txFeeAmount = useMemo(() => {
+    return timesDecimals(txFee, projectInfo?.toRaiseToken?.decimals);
+  }, [txFee, projectInfo?.toRaiseToken?.decimals]);
 
   const revokeAmount = useMemo(() => {
     return new BigNumber(projectInfo?.investAmount ?? 0).times(0.9);
   }, [projectInfo?.investAmount]);
 
   const finalAmount = useMemo(() => {
-    const amount = revokeAmount.minus(estimatedTransactionFee);
+    const amount = revokeAmount.minus(txFeeAmount);
     if (amount.lt(0)) {
       return ZERO;
     } else {
       return amount;
     }
-  }, [revokeAmount]);
+  }, [revokeAmount, txFeeAmount]);
 
   const notEnoughTokens = useMemo(() => {
-    // TODO: check logic
-    const isRevokeNotEnough = revokeAmount.lt(estimatedTransactionFee);
-    return isRevokeNotEnough;
-    // const isBalanceNotEnough = new BigNumber(balances?.[0] ?? 0).lt(estimatedTransactionFee);
-    // return isRevokeNotEnough || isBalanceNotEnough;
-  }, [revokeAmount]);
+    return new BigNumber(balance).lt(txFeeAmount);
+  }, [balance, txFeeAmount]);
 
   const handleSubmit = async () => {
     setIsSubmitModalOpen(false);
@@ -63,31 +68,33 @@ export default function RevokeInvestmentButton({ projectInfo }: IRevokeInvestmen
     const isManagerSynced = await checkManagerSyncState();
     if (!isManagerSynced) {
       emitLoading(false);
-      // TODO: show tips modal
+      emitSyncTipsModal(true);
       return;
     }
-
     try {
-      const unInvestResult = await wallet?.callContract<any, any>({
+      const result = await wallet?.callContract<any, any>({
         contractAddress: NETWORK_CONFIG.ewellContractAddress,
         methodName: 'UnInvest',
-        args: {
-          // TODO: check args
-          projectId,
-        },
+        args: projectId,
       });
-      console.log('unInvestResult', unInvestResult);
-      // TODO: polling get Transaction ID
-      emitLoading(false);
+      console.log('UnInvest result', result);
+      const { TransactionId } = result;
+      setTransactionId(TransactionId);
       setIsSuccessModalOpen(true);
-    } catch (error) {
+    } catch (error: any) {
       console.log('error', error);
+      messageApi.open({
+        type: 'error',
+        content: error?.message || 'UnInvest failed',
+      });
+    } finally {
       emitLoading(false);
     }
   };
 
   return (
     <>
+      {contextHolder}
       <Text
         className="revoke-investment-button cursor-pointer"
         fontWeight={FontWeightEnum.Medium}
@@ -142,23 +149,22 @@ export default function RevokeInvestmentButton({ projectInfo }: IRevokeInvestmen
               address={wallet?.walletInfo.address || ''}
             />
           </Flex>
-          <Flex
-            className={clsx('modal-box-data-wrapper', { ['error-border']: notEnoughTokens })}
-            justify="space-between">
-            <Text className={clsx({ ['error-text']: notEnoughTokens })} fontWeight={FontWeightEnum.Medium}>
-              Revoke
-            </Text>
+          <Flex className="modal-box-data-wrapper" justify="space-between">
+            <Text fontWeight={FontWeightEnum.Medium}>Revoke</Text>
             <Flex gap={8} align="baseline">
-              <Text className={clsx({ ['error-text']: notEnoughTokens })} fontWeight={FontWeightEnum.Medium}>
+              <Text fontWeight={FontWeightEnum.Medium}>
                 {divDecimalsStr(revokeAmount, projectInfo?.toRaiseToken?.decimals)}{' '}
                 {projectInfo?.toRaiseToken?.symbol ?? '--'}
               </Text>
-              <Text
-                className={clsx({ ['error-text']: notEnoughTokens })}
-                fontWeight={FontWeightEnum.Medium}
-                size="small">
-                $ 1.86
-              </Text>
+              {renderTokenPrice({
+                textProps: {
+                  fontWeight: FontWeightEnum.Medium,
+                  size: 'small',
+                },
+                amount: revokeAmount,
+                decimals: projectInfo?.toRaiseToken?.decimals,
+                tokenPrice,
+              })}
             </Flex>
           </Flex>
           <Flex vertical gap={8}>
@@ -166,10 +172,16 @@ export default function RevokeInvestmentButton({ projectInfo }: IRevokeInvestmen
               <Text>Estimated Transaction Fee</Text>
               <Flex gap={8} align="baseline">
                 <Text>
-                  {divDecimalsStr(estimatedTransactionFee, projectInfo?.toRaiseToken?.decimals)}{' '}
-                  {projectInfo?.toRaiseToken?.symbol ?? '--'}
+                  {txFee} {projectInfo?.toRaiseToken?.symbol ?? '--'}
                 </Text>
-                <Text size="small">$ 0.19</Text>
+                {renderTokenPrice({
+                  textProps: {
+                    size: 'small',
+                  },
+                  amount: txFee,
+                  decimals: 0,
+                  tokenPrice,
+                })}
               </Flex>
             </Flex>
             <Flex justify="space-between">
@@ -179,7 +191,14 @@ export default function RevokeInvestmentButton({ projectInfo }: IRevokeInvestmen
                   {divDecimalsStr(finalAmount, projectInfo?.toRaiseToken?.decimals)}{' '}
                   {projectInfo?.toRaiseToken?.symbol ?? '--'}
                 </Text>
-                <Text size="small">$ 2.04</Text>
+                {renderTokenPrice({
+                  textProps: {
+                    size: 'small',
+                  },
+                  amount: finalAmount,
+                  decimals: projectInfo?.toRaiseToken?.decimals,
+                  tokenPrice,
+                })}
               </Flex>
             </Flex>
           </Flex>
@@ -209,14 +228,14 @@ export default function RevokeInvestmentButton({ projectInfo }: IRevokeInvestmen
         data={{
           amountList: [
             {
-              amount: divDecimalsStr(finalAmount, projectInfo?.toRaiseToken?.decimals),
+              amount: divDecimalsStr(revokeAmount, projectInfo?.toRaiseToken?.decimals),
               symbol: projectInfo?.toRaiseToken?.symbol || '--',
             },
           ],
           description: 'Congratulations, your token has been revoked successfully!',
           boxData: {
             label: 'Transaction ID',
-            value: 'ELF_0x00…14dC_AELF',
+            value: transactionId,
           },
         }}
       />

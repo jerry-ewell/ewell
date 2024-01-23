@@ -4,5 +4,6 @@
   "rules": {
     "font-family-name-quotes": null,
     "rule-empty-line-before": null
-  }
+  },
+  "ignoreFiles": ["src/assets/theme/antd.css"]
 }

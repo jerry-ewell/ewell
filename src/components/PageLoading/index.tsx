@@ -40,6 +40,7 @@ export default function PageLoading() {
           <SandGlassLoading />
           {!!loadingInfo.text && <span>{loadingInfo.text}</span>}
         </Flex>
-      }></Loading>
+      }
+    />
   );
 }

@@ -28,11 +28,16 @@ const ProjectApiList = {
   getTokenList: '/api/app/token/list',
   getProjectUserList: '/api/app/project/userList',
 };
+
+const AssetsApiList = {
+  getTxFee: '/api/app/project/fee',
+  getTokenPrice: '/api/app/token/price',
+};
 /**
  * api request extension configuration directory
  * @description object.key // The type of this object key comes from from @type {UrlObj}
  */
-export const EXPAND_APIS = { project: ProjectApiList, auth: AuthList };
+export const EXPAND_APIS = { project: ProjectApiList, auth: AuthList, assets: AssetsApiList };
 
 export type EXPAND_REQ_TYPES = {
   [X in keyof typeof EXPAND_APIS]: {

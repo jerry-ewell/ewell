@@ -2,6 +2,9 @@ import { useCallback, useRef } from 'react';
 import { useViewContractContext } from '.';
 import { getContract } from './utils';
 import { DEFAULT_CHAIN_ID, NETWORK_CONFIG } from 'constants/network';
+import { unifyMillisecond } from 'utils/time';
+import { TWhitelistUser } from './types';
+import { ZERO } from 'constants/misc';
 
 export function useViewContract() {
   const [{ tokenContract, ewellContract, whitelistContract }, dispatch] = useViewContractContext();
@@ -54,22 +57,45 @@ export function useViewContract() {
     return contract;
   }, [dispatch]);
 
-  const getWhitelistUserAddressList = useCallback(
+  const getWhitelistUserList = useCallback(
     async (whitelistId: string) => {
       const whitelistContract = await getWhitelistContract();
       const whitelistInfo = await whitelistContract.GetWhitelist.call(whitelistId);
-      const addressList: string[] = (whitelistInfo?.extraInfoIdList?.value?.[0]?.addressList?.value ?? []).map(
-        (address) => `ELF_${address}_${DEFAULT_CHAIN_ID}`,
+      const addressList: TWhitelistUser[] = (whitelistInfo?.extraInfoIdList?.value?.[0]?.addressList?.value ?? []).map(
+        (item) => ({
+          address: `ELF_${item.address}_${DEFAULT_CHAIN_ID}`,
+          createTime: unifyMillisecond(item.createTime),
+        }),
       );
       return addressList;
     },
     [getWhitelistContract],
   );
 
+  const getApproveAmount = useCallback(
+    async ({ symbol, amount, owner }: { symbol: string; amount: string; owner: string }) => {
+      const tokenContract = await getTokenContract();
+      const { balance } = await tokenContract.GetBalance.call({
+        symbol,
+        owner,
+      });
+
+      const approveAmount = ZERO.plus(amount).minus(balance);
+      const isNeedApprove = approveAmount.gt(ZERO);
+
+      return {
+        isNeedApprove,
+        approveAmount: approveAmount.toFixed(),
+      };
+    },
+    [getTokenContract],
+  );
+
   return {
     getTokenContract,
     getEwellContract,
     getWhitelistContract,
-    getWhitelistUserAddressList,
+    getWhitelistUserList,
+    getApproveAmount,
   };
 }

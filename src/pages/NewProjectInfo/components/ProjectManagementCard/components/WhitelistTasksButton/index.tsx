@@ -1,21 +1,23 @@
 import { useState, useEffect, useMemo } from 'react';
-import { Flex } from 'antd';
+import { Flex, message } from 'antd';
 import { Button, Modal, Typography, Input } from 'aelf-design';
 import { success } from 'assets/images';
 import { useWallet } from 'contexts/useWallet/hooks';
-import { emitLoading } from 'utils/events';
+import { emitLoading, emitSyncTipsModal } from 'utils/events';
 import { NETWORK_CONFIG } from 'constants/network';
 import './styles.less';
 
 interface IWhitelistTasksButtonProps {
   whitelistId?: string;
   whitelistTasksUrl?: string;
+  disabled?: boolean;
 }
 
 const { Text } = Typography;
 
-export default function WhitelistTasksButton({ whitelistId, whitelistTasksUrl }: IWhitelistTasksButtonProps) {
+export default function WhitelistTasksButton({ whitelistId, whitelistTasksUrl, disabled }: IWhitelistTasksButtonProps) {
   const { wallet, checkManagerSyncState } = useWallet();
+  const [messageApi, contextHolder] = message.useMessage();
 
   const [isWhitelistTasksModalOpen, setIsWhitelistTasksModalOpen] = useState(false);
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
@@ -35,11 +37,11 @@ export default function WhitelistTasksButton({ whitelistId, whitelistTasksUrl }:
     const isManagerSynced = await checkManagerSyncState();
     if (!isManagerSynced) {
       emitLoading(false);
-      // TODO: show tips modal
+      emitSyncTipsModal(true);
       return;
     }
     try {
-      const txResult = await wallet?.callContract({
+      const result = await wallet?.callContract({
         contractAddress: NETWORK_CONFIG.whitelistContractAddress,
         methodName: 'ChangeWhitelistUrl',
         args: {
@@ -47,11 +49,14 @@ export default function WhitelistTasksButton({ whitelistId, whitelistTasksUrl }:
           url: urlInputValue,
         },
       });
-      console.log('txResult', txResult);
-      // TODO: refresh isEnableWhitelist
+      console.log('ChangeWhitelistUrl result', result);
       setIsSuccessModalOpen(true);
-    } catch (error) {
-      console.log('error', error);
+    } catch (error: any) {
+      console.log('ChangeWhitelistUrl error', error);
+      messageApi.open({
+        type: 'error',
+        content: error?.message || 'ChangeWhitelistUrl failed',
+      });
     } finally {
       emitLoading(false);
     }
@@ -59,6 +64,7 @@ export default function WhitelistTasksButton({ whitelistId, whitelistTasksUrl }:
 
   return (
     <>
+      {contextHolder}
       <Button onClick={() => setIsWhitelistTasksModalOpen(true)}>Whitelist Tasks</Button>
       <Modal
         title={`${isEdit ? 'Edit' : 'Open'} Whitelist Tasks`}
@@ -77,7 +83,7 @@ export default function WhitelistTasksButton({ whitelistId, whitelistTasksUrl }:
             <Button className="flex-1" onClick={() => setIsWhitelistTasksModalOpen(false)}>
               Cancel
             </Button>
-            <Button className="flex-1" type="primary" disabled={!urlInputValue} onClick={handleSubmit}>
+            <Button className="flex-1" type="primary" disabled={disabled || !urlInputValue} onClick={handleSubmit}>
               Submit
             </Button>
           </Flex>

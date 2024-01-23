@@ -1,8 +1,4 @@
-.welcome-modal {
-  .ewell-modal-confirm-paragraph {
-    max-width: 100%;
-  }
-}
+@import '../../assets/theme/color.less';
 
 .terms-frame {
   .terms-header {
@@ -19,7 +15,7 @@
       cursor: pointer;
       right: 0;
       top: 50%;
-      transform: translate3d(-50%, -50%, 0);
+      transform: translate3d(0, -50%, 0);
       width: 16px;
       height: 16px;
     }
@@ -27,12 +23,46 @@
 
   .terms-content {
     margin-bottom: 24px;
+
+    .terms-info {
+      text-align: center;
+      font-size: 14px;
+      font-weight: 400;
+      line-height: 22px;
+      margin-bottom: 24px;
+
+      span {
+        font-weight: 500;
+        color: @font-2;
+        cursor: pointer;
+      }
+    }
+
+    .terms-check-wrap {
+      border: 1px solid @border-1;
+      padding: 16px;
+      border-radius: 6px;
+      display: flex;
+      flex-direction: row;
+      align-items: flex-start;
+
+      .terms-check-info {
+        font-size: 12px;
+        font-weight: 400;
+        line-height: 20px;
+        margin-left: 8px;
+        color: @font-1;
+      }
+    }
   }
 
   .terms-footer {
     display: flex;
     .terms-btn {
       flex: 1;
+      span {
+        font-weight: 500;
+      }
       &:first-child {
         margin-right: 8px;
       }

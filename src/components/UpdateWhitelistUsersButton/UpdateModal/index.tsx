@@ -33,7 +33,7 @@ const UpdateModal = forwardRef(function (
   { updateType, modalOpen, onModalCancel, onModalSubmit }: IUpdateModalProps,
   ref,
 ) {
-  const [currentUpdateWay, setCurrentUpdateWay] = useState<UpdateWay>(UpdateWay.PASTE);
+  const [currentUpdateWay, setCurrentUpdateWay] = useState<UpdateWay>(UpdateWay.UPLOAD);
   const [file, setFile] = useState<RcFile>();
   const [addressInput, setAddressInput] = useState<string>('');
 
@@ -69,6 +69,7 @@ const UpdateModal = forwardRef(function (
 
   const reset = useCallback(() => {
     setFile(undefined);
+    setAddressInput('');
   }, []);
   useImperativeHandle(ref, () => ({ reset }));
 
@@ -114,7 +115,12 @@ const UpdateModal = forwardRef(function (
           <Upload className="address-upload" tips="Browse your file here" beforeUpload={handleUpload} />
         )}
         {currentUpdateWay === UpdateWay.PASTE && (
-          <TextArea className="paste-address-textarea" placeholder="placeholder" onChange={handleAddressInputChange} />
+          <TextArea
+            value={addressInput}
+            className="paste-address-textarea"
+            placeholder="placeholder"
+            onChange={handleAddressInputChange}
+          />
         )}
         <Flex gap={16} justify="center">
           <Button className="modal-footer-button" onClick={onModalCancel}>
