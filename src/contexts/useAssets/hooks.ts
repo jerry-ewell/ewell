@@ -37,7 +37,7 @@ export function useAssets() {
 
   const initTxFee = useCallback(async () => {
     try {
-      handleLoopFetch({
+      await handleLoopFetch({
         fetch: () => {
           return getTxFee();
         },
@@ -54,7 +54,7 @@ export function useAssets() {
 
   const initTokenPrice = useCallback(async () => {
     try {
-      handleLoopFetch({
+      await handleLoopFetch({
         fetch: () => {
           return getTokenPrice();
         },
