@@ -4,12 +4,13 @@ import { useParams, useLocation, NavLink } from 'react-router-dom';
 import { request } from 'api';
 import { Breadcrumb, Flex, message } from 'antd';
 import { Typography } from 'aelf-design';
+import { WebLoginEvents, useWebLoginEvent } from 'aelf-web-login';
 import ActionCard from './components/ActionCard';
 import InfoWrapper from './components/InfoWrapper';
 import { useMobile } from 'contexts/useStore/hooks';
 import { useWallet } from 'contexts/useWallet/hooks';
 import { useViewContract } from 'contexts/useViewContract/hooks';
-import { DEFAULT_CHAIN_ID, NETWORK_CONFIG } from 'constants/network';
+import { DEFAULT_CHAIN_ID } from 'constants/network';
 import { IProjectInfo, ProjectListType } from 'types/project';
 import myEvents from 'utils/myEvent';
 import { mockDetail, mockWhitelistInfo, mockPreviewData } from './mock';
@@ -121,6 +122,13 @@ export default function ProjectInfo({ previewData, style }: IProjectInfoProps) {
     ],
     [projectInfo?.additionalInfo?.projectName, from],
   );
+
+  const onLogout = useCallback(() => {
+    console.log('onLogout');
+    getProjectInfo();
+  }, [getProjectInfo]);
+
+  useWebLoginEvent(WebLoginEvents.LOGOUT, onLogout);
 
   return (
     <>
