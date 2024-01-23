@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import clsx from 'clsx';
 import { Row, Col, Flex, Typography } from 'antd';
 import { Typography as AELFTypography, FontWeightEnum, Progress } from 'aelf-design';
@@ -15,6 +15,8 @@ import { divDecimals } from 'utils/calculate';
 import { NumberFormat } from 'utils/format';
 import { ProjectStatus as IProjectStatus } from 'types/project';
 import './styles.less';
+import { useNavigate } from 'react-router-dom';
+import { stringifyUrl } from 'query-string';
 
 export interface IProjectCard {
   id?: string;
@@ -60,9 +62,21 @@ const Card: React.FC<ProjectCardProps> = ({ data }) => {
       .times(1e2);
     return percent.isNaN() ? ZERO : percent;
   }, [currentRaisedAmount, toRaisedAmount]);
+  const navigate = useNavigate();
+
+  const jumpDetail = useCallback(() => {
+    navigate(
+      stringifyUrl({
+        url: `/participant-list/${data.id}`,
+        query: {
+          projectName: projectName || '',
+        },
+      }),
+    );
+  }, [data, navigate, projectName]);
 
   return (
-    <div className="project-card">
+    <div className="project-card" onClick={jumpDetail}>
       <img className="project-img" src={projectImgs.split(',')[0]} />
       <Flex className="project-card-info">
         <img className="project-card-logo" src={logoUrl?.split(',')[0]} alt="" />

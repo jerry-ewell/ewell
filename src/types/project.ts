@@ -29,17 +29,19 @@ export interface TokenInfo {
   decimals: number;
 }
 
+export interface IAdditionalInfo {
+  projectName: string;
+  projectSummary: string;
+  projectDescription: string;
+  x: string;
+  telegram: string;
+  medium: string;
+  logoUrl: string;
+  projectImgs: string;
+}
+
 export interface IProjectInfo {
-  additionalInfo?: {
-    projectName: string;
-    projectSummary: string;
-    projectDescription: string;
-    x: string;
-    telegram: string;
-    medium: string;
-    logoUrl: string;
-    projectImgs: string;
-  };
+  additionalInfo?: IAdditionalInfo;
   creator?: string;
   crowdFundingIssueAmount?: string;
   crowdFundingIssueToken?: TokenInfo & {

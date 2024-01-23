@@ -1,5 +1,5 @@
 import { ZERO } from 'constants/misc';
-import { ProjectItem } from 'types/project';
+import { IAdditionalInfo, ProjectItem } from 'types/project';
 import { getLog } from './protoUtils';
 import { unifySecond } from './time';
 import { ITextProps, Typography } from 'aelf-design';
@@ -91,3 +91,12 @@ export function renderTokenPrice({
     )
   );
 }
+
+export const parseAdditionalInfo = (projectInfo: any) => {
+  try {
+    const additionalInfo = JSON.parse(projectInfo.additionalInfo);
+    return additionalInfo as IAdditionalInfo;
+  } catch (error) {
+    return undefined;
+  }
+};
