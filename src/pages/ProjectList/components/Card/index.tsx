@@ -67,7 +67,7 @@ const Card: React.FC<ProjectCardProps> = ({ data }) => {
   const jumpDetail = useCallback(() => {
     navigate(
       stringifyUrl({
-        url: `/participant-list/${data.id}`,
+        url: `/project/${data.id}`,
         query: {
           projectName: projectName || '',
         },
@@ -85,9 +85,9 @@ const Card: React.FC<ProjectCardProps> = ({ data }) => {
           {/* <ProjectStatusRow status={'Upcoming'} /> */}
         </div>
       </Flex>
-      <Paragraph className="project-desc" ellipsis={{ rows: 2 }}>
+      {/* <Paragraph className="project-desc" ellipsis={{ rows: 2 }}>
         {projectSummary}
-      </Paragraph>
+      </Paragraph> */}
       <div className="project-community">
         {Object.keys(community).map((key, index) => (
           <img
