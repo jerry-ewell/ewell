@@ -2,6 +2,7 @@ import clsx from 'clsx';
 import { Flex } from 'antd';
 import { Modal, IModalProps, Button, Typography, FontWeightEnum, HashAddress } from 'aelf-design';
 import { success } from 'assets/images';
+import { DEFAULT_CHAIN_ID } from 'constants/network';
 import './styles.less';
 
 const { Title, Text } = Typography;
@@ -48,7 +49,13 @@ export default function SuccessModal({ modalProps, data: { amountList, descripti
         <Flex className="modal-box-data-wrapper" justify="space-between">
           <Text>{boxData.label}</Text>
           {/* TODO: jump */}
-          <HashAddress className="hash-address-small" preLen={8} endLen={9} address={boxData.value} />
+          <HashAddress
+            className="hash-address-small"
+            preLen={8}
+            endLen={9}
+            chain={DEFAULT_CHAIN_ID}
+            address={boxData.value}
+          />
         </Flex>
         <Flex justify="center">
           <Button className="modal-single-button" type="primary" onClick={modalProps.onOk}>

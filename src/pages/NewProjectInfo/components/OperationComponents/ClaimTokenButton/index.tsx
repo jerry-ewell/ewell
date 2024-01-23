@@ -9,7 +9,7 @@ import { IProjectInfo } from 'types/project';
 import { divDecimalsStr } from 'utils/calculate';
 import { useWallet } from 'contexts/useWallet/hooks';
 import { emitLoading, emitSyncTipsModal } from 'utils/events';
-import { NETWORK_CONFIG } from 'constants/network';
+import { DEFAULT_CHAIN_ID, NETWORK_CONFIG } from 'constants/network';
 import { timesDecimals } from 'utils/calculate';
 import { useTokenPrice, useTxFee } from 'contexts/useAssets/hooks';
 import { renderTokenPrice } from 'utils/project';
@@ -113,6 +113,7 @@ export default function ClaimTokenButton({ projectInfo }: IClaimTokenButtonProps
               className="hash-address-small"
               preLen={8}
               endLen={9}
+              chain={DEFAULT_CHAIN_ID}
               address={wallet?.walletInfo.address || ''}
             />
           </Flex>

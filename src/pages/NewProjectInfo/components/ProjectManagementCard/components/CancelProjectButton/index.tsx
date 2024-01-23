@@ -7,7 +7,7 @@ import { emitLoading, emitSyncTipsModal } from 'utils/events';
 import { useWallet } from 'contexts/useWallet/hooks';
 import { IProjectInfo } from 'types/project';
 import { divDecimalsStr } from 'utils/calculate';
-import { NETWORK_CONFIG } from 'constants/network';
+import { DEFAULT_CHAIN_ID, NETWORK_CONFIG } from 'constants/network';
 import { useTokenPrice, useTxFee } from 'contexts/useAssets/hooks';
 import { renderTokenPrice } from 'utils/project';
 
@@ -116,6 +116,7 @@ export default function CancelProjectButton({ projectInfo }: ICancelProjectButto
               className="half-width hash-address-small"
               preLen={8}
               endLen={9}
+              chain={DEFAULT_CHAIN_ID}
               address={wallet?.walletInfo.address || ''}
             />
           </Flex>

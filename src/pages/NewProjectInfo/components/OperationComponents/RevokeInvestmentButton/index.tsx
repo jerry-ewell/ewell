@@ -10,7 +10,7 @@ import { IProjectInfo } from 'types/project';
 import { divDecimals, divDecimalsStr, timesDecimals } from 'utils/calculate';
 import { ZERO } from 'constants/misc';
 import { emitLoading, emitSyncTipsModal } from 'utils/events';
-import { NETWORK_CONFIG } from 'constants/network';
+import { DEFAULT_CHAIN_ID, NETWORK_CONFIG } from 'constants/network';
 import { useTokenPrice, useTxFee } from 'contexts/useAssets/hooks';
 import { renderTokenPrice } from 'utils/project';
 import { useBalance } from 'hooks/useBalance';
@@ -146,6 +146,7 @@ export default function RevokeInvestmentButton({ projectInfo }: IRevokeInvestmen
               className="hash-address-small"
               preLen={8}
               endLen={9}
+              chain={DEFAULT_CHAIN_ID}
               address={wallet?.walletInfo.address || ''}
             />
           </Flex>
