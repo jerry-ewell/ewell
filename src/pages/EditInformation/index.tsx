@@ -9,19 +9,38 @@ import { useEffectOnce, useSetState } from 'react-use';
 import CustomMark from 'pages/CreateProject/components/CustomMark';
 import { IAdditionalInfo, IProjectInfo } from 'pages/ProjectList/components/Card/types';
 import { urlString2FileList } from 'utils/format';
+import { useUpdateAddition } from './useApi';
 import './styles.less';
 
 const { Title, Text } = Typography;
 
 export default function EditInformation() {
-  const [additionalInfo, setAdditionalInfo] = useSetState({});
+  const [additionalInfo, setAdditionalInfo] = useSetState();
   const { projectId } = useParams();
   const { getDetail } = useTransfer();
+  const { updateAddition } = useUpdateAddition();
   const navigate = useNavigate();
 
-  const onFinish = useCallback((value: any) => {
-    console.log('onUpdate-value', value);
-  }, []);
+  const onFinish = useCallback(
+    async ({ logoUrl, projectImgs, ...value }: any) => {
+      console.log('onUpdate-value', value);
+
+      const isSuccess = await updateAddition(projectId, {
+        ...value,
+        logoUrl: logoUrl.map((file) => file.url).join(),
+        projectImgs: projectImgs.map((file) => file.url).join(),
+      });
+
+      if (isSuccess) {
+        message.success('update success!');
+        navigate(`/project/${projectId}`);
+        return;
+      }
+
+      message.error('update failed');
+    },
+    [navigate, projectId, updateAddition],
+  );
 
   const getProjectInfo = useCallback(async () => {
     const result = await getDetail(projectId);
@@ -61,7 +80,7 @@ export default function EditInformation() {
           {FormFields(ProjectInfoFromJson)}
           <Form.Item>
             <Flex justify="center">
-              <Button type="primary" htmlType="submit">
+              <Button type="primary" htmlType="submit" style={{ width: 206 }}>
                 Submit
               </Button>
             </Flex>
