@@ -64,13 +64,6 @@ const Projects: React.FC = () => {
     return (
       <>
         <div className="project-type">Active Projects</div>
-        {/* <Row gutter={[24, 24]}>
-          {Array.from({ length: 50 }).map((item, index) => (
-            <Col span={24 / colNum} key={`${index}`}>
-              <ProjectCard data={{}} />
-            </Col>
-          ))}
-        </Row> */}
         {activeItems.length ? (
           <Row gutter={[24, 24]}>
             {activeItems.map((item, index) => (
@@ -83,7 +76,7 @@ const Projects: React.FC = () => {
           <Empty text="There are currently no active projects, please stay tuned" />
         )}
 
-        {/* <InfiniteList
+        <InfiniteList
           showScrollToTop={false}
           loaded={loadAllClosedItems}
           loadMoreData={getClosedProject}
@@ -97,10 +90,10 @@ const Projects: React.FC = () => {
               </Col>
             ))}
           </Row>
-        </InfiniteList> */}
+        </InfiniteList>
       </>
     );
-  }, [activeItems, closedItems, colNum]);
+  }, [activeItems, closedItems, getClosedProject, loadAllClosedItems]);
 
   return (
     <div className="project-page" id="project-list-scroll">

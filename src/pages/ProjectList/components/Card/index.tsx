@@ -1,12 +1,8 @@
 import React, { useCallback, useMemo } from 'react';
 import clsx from 'clsx';
-import { Row, Col, Flex, Typography } from 'antd';
-import { Typography as AELFTypography, FontWeightEnum, Progress } from 'aelf-design';
+import { Row, Col, Flex } from 'antd';
+import { Typography, FontWeightEnum, Progress } from 'aelf-design';
 import { getProjectStatus, ProjectStatus } from 'utils/project';
-import ProImg from 'assets/images/project/proimg.png';
-import ProIcon from 'assets/images/project/proIcon.png';
-import CommonLink from 'components/CommonLink';
-import IconFont from 'components/IconFont';
 import communityLogo from 'assets/images/communityLogo';
 import { IProjectInfo, IAdditionalInfo } from './types';
 import { mockDetail } from './mock';
@@ -14,9 +10,10 @@ import { ZERO } from 'constants/misc';
 import { divDecimals } from 'utils/calculate';
 import { NumberFormat } from 'utils/format';
 import { ProjectStatus as IProjectStatus } from 'types/project';
-import './styles.less';
 import { useNavigate } from 'react-router-dom';
 import { stringifyUrl } from 'query-string';
+import { parseAdditionalInfo } from 'utils/project';
+import './styles.less';
 
 export interface IProjectCard {
   id?: string;
@@ -39,9 +36,7 @@ export interface ProjectCardProps {
   data: IProjectInfo;
 }
 
-const { Text } = AELFTypography;
-const { Paragraph } = Typography;
-
+const { Text } = Typography;
 const Card: React.FC<ProjectCardProps> = ({ data }) => {
   const {
     additionalInfo = '',
@@ -51,10 +46,9 @@ const Card: React.FC<ProjectCardProps> = ({ data }) => {
     toRaisedAmount,
     toRaiseToken,
     status,
-  } = mockDetail;
-  const { projectName, projectSummary, projectDescription, logoUrl, projectImgs, ...community } = JSON.parse(
-    additionalInfo,
-  ) as IAdditionalInfo;
+  } = data;
+
+  const _additionalInfo = useMemo(() => parseAdditionalInfo(additionalInfo), [additionalInfo]);
 
   const progressPercent = useMemo(() => {
     const percent = ZERO.plus(currentRaisedAmount ?? 0)
@@ -69,44 +63,44 @@ const Card: React.FC<ProjectCardProps> = ({ data }) => {
       stringifyUrl({
         url: `/participant-list/${data.id}`,
         query: {
-          projectName: projectName || '',
+          projectName: _additionalInfo?.projectName || '',
         },
       }),
     );
-  }, [data, navigate, projectName]);
+  }, [_additionalInfo?.projectName, data.id, navigate]);
 
   return (
     <div className="project-card" onClick={jumpDetail}>
-      <img className="project-img" src={projectImgs.split(',')[0]} />
+      <img className="project-img" src={_additionalInfo?.projectImgs.split(',')[0] || ''} />
       <Flex className="project-card-info">
-        <img className="project-card-logo" src={logoUrl?.split(',')[0]} alt="" />
+        <img className="project-card-logo" src={_additionalInfo?.logoUrl?.split(',')[0] || ''} alt="" />
         <div>
-          <div className="project-name">{projectName}</div>
+          <div className="project-name">{_additionalInfo?.projectName || '--'}</div>
           {/* <ProjectStatusRow status={'Upcoming'} /> */}
         </div>
       </Flex>
-      <Paragraph className="project-desc" ellipsis={{ rows: 2 }}>
-        {projectSummary}
-      </Paragraph>
+      <div className="project-desc">{_additionalInfo?.projectSummary}</div>
       <div className="project-community">
-        {Object.keys(community).map((key, index) => (
-          <img
-            key={index}
-            className="cursor-pointer"
-            src={communityLogo[key]}
-            alt=""
-            onClick={() => {
-              window.open(community[key], '_blank');
-            }}
-          />
-        ))}
+        {Object.entries(additionalInfo || [])
+          .filter(([key]) => Object.keys(communityLogo).find((item) => item === key))
+          .map(([key, value], index) => (
+            <img
+              key={index}
+              className="cursor-pointer"
+              src={communityLogo[key]}
+              alt="community"
+              onClick={() => {
+                window.open(value, '_blank');
+              }}
+            />
+          ))}
       </div>
       <Flex className="project-card-sale" justify="space-between">
         <div className="text-left">
           <div>Sale Price</div>
-          {/* TODO: caculate preprice */}
+          {/* TODO: calculate prePrice */}
           <div>
-            1 ELF ={divDecimals(preSalePrice, crowdFundingIssueToken.decimals).toFixed()}
+            1 ELF ={divDecimals(preSalePrice, crowdFundingIssueToken?.decimals).toFixed()}
             PIGE
           </div>
         </div>
@@ -124,8 +118,8 @@ const Card: React.FC<ProjectCardProps> = ({ data }) => {
       <Flex className="project-progress" justify="space-between">
         <Text>{progressPercent.toNumber()}%</Text>
         <Text>
-          {divDecimals(currentRaisedAmount, toRaiseToken.decimals).toFixed()}/
-          {divDecimals(toRaisedAmount, toRaiseToken.decimals).toFixed()} ELF
+          {divDecimals(currentRaisedAmount, toRaiseToken?.decimals).toFixed()}/
+          {divDecimals(toRaisedAmount, toRaiseToken?.decimals).toFixed()} ELF
         </Text>
       </Flex>
     </div>
