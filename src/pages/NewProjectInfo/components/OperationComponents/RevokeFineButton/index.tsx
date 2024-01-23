@@ -26,7 +26,7 @@ export default function RevokeFineButton({ projectInfo }: IClaimTokenButtonProps
   const [messageApi, contextHolder] = message.useMessage();
 
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
-  const [isSubmitModalOpen, setIsSubmitModalOpen] = useState(true);
+  const [isSubmitModalOpen, setIsSubmitModalOpen] = useState(false);
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
   const [transactionId, setTransactionId] = useState('');
 
