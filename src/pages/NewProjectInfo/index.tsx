@@ -13,7 +13,6 @@ import { useViewContract } from 'contexts/useViewContract/hooks';
 import { DEFAULT_CHAIN_ID } from 'constants/network';
 import { IProjectInfo, ProjectListType } from 'types/project';
 import myEvents from 'utils/myEvent';
-import { mockDetail, mockWhitelistInfo, mockPreviewData } from './mock';
 import { emitLoading } from 'utils/events';
 import { tableEmpty } from 'assets/images';
 import './styles.less';
