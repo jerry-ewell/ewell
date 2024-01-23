@@ -133,7 +133,7 @@ export default function ProjectInfo({ previewData, style }: IProjectInfoProps) {
   return (
     <>
       {contextHolder}
-      <div className="common-page-1360 min-height-container project-info-wrapper" style={style}>
+      <div className="common-page page-body project-info-wrapper" style={style}>
         {!isPreview && <Breadcrumb className="bread-wrap" items={breadList} />}
         {showInfo ? (
           <div className="flex project-info-content">
