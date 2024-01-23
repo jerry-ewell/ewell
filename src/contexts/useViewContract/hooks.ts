@@ -72,21 +72,16 @@ export function useViewContract() {
     [getWhitelistContract],
   );
 
-  const getApproveAmount = useCallback(
-    async ({ symbol, amount, owner }: { symbol: string; amount: string; owner: string }) => {
+  const checkIsNeedApprove = useCallback(
+    async ({ symbol, amount, owner, spender }: { symbol: string; amount: string; owner: string; spender: string }) => {
       const tokenContract = await getTokenContract();
-      const { balance } = await tokenContract.GetBalance.call({
+      const { allowance } = await tokenContract.GetAllowance.call({
         symbol,
         owner,
+        spender,
       });
 
-      const approveAmount = ZERO.plus(amount).minus(balance);
-      const isNeedApprove = approveAmount.gt(ZERO);
-
-      return {
-        isNeedApprove,
-        approveAmount: approveAmount.toFixed(),
-      };
+      return ZERO.plus(allowance).lt(amount);
     },
     [getTokenContract],
   );
@@ -96,6 +91,6 @@ export function useViewContract() {
     getEwellContract,
     getWhitelistContract,
     getWhitelistUserList,
-    getApproveAmount,
+    checkIsNeedApprove,
   };
 }

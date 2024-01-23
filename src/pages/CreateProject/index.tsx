@@ -8,12 +8,23 @@ import IDOInfo from './IDOInfo';
 import Transfer from './Transfer';
 import ESteps from './components/ESteps';
 import { CreateStepPorps, TSteps } from './types';
-import { stepsItems } from './constants';
+import { stepsItems, stepTitle } from './constants';
 import ScrollToTop from 'components/ScrollToTop';
 import './styles.less';
 
 const CreateProject: React.FC = () => {
   const [currentStep, setCurrentStep] = useState<TSteps>(TSteps.ONE);
+
+  const breadTitles = useMemo(() => {
+    return [
+      {
+        title: 'Lanch with EWELL',
+      },
+      {
+        title: stepTitle[currentStep],
+      },
+    ];
+  }, [currentStep]);
 
   const onNext = useCallback(() => {
     console.log('onNext');
@@ -39,18 +50,7 @@ const CreateProject: React.FC = () => {
 
   return (
     <div className="common-page-1360 cre-project page-body">
-      <Breadcrumb
-        className="project-nav"
-        separator="\"
-        items={[
-          {
-            title: 'Home',
-          },
-          {
-            title: 'Lanch with EWELL',
-          },
-        ]}
-      />
+      {currentStep <= TSteps.THREE && <Breadcrumb className="project-nav" separator="\" items={breadTitles} />}
       <div className={clsx('project-wrapper', currentStep === TSteps.FOURE && 'project-wrapper-full')}>
         {/* TODO: scroll top */}
         {/* <ScrollToTop /> */}

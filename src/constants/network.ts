@@ -74,6 +74,7 @@ const NETWORK_CONFIG_LIST = {
   },
 };
 
-export const NETWORK_CONFIG = NETWORK_CONFIG_LIST['test3'];
+// export const NETWORK_CONFIG = NETWORK_CONFIG_LIST[process.env.NETWORK_KEY || ''];
+export const NETWORK_CONFIG = NETWORK_CONFIG_LIST['test3' || ''];
 
 export const DEFAULT_CHAIN_ID = NETWORK_CONFIG.sideChainId as ChainId;
