@@ -80,7 +80,6 @@ const Projects: React.FC = () => {
           showScrollToTop={false}
           loaded={loadAllClosedItems}
           loadMoreData={getClosedProject}
-          id="project-list-scroll"
           dataLength={closedItems.length}>
           {!!closedItems.length && <div className="project-type">Closed Projects</div>}
           <Row gutter={[24, 24]}>
@@ -95,11 +94,7 @@ const Projects: React.FC = () => {
     );
   }, [activeItems, closedItems, getClosedProject, loadAllClosedItems]);
 
-  return (
-    <div className="project-page" id="project-list-scroll">
-      {render}
-    </div>
-  );
+  return <div className="project-page">{render}</div>;
 };
 
 export default Projects;

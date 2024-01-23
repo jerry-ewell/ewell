@@ -2,43 +2,16 @@
 
 .project-list {
   width: 100%;
-  
-  #project-list-scroll {
-    height: calc(100vh - @header-height - @footer-height);
-    overflow: scroll;
-  }
 
   .project-page {
-    margin: 0 40px;
+    padding-top: 24px;
 
     .project-type {
-      color: #070A26;
+      color: #070a26;
       font-size: 24px;
       font-weight: 500;
       line-height: 32px;
-      margin: 24px 0 16px;
-    }
-
-    .empty-full {
-      height: calc(100vh - 136px - 72px);
-    }
-
-    @media screen and (max-width: 640px) {
-      .empty-full {
-        height:calc(100vh - 136px - 120px) ;
-      }
-    }
-  }
-
-  @media screen and (max-width: 1024px) and (min-width: 640px) {
-    .project-page {
-      margin: 0 20px; 
-    }
-  }
-
-  @media screen and (max-width: 640px) {
-    .project-page {
-      margin: 0 16px;
+      margin-bottom: 16px;
     }
   }
 }

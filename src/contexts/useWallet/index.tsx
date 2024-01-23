@@ -148,6 +148,7 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const { remove } = myEvents.AuthorizationExpired.addListener(() => {
       clearLocalJWT();
+      console.log('AuthorizationExpired');
       authToken(wallet);
     });
     return () => {

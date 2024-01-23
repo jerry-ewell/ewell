@@ -58,19 +58,19 @@ export default function ProjectManagementCard({ projectInfo }: IProjectManagemen
     try {
       const result = await wallet?.callContract({
         contractAddress: NETWORK_CONFIG.whitelistContractAddress,
-        methodName: checked ? 'DisableWhitelist' : 'EnableWhitelist',
+        methodName: checked ? 'EnableWhitelist' : 'DisableWhitelist',
         args: projectInfo?.whitelistId,
       });
       console.log('whitelist result', result);
       messageApi.open({
         type: 'success',
-        content: checked ? 'Disable whitelist successfully' : 'Enable whitelist successfully',
+        content: checked ? 'Enable whitelist successfully' : 'Disable whitelist successfully',
       });
     } catch (error: any) {
       console.log('error', error);
       messageApi.open({
         type: 'error',
-        content: error?.message || (checked ? 'Disable whitelist failed' : 'Enable whitelist failed'),
+        content: error?.message || (checked ? 'Enable whitelist failed' : 'Disable whitelist failed'),
       });
     } finally {
       setIsWhitelistSwitchLoading(false);
