@@ -66,7 +66,7 @@ const MyProjects: React.FC<ProjectListProps> = () => {
     <div className="project-page">
       {!createdItems.length && !participateItems.length && (
         <>
-          <div className="project-type"> No Projects</div>
+          <div className="project-type">No Projects</div>
           <Empty className="empty-full" text={emptyText} />
         </>
       )}
@@ -83,6 +83,7 @@ const MyProjects: React.FC<ProjectListProps> = () => {
         </>
       )}
       <InfiniteList
+        id="project-list-scroll"
         showScrollToTop={false}
         loaded={loadAllParticipateItems}
         loadMoreData={getParticipateProject}

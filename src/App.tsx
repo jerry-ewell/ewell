@@ -15,7 +15,7 @@ function App() {
     <>
       {/* <Modals /> */}
       {/* <Suspense fallback={null}> */}
-      <div className="ewell-ui-root">
+      <div className="ewell-ui-root" id="project-list-scroll">
         <Header />
         <ScrollToTop />
         <div className="page-container">

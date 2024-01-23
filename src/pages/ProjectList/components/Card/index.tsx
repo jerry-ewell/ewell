@@ -78,7 +78,7 @@ const Card: React.FC<ProjectCardProps> = ({ data }) => {
 
   return (
     <div className="project-card" onClick={jumpDetail}>
-      <img className="project-img" src={_additionalInfo?.projectImgs.split(',')[0] || ''} />
+      <img className="project-img" src={_additionalInfo?.projectImgs?.split(',')[0] || ''} />
       <Flex className="project-card-info">
         <img className="project-card-logo" src={_additionalInfo?.logoUrl?.split(',')[0] || ''} alt="" />
         <div>
