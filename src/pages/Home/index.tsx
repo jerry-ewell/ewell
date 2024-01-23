@@ -4,7 +4,10 @@ import multipleCirclesImg from './images/multiple-circles.svg';
 import multipleArrowImg from './images/multiple-arrow.svg';
 import { Button } from 'aelf-design';
 import Web3Button from 'components/Web3Button';
+import { useNavigate } from 'react-router-dom';
 export default function Home() {
+  const navigate = useNavigate();
+
   return (
     <div className="home">
       <div className="home-body common-page page-body">
@@ -38,7 +41,7 @@ export default function Home() {
                   className="btn-wrap"
                   block
                   onClick={() => {
-                    console.log('jump to launch page');
+                    navigate('/create-project');
                   }}>
                   Launch with EWELL
                 </Web3Button>

@@ -18,10 +18,9 @@ import { useParseWhitelist } from 'hooks/useParseWhitelist';
 import { identifyWhitelistData } from 'utils/parseWhiteList';
 import { UpdateType } from 'components/UpdateWhitelistUsersButton/types';
 import { useTokenPrice, useTxFee } from 'contexts/useAssets/hooks';
+import { stringify } from 'query-string';
 
 const { Dragger } = Upload;
-
-const x = process.env;
 
 export default function Example() {
   const { login, logout, wallet, checkManagerSyncState } = useWallet();
@@ -29,12 +28,17 @@ export default function Example() {
   const { getTokenContract, getEwellContract, getWhitelistContract, checkIsNeedApprove } = useViewContract();
   const [projectId, setProjectId] = useState('15d556a57222ef06ea9a46a6fb9db416bffb98b8de60ccef6bcded8ca851f407');
   const { updateFile } = useParseWhitelist();
-  console.log('???????', x);
 
   const { tokenPrice } = useTokenPrice();
   const { txFee } = useTxFee();
   useEffect(() => {
     console.log('tokenPrice', tokenPrice);
+    console.log(
+      'stringify(apiData)',
+      stringify({
+        projectName: '123',
+      }),
+    );
   }, [tokenPrice]);
 
   useEffect(() => {

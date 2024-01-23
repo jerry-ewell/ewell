@@ -100,7 +100,7 @@ const Projects: React.FC = () => {
         </InfiniteList> */}
       </>
     );
-  }, [activeItems, closedItems, colNum, getClosedProject, loadAllClosedItems]);
+  }, [activeItems, closedItems, colNum]);
 
   return (
     <div className="project-page" id="project-list-scroll">

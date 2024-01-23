@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Flex, Switch, message } from 'antd';
 import { Button, Typography, FontWeightEnum } from 'aelf-design';
@@ -13,6 +13,8 @@ import UpdateWhitelistUsersButton from 'components/UpdateWhitelistUsersButton';
 import { UpdateType } from 'components/UpdateWhitelistUsersButton/types';
 import './styles.less';
 import { emitSyncTipsModal } from 'utils/events';
+import { stringify, stringifyUrl } from 'query-string';
+import { parseAdditionalInfo } from 'utils/project';
 
 const { Text } = Typography;
 
@@ -75,6 +77,17 @@ export default function ProjectManagementCard({ projectInfo }: IProjectManagemen
     }
   };
 
+  const jumpParticipants = useCallback(() => {
+    navigate(
+      stringifyUrl({
+        url: `/participant-list/${projectId}`,
+        query: {
+          projectName: projectInfo?.additionalInfo?.projectName || '',
+        },
+      }),
+    );
+  }, [navigate, projectId, projectInfo]);
+
   return (
     <>
       {contextHolder}
@@ -84,12 +97,7 @@ export default function ProjectManagementCard({ projectInfo }: IProjectManagemen
         title="Project Management">
         <Flex vertical gap={12}>
           <Text fontWeight={FontWeightEnum.Medium}>Participants</Text>
-          <Button
-            onClick={() => {
-              navigate(`/participant-list/${projectId}`);
-            }}>
-            View Participants List
-          </Button>
+          <Button onClick={jumpParticipants}>View Participants List</Button>
         </Flex>
         <div className="divider" />
         <Flex vertical gap={12}>
