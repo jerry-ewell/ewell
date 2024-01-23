@@ -9,10 +9,10 @@ export type FileType = Parameters<GetProp<IUploadProps, 'beforeUpload'>>[0];
 export interface IFUploadProps extends IUploadProps {
   maxFileCount?: number;
   fileLimit?: string;
-  fileList?: FileType[];
+  fileList?: UploadFile[];
 }
 
-const hanldleLimit = (limit: string) => {
+const handleLimit = (limit: string) => {
   const unit_K = 1 * 1024;
   const unit_M = unit_K * 1024;
 
@@ -28,14 +28,17 @@ const hanldleLimit = (limit: string) => {
 };
 const FUpload: React.FC<IFUploadProps> = ({ fileList, maxFileCount, fileLimit = '10M', onChange, ...props }) => {
   const [showUploadBtn, setShowUploadBtn] = useState<boolean>(false);
-  const [inFileList, setFileList] = useState<UploadFile[]>(fileList || []);
+  const [inFileList, setFileList] = useState<UploadFile[]>([]);
   const { awsUploadFile } = useAWSUploadService();
 
   useEffect(() => {
-    console.log('fileList-init', inFileList, fileList);
     if (!maxFileCount) return setShowUploadBtn(true);
     setShowUploadBtn(inFileList.length < maxFileCount);
-  }, [inFileList, maxFileCount, fileList]);
+  }, [inFileList, maxFileCount]);
+
+  useEffect(() => {
+    setFileList(fileList || []);
+  }, [fileList]);
 
   const onFileChange: IFUploadProps['onChange'] = (info) => {
     const { fileList } = info;
@@ -51,7 +54,7 @@ const FUpload: React.FC<IFUploadProps> = ({ fileList, maxFileCount, fileLimit = 
   };
 
   const onBeforeUpload = (file: FileType) => {
-    const isLteLimit = file.size <= hanldleLimit(fileLimit);
+    const isLteLimit = file.size <= handleLimit(fileLimit);
 
     if (!isLteLimit) {
       message.error(`Image must smaller than ${fileLimit}B!`);

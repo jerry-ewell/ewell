@@ -10,14 +10,16 @@ import CustomMark from 'pages/CreateProject/components/CustomMark';
 import { IAdditionalInfo, IProjectInfo } from 'pages/ProjectList/components/Card/types';
 import { urlString2FileList } from 'utils/format';
 import { useUpdateAddition } from './useApi';
+import { parseAdditionalInfo } from 'utils/project';
+import Upload from 'components/Upload';
 import './styles.less';
 
 const { Title, Text } = Typography;
 
 export default function EditInformation() {
-  const [additionalInfo, setAdditionalInfo] = useSetState();
   const { projectId } = useParams();
   const { getDetail } = useTransfer();
+  const [form] = Form.useForm();
   const { updateAddition } = useUpdateAddition();
   const navigate = useNavigate();
 
@@ -49,15 +51,16 @@ export default function EditInformation() {
       console.log('getProject-info-error', result.errMsg);
       return;
     }
-    const { additionalInfo = '' }: IProjectInfo = result;
-    const { logoUrl, projectImgs, ...info }: IAdditionalInfo = JSON.parse(additionalInfo);
 
-    setAdditionalInfo({
-      ...info,
-      logoUrl: urlString2FileList(logoUrl),
-      projectImgs: urlString2FileList(projectImgs),
-    });
-  }, [getDetail, projectId, setAdditionalInfo]);
+    const additional = parseAdditionalInfo(result.additionalInfo);
+
+    additional &&
+      form.setFieldsValue({
+        ...additional,
+        logoUrl: urlString2FileList(additional.logoUrl),
+        projectImgs: urlString2FileList(additional.projectImgs),
+      });
+  }, [form, getDetail, projectId]);
 
   useEffectOnce(() => {
     getProjectInfo();
@@ -72,7 +75,7 @@ export default function EditInformation() {
         <Form
           layout="vertical"
           name="projectInfo"
-          initialValues={additionalInfo}
+          form={form}
           requiredMark={CustomMark}
           scrollToFirstError
           onFinish={onFinish}

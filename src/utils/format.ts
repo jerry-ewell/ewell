@@ -9,13 +9,14 @@ export const urlString2FileList = (urlString: string) => {
   if (!urlString) return fileList;
 
   urlString.split(',').forEach((url, index) => {
-    if (!url) return;
-    fileList.push({
-      uid: '' + index,
-      name: url.match(/[^/]*$/)?.[0] || '',
-      status: 'done',
-      url,
-    });
+    if (url) {
+      fileList.push({
+        uid: '' + index,
+        name: url.match(/[^/]*$/)?.[0] || '',
+        status: 'done',
+        url,
+      });
+    }
   });
 
   return fileList;

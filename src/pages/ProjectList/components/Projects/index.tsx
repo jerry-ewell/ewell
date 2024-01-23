@@ -68,7 +68,7 @@ const Projects: React.FC = () => {
           <Row gutter={[24, 24]}>
             {activeItems.map((item, index) => (
               <Col span={24 / colNum} key={index}>
-                <ProjectCard data={{}} />
+                <ProjectCard data={item} />
               </Col>
             ))}
           </Row>
