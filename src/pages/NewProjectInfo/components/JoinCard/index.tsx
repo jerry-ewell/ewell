@@ -87,9 +87,61 @@ export default function JoinCard({ projectInfo, isPreview, handleRefresh }: IJoi
     return projectInfo?.isEnableWhitelist && projectInfo?.isInWhitelist;
   }, [projectInfo?.isEnableWhitelist, projectInfo?.isInWhitelist]);
 
-  const showOperation = useMemo(() => {
+  const canOperate = useMemo(() => {
     return isLogin && (!projectInfo?.isEnableWhitelist || projectInfo?.isInWhitelist);
   }, [isLogin, projectInfo?.isEnableWhitelist, projectInfo?.isInWhitelist]);
+
+  const showMyAmount = useMemo(() => {
+    return (
+      projectInfo?.status === ProjectStatus.PARTICIPATORY ||
+      projectInfo?.status === ProjectStatus.UNLOCKED ||
+      projectInfo?.status === ProjectStatus.ENDED
+    );
+  }, [projectInfo?.status]);
+
+  const showPurchaseButton = useMemo(() => {
+    return projectInfo?.status === ProjectStatus.PARTICIPATORY;
+  }, [projectInfo?.status]);
+
+  const showRevokeInvestmentButton = useMemo(() => {
+    return projectInfo?.status === ProjectStatus.PARTICIPATORY && new BigNumber(projectInfo?.investAmount || '').gt(0);
+  }, [projectInfo?.investAmount, projectInfo?.status]);
+
+  const showUnlockTips = useMemo(() => {
+    return projectInfo?.status === ProjectStatus.UNLOCKED && new BigNumber(projectInfo?.investAmount || '').gt(0);
+  }, [projectInfo?.investAmount, projectInfo?.status]);
+
+  const showClaimTokenButton = useMemo(() => {
+    return (
+      projectInfo?.status === ProjectStatus.ENDED &&
+      new BigNumber(projectInfo?.investAmount || '').gt(0) &&
+      !projectInfo?.isWithdraw
+    );
+  }, [projectInfo?.investAmount, projectInfo?.isWithdraw, projectInfo?.status]);
+
+  const showRevokeFineButton = useMemo(() => {
+    return projectInfo?.status === ProjectStatus.CANCELED && !projectInfo?.claimedLiquidatedDamage;
+  }, [projectInfo?.claimedLiquidatedDamage, projectInfo?.status]);
+
+  const showOperationArea = useMemo(() => {
+    return (
+      canOperate &&
+      (showMyAmount ||
+        showPurchaseButton ||
+        showRevokeInvestmentButton ||
+        showUnlockTips ||
+        showClaimTokenButton ||
+        showRevokeFineButton)
+    );
+  }, [
+    canOperate,
+    showClaimTokenButton,
+    showMyAmount,
+    showPurchaseButton,
+    showRevokeFineButton,
+    showRevokeInvestmentButton,
+    showUnlockTips,
+  ]);
 
   useEffect(() => {
     setIsPurchaseButtonDisabled((pre) => {
@@ -217,7 +269,7 @@ export default function JoinCard({ projectInfo, isPreview, handleRefresh }: IJoi
           )} ${projectInfo?.toRaiseToken?.symbol ?? '--'}`}</Text>
         </div>
       </Flex>
-      {(showViewWhitelistTasks || shoeWhitelistJoined || showOperation) && <div className="divider" />}
+      {(showViewWhitelistTasks || shoeWhitelistJoined || showOperationArea) && <div className="divider" />}
       <Flex vertical gap={12}>
         {showViewWhitelistTasks && (
           <>
@@ -245,11 +297,9 @@ export default function JoinCard({ projectInfo, isPreview, handleRefresh }: IJoi
             </Text>
           </div>
         )}
-        {showOperation && (
+        {canOperate && (
           <>
-            {(projectInfo?.status === ProjectStatus.PARTICIPATORY ||
-              projectInfo?.status === ProjectStatus.UNLOCKED ||
-              projectInfo?.status === ProjectStatus.ENDED) && (
+            {showMyAmount && (
               <div className="flex-between-center">
                 <Text>My Allocation</Text>
                 <Text fontWeight={FontWeightEnum.Medium}>
@@ -258,9 +308,7 @@ export default function JoinCard({ projectInfo, isPreview, handleRefresh }: IJoi
                 </Text>
               </div>
             )}
-            {(projectInfo?.status === ProjectStatus.PARTICIPATORY ||
-              projectInfo?.status === ProjectStatus.UNLOCKED ||
-              projectInfo?.status === ProjectStatus.ENDED) && (
+            {showMyAmount && (
               <div className="flex-between-center">
                 <Text>
                   {projectInfo?.status === ProjectStatus.ENDED && projectInfo?.isWithdraw ? 'Receive' : 'To Receive'}
@@ -271,7 +319,7 @@ export default function JoinCard({ projectInfo, isPreview, handleRefresh }: IJoi
                 </Text>
               </div>
             )}
-            {projectInfo?.status === ProjectStatus.PARTICIPATORY && (
+            {showPurchaseButton && (
               <>
                 <Form.Item
                   className="purchase-input-number-wrapper"
@@ -330,21 +378,14 @@ export default function JoinCard({ projectInfo, isPreview, handleRefresh }: IJoi
                 />
               </>
             )}
-            {projectInfo?.status === ProjectStatus.PARTICIPATORY &&
-              new BigNumber(projectInfo?.investAmount || '').gt(0) && (
-                <RevokeInvestmentButton projectInfo={projectInfo} />
-              )}
-            {projectInfo?.status === ProjectStatus.UNLOCKED && new BigNumber(projectInfo?.investAmount || '').gt(0) && (
+            {showRevokeInvestmentButton && <RevokeInvestmentButton projectInfo={projectInfo} />}
+            {showUnlockTips && (
               <Text className="text-center" fontWeight={FontWeightEnum.Medium}>
                 Claim Token when it's time to unlock!
               </Text>
             )}
-            {projectInfo?.status === ProjectStatus.ENDED &&
-              new BigNumber(projectInfo?.investAmount || '').gt(0) &&
-              !projectInfo?.isWithdraw && <ClaimTokenButton projectInfo={projectInfo} />}
-            {projectInfo?.status === ProjectStatus.CANCELED && !projectInfo?.claimedLiquidatedDamage && (
-              <RevokeFineButton projectInfo={projectInfo} />
-            )}
+            {showClaimTokenButton && <ClaimTokenButton projectInfo={projectInfo} />}
+            {showRevokeFineButton && <RevokeFineButton projectInfo={projectInfo} />}
           </>
         )}
       </Flex>

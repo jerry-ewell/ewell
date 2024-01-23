@@ -23,7 +23,7 @@ const { Title, Text } = Typography;
 
 export interface IPurchaseButtonProps {
   buttonDisabled?: boolean;
-  projectInfo: IProjectInfo;
+  projectInfo?: IProjectInfo;
   purchaseAmount?: string;
 }
 
