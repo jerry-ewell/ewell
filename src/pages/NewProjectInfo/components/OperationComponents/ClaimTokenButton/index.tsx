@@ -103,7 +103,6 @@ export default function ClaimTokenButton({ projectInfo }: IClaimTokenButtonProps
           <Text>After clicking “Submit”, EWELL transfer ELF to the designated account.</Text>
           <Flex justify="center" align="baseline" gap={8}>
             <Title fontWeight={FontWeightEnum.Medium} level={4}>
-              {/* TODO: check value */}
               {divDecimalsStr(projectInfo?.toClaimAmount, projectInfo?.crowdFundingIssueToken?.decimals)}
             </Title>
             <Title fontWeight={FontWeightEnum.Medium}>{projectInfo?.crowdFundingIssueToken?.symbol || '--'}</Title>
@@ -118,14 +117,13 @@ export default function ClaimTokenButton({ projectInfo }: IClaimTokenButtonProps
             />
           </Flex>
           <Flex justify="space-between">
-            <Text className={clsx({ ['error-text']: notEnoughTokens })}>Estimated Transaction Fee</Text>
+            <Text>Estimated Transaction Fee</Text>
             <Flex gap={8} align="baseline">
-              <Text className={clsx({ ['error-text']: notEnoughTokens })}>
+              <Text>
                 {txFee} {projectInfo?.toRaiseToken?.symbol ?? '--'}
               </Text>
               {renderTokenPrice({
                 textProps: {
-                  className: clsx({ ['error-text']: notEnoughTokens }),
                   size: 'small',
                 },
                 amount: txFee,

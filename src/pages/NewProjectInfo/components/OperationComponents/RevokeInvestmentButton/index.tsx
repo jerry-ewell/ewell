@@ -149,20 +149,15 @@ export default function RevokeInvestmentButton({ projectInfo }: IRevokeInvestmen
               address={wallet?.walletInfo.address || ''}
             />
           </Flex>
-          <Flex
-            className={clsx('modal-box-data-wrapper', { ['error-border']: notEnoughTokens })}
-            justify="space-between">
-            <Text className={clsx({ ['error-text']: notEnoughTokens })} fontWeight={FontWeightEnum.Medium}>
-              Revoke
-            </Text>
+          <Flex className="modal-box-data-wrapper" justify="space-between">
+            <Text fontWeight={FontWeightEnum.Medium}>Revoke</Text>
             <Flex gap={8} align="baseline">
-              <Text className={clsx({ ['error-text']: notEnoughTokens })} fontWeight={FontWeightEnum.Medium}>
+              <Text fontWeight={FontWeightEnum.Medium}>
                 {divDecimalsStr(revokeAmount, projectInfo?.toRaiseToken?.decimals)}{' '}
                 {projectInfo?.toRaiseToken?.symbol ?? '--'}
               </Text>
               {renderTokenPrice({
                 textProps: {
-                  className: clsx({ ['error-text']: notEnoughTokens }),
                   fontWeight: FontWeightEnum.Medium,
                   size: 'small',
                 },

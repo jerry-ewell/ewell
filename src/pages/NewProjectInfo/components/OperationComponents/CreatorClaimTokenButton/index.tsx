@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import BigNumber from 'bignumber.js';
+import clsx from 'clsx';
 import { Flex, message } from 'antd';
 import { Button, Modal, Typography, FontWeightEnum, HashAddress } from 'aelf-design';
 import SuccessModal from '../SuccessModal';
@@ -100,9 +101,9 @@ export default function CreatorClaimTokenButton({ projectInfo }: ICreatorClaimTo
           <Text>
             Click to extract ELF from EWELL contract. If you have any token left, it will be withdrawn as well.
           </Text>
-          <Flex vertical>
+          <Flex vertical align="center">
             <Flex align="baseline" gap={8}>
-              <Title className="half-width text-right" fontWeight={FontWeightEnum.Medium} level={4}>
+              <Title fontWeight={FontWeightEnum.Medium} level={4}>
                 {divDecimalsStr(
                   new BigNumber(projectInfo?.currentRaisedAmount || '').plus(
                     projectInfo?.receivableLiquidatedDamageAmount || '',
@@ -110,12 +111,10 @@ export default function CreatorClaimTokenButton({ projectInfo }: ICreatorClaimTo
                   projectInfo?.toRaiseToken?.decimals,
                 )}
               </Title>
-              <Title className="half-width" fontWeight={FontWeightEnum.Medium}>
-                {projectInfo?.toRaiseToken?.symbol || '--'}
-              </Title>
+              <Title fontWeight={FontWeightEnum.Medium}>{projectInfo?.toRaiseToken?.symbol || '--'}</Title>
             </Flex>
             <Flex align="baseline" gap={8}>
-              <Title className="half-width text-right" fontWeight={FontWeightEnum.Medium} level={4}>
+              <Title fontWeight={FontWeightEnum.Medium} level={4}>
                 {divDecimalsStr(
                   new BigNumber(projectInfo?.crowdFundingIssueAmount || '').minus(
                     projectInfo?.currentCrowdFundingIssueAmount || '',
@@ -123,9 +122,7 @@ export default function CreatorClaimTokenButton({ projectInfo }: ICreatorClaimTo
                   projectInfo?.crowdFundingIssueToken?.decimals,
                 )}
               </Title>
-              <Title className="half-width" fontWeight={FontWeightEnum.Medium}>
-                {projectInfo?.crowdFundingIssueToken?.symbol || '--'}
-              </Title>
+              <Title fontWeight={FontWeightEnum.Medium}>{projectInfo?.crowdFundingIssueToken?.symbol || '--'}</Title>
             </Flex>
           </Flex>
           <Flex className="modal-box-data-wrapper" justify="space-between">
@@ -153,8 +150,14 @@ export default function CreatorClaimTokenButton({ projectInfo }: ICreatorClaimTo
               })}
             </Flex>
           </Flex>
+          <Text
+            className={clsx('error-text', 'text-center', { ['display-none']: !notEnoughTokens })}
+            fontWeight={FontWeightEnum.Medium}>
+            Please deposit enough ELF in your wallet to pay for Gas! Estimated Gas is {txFee}{' '}
+            {projectInfo?.toRaiseToken?.symbol ?? '--'}
+          </Text>
           <Flex justify="center">
-            <Button className="modal-single-button" type="primary" onClick={handleSubmit}>
+            <Button className="modal-single-button" type="primary" disabled={notEnoughTokens} onClick={handleSubmit}>
               Submit
             </Button>
           </Flex>
