@@ -31,7 +31,7 @@ export default function PurchaseButton({ buttonDisabled, projectInfo, purchaseAm
   const { projectId } = useParams();
   const { additionalInfo } = projectInfo || {};
   const { wallet, checkManagerSyncState } = useWallet();
-  const { getApproveAmount } = useViewContract();
+  const { checkIsNeedApprove } = useViewContract();
   const { tokenPrice } = useTokenPrice();
   const { txFee } = useTxFee();
   const [messageApi, contextHolder] = message.useMessage();
@@ -70,21 +70,15 @@ export default function PurchaseButton({ buttonDisabled, projectInfo, purchaseAm
     }
 
     const amount = allocationAmount.toString();
-    let approveAmount = '';
     let needApprove = false;
-
     try {
-      const result = await getApproveAmount({
+      needApprove = await checkIsNeedApprove({
         symbol: projectInfo?.toRaiseToken?.symbol || '',
         amount,
         owner: wallet?.walletInfo.address || '',
         spender: NETWORK_CONFIG.ewellContractAddress,
       });
-      console.log('getApproveAmount result', result);
-      needApprove = result?.isNeedApprove;
-      if (needApprove) {
-        approveAmount = result?.approveAmount;
-      }
+      console.log('checkIsNeedApprove result', needApprove);
     } catch (error: any) {
       console.log('error', error);
       messageApi.open({
@@ -103,7 +97,7 @@ export default function PurchaseButton({ buttonDisabled, projectInfo, purchaseAm
           args: {
             spender: NETWORK_CONFIG.ewellContractAddress,
             symbol: projectInfo?.toRaiseToken?.symbol,
-            amount: approveAmount,
+            amount,
           },
         });
         console.log('approveResult', approveResult);

@@ -24,7 +24,7 @@ const { Dragger } = Upload;
 export default function Example() {
   const { login, logout, wallet, checkManagerSyncState } = useWallet();
 
-  const { getTokenContract, getEwellContract, getWhitelistContract, getApproveAmount } = useViewContract();
+  const { getTokenContract, getEwellContract, getWhitelistContract, checkIsNeedApprove } = useViewContract();
   const [projectId, setProjectId] = useState('15d556a57222ef06ea9a46a6fb9db416bffb98b8de60ccef6bcded8ca851f407');
   const { updateFile } = useParseWhitelist();
 
@@ -378,14 +378,14 @@ export default function Example() {
   }, [getEwellContract, getWhitelistContract, projectId]);
 
   const shouldApproveLocal = useCallback(async () => {
-    const result = await getApproveAmount({
+    const result = await checkIsNeedApprove({
       symbol: 'ELF',
       owner: wallet?.walletInfo.address || '',
       amount: '1000000000',
       spender: NETWORK_CONFIG.ewellContractAddress,
     });
     console.log('shouldApproveLocal', result);
-  }, [getApproveAmount, wallet]);
+  }, [checkIsNeedApprove, wallet]);
 
   return (
     <div>
@@ -437,7 +437,7 @@ export default function Example() {
           getProjectUserList
         </Button>
         <Button type="primary" onClick={shouldApproveLocal}>
-          getApproveAmount
+          checkIsNeedApprove
         </Button>
       </div>
       <div>

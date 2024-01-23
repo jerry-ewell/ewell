@@ -65,7 +65,7 @@ export default function Header() {
   }, [pathname]);
 
   const { login, loginState, logout, wallet } = useWallet();
-  const isProjectPage = useCheckRoute('example');
+  const isProjectPage = useCheckRoute('project-list');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const menuList: TMenuItem[] = useMemo(
