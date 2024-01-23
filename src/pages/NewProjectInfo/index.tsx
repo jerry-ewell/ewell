@@ -60,6 +60,11 @@ export default function ProjectInfo({ previewData, style }: IProjectInfoProps) {
         whitelistInfo = await whitelistContract.GetWhitelist.call(whitelistId);
       }
 
+      const whitelistAddressList =
+        whitelistInfo?.extraInfoIdList?.value?.[0]?.addressList?.value
+          ?.map((item) => item?.address)
+          .filter((item) => !!item) || [];
+
       console.log('whitelistInfo', whitelistInfo);
       let newProjectInfo = {};
       if (detail) {
@@ -69,7 +74,7 @@ export default function ProjectInfo({ previewData, style }: IProjectInfoProps) {
           listMarketInfo: detail?.listMarketInfo ? JSON.parse(detail.listMarketInfo) : [],
           whitelistInfo,
           isCreator,
-          isInWhitelist: whitelistInfo?.extraInfoIdList?.value?.[0]?.addressList?.value?.includes(addressRef.current),
+          isInWhitelist: whitelistAddressList.includes(addressRef.current),
         };
       }
       console.log('newProjectInfo: ', newProjectInfo);
