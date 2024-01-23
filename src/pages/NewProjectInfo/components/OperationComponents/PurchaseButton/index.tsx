@@ -192,7 +192,7 @@ export default function PurchaseButton({ buttonDisabled, projectInfo, purchaseAm
                     size: 'small',
                   },
                   amount: purchaseAmount,
-                  decimals: projectInfo?.toRaiseToken?.decimals,
+                  decimals: 0,
                   tokenPrice,
                 })}
               </Flex>

@@ -166,7 +166,7 @@ export default function RevokeInvestmentButton({ projectInfo }: IRevokeInvestmen
                   fontWeight: FontWeightEnum.Medium,
                   size: 'small',
                 },
-                amount: divDecimals(revokeAmount, projectInfo?.toRaiseToken?.decimals),
+                amount: revokeAmount,
                 decimals: projectInfo?.toRaiseToken?.decimals,
                 tokenPrice,
               })}
@@ -200,7 +200,7 @@ export default function RevokeInvestmentButton({ projectInfo }: IRevokeInvestmen
                   textProps: {
                     size: 'small',
                   },
-                  amount: divDecimals(finalAmount, projectInfo?.toRaiseToken?.decimals),
+                  amount: finalAmount,
                   decimals: projectInfo?.toRaiseToken?.decimals,
                   tokenPrice,
                 })}
