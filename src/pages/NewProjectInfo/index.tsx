@@ -1,3 +1,4 @@
+import React from 'react';
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import { request } from 'api';
@@ -18,11 +19,12 @@ import './styles.less';
 
 interface IProjectInfoProps {
   previewData?: IProjectInfo;
+  style?: React.CSSProperties;
 }
 
 const { Text } = Typography;
 
-export default function ProjectInfo({ previewData }: IProjectInfoProps) {
+export default function ProjectInfo({ previewData, style }: IProjectInfoProps) {
   const isMobile = useMobile();
   const { wallet } = useWallet();
   const { projectId } = useParams();
@@ -104,7 +106,7 @@ export default function ProjectInfo({ previewData }: IProjectInfoProps) {
   return (
     <>
       {contextHolder}
-      <div className="common-page-1360 min-height-container project-info-wrapper">
+      <div className="common-page-1360 min-height-container project-info-wrapper" style={style}>
         {showInfo ? (
           <div className="flex project-info-content">
             <InfoWrapper projectInfo={info} />

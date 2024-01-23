@@ -9,10 +9,11 @@ import Transfer from './Transfer';
 import ESteps from './components/ESteps';
 import { CreateStepPorps, TSteps } from './types';
 import { stepsItems } from './constants';
+import ScrollToTop from 'components/ScrollToTop';
 import './styles.less';
 
 const CreateProject: React.FC = () => {
-  const [currentStep, setCurrentStep] = useState<TSteps>(TSteps.FOURE);
+  const [currentStep, setCurrentStep] = useState<TSteps>(TSteps.ONE);
 
   const onNext = useCallback(() => {
     console.log('onNext');
@@ -37,7 +38,7 @@ const CreateProject: React.FC = () => {
   }, [currentStep, onNext, onPre]);
 
   return (
-    <div className="common-page-1360 cre-project">
+    <div className="common-page-1360 cre-project page-body">
       <Breadcrumb
         className="project-nav"
         separator="\"
@@ -50,7 +51,9 @@ const CreateProject: React.FC = () => {
           },
         ]}
       />
-      <div className="project-wrapper">
+      <div className={clsx('project-wrapper', currentStep === TSteps.FOURE && 'project-wrapper-full')}>
+        {/* TODO: scroll top */}
+        {/* <ScrollToTop /> */}
         <ESteps current={currentStep} items={stepsItems} />
         {renderStep}
       </div>

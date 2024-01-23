@@ -55,15 +55,18 @@ export function getInfo(confirmTradingPair: any, projectPanel: any, additionalIn
 
   return {
     acceptedCurrency: AELF_TOKEN_INFO.symbol,
-    // projectCurrency: confirmTradingPair.symbol,
-    projectCurrency: 'LINHONG',
+    // TODO: change project currency
+    projectCurrency: confirmTradingPair.symbol,
+    // projectCurrency: 'LINHONG',
     crowdFundingType: projectPanel.crowdFundingType,
     crowdFundingIssueAmount,
     preSalePrice,
     startTime: getProtobufTime(projectPanel.startTime),
     endTime: getProtobufTime(projectPanel.endTime),
     tokenReleaseTime: getProtobufTime(projectPanel.tokenReleaseTime),
-    minSubscription: '7',
+    // TODO
+    // minSubscription: '7',
+    minSubscription,
     maxSubscription,
     publicSalePrice,
     listMarketInfo: [],

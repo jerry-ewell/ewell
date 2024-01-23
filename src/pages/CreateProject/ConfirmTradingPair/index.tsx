@@ -43,7 +43,7 @@ const ConfirmTradingPair: React.FC<CreateStepPorps> = ({ onNext }) => {
 
   useEffect(() => {
     getTokenList();
-  });
+  }, [getTokenList]);
 
   return (
     <div className="trading-page">

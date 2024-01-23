@@ -57,6 +57,7 @@ export const ProjectInfoFromJson: FormItemProps[] = [
     type: 'fileUpload',
     label: 'LogoUrl:',
     name: 'logoUrl',
+    required: true,
     valuePropName: 'fileList',
     getValueFromEvent: normFile,
     childrenProps: {
@@ -82,7 +83,7 @@ export const ProjectInfoFromJson: FormItemProps[] = [
     label: 'Official Website:',
     name: 'website',
     tooltip: 'test',
-    rules: [{ required: true, message: 'sdssds' }, { validator: urlValidator }],
+    rules: [{ required: true, message: '' }, { validator: urlValidator }],
   }),
   {
     type: 'fieldsGroup',

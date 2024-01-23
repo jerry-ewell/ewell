@@ -10,13 +10,24 @@ export interface IButtonGroup {
   disabledNext?: boolean;
   htmlType?: IButtonProps['htmlType'];
   nextText?: string;
+  className?: string;
+  style?: React.CSSProperties;
   onPre?: () => void;
   onNext?: () => void;
 }
 
-const ButtonGroup: React.FC<IButtonGroup> = ({ onPre, onNext, disablePre, disabledNext, htmlType, nextText }) => {
+const ButtonGroup: React.FC<IButtonGroup> = ({
+  onPre,
+  onNext,
+  disablePre,
+  disabledNext,
+  htmlType,
+  nextText,
+  style,
+  className,
+}) => {
   return (
-    <Flex className="create-btn-group" justify="center">
+    <Flex className={clsx('create-btn-group', className)} justify="center" style={style}>
       {onPre && (
         <Button className={clsx('group-btn pre-btn', { disabled: disablePre })} disabled={disablePre} onClick={onPre}>
           <img className="arrow-icon" src={arrow} alt="" />
