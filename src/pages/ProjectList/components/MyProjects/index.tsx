@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useCallback } from 'react';
+import React, { useMemo, useState, useCallback, useEffect, useRef } from 'react';
 import { Row, Col } from 'antd';
 import { useEffectOnce } from 'react-use';
 import { useCardCol } from '../../hooks/useCardCol';
@@ -8,6 +8,7 @@ import { ProjectType } from 'types/project';
 import Empty from 'components/Empty';
 import { emitLoading } from 'utils/events';
 import InfiniteList from 'components/InfiniteList';
+import myEvents from 'utils/myEvent';
 interface ProjectListProps {
   createdItems?: IProjectCard[];
   participateItems?: IProjectCard[];
@@ -48,9 +49,24 @@ const MyProjects: React.FC<ProjectListProps> = () => {
     [colNum, getList, participateItems, participateListPageNum],
   );
 
-  useEffectOnce(() => {
+  const initList = useCallback(() => {
     getCreatedProjects();
     getParticipateProject();
+  }, [getCreatedProjects, getParticipateProject]);
+
+  const initListRef = useRef(initList);
+  initListRef.current = initList;
+  useEffect(() => {
+    const { remove } = myEvents.AuthToken.addListener(() => {
+      initListRef.current?.();
+    });
+    return () => {
+      remove();
+    };
+  }, []);
+
+  useEffectOnce(() => {
+    initList();
   });
 
   const emptyText = useMemo(() => {
