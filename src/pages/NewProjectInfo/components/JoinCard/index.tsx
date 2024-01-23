@@ -83,7 +83,7 @@ export default function JoinCard({ projectInfo, isPreview, handleRefresh }: IJoi
     return projectInfo?.isEnableWhitelist && projectInfo?.whitelistInfo?.url && !projectInfo?.isInWhitelist;
   }, [projectInfo?.isEnableWhitelist, projectInfo?.isInWhitelist, projectInfo?.whitelistInfo?.url]);
 
-  const shoeWhitelistJoined = useMemo(() => {
+  const showWhitelistJoined = useMemo(() => {
     return projectInfo?.isEnableWhitelist && projectInfo?.isInWhitelist;
   }, [projectInfo?.isEnableWhitelist, projectInfo?.isInWhitelist]);
 
@@ -156,7 +156,14 @@ export default function JoinCard({ projectInfo, isPreview, handleRefresh }: IJoi
   }, [isPreview, isPurchaseInputting, purchaseInputErrorMessage, purchaseInputValue]);
 
   const renderRemainder = () => {
-    if (projectInfo?.status === ProjectStatus.UPCOMING) {
+    if (isPreview) {
+      return (
+        <>
+          <Text>Remainder</Text>
+          <Text fontWeight={FontWeightEnum.Medium}>23:50:45</Text>
+        </>
+      );
+    } else if (projectInfo?.status === ProjectStatus.UPCOMING) {
       return (
         <>
           <Text>Remainder</Text>
@@ -269,7 +276,7 @@ export default function JoinCard({ projectInfo, isPreview, handleRefresh }: IJoi
           )} ${projectInfo?.toRaiseToken?.symbol ?? '--'}`}</Text>
         </div>
       </Flex>
-      {(showViewWhitelistTasks || shoeWhitelistJoined || showOperationArea) && <div className="divider" />}
+      {(showViewWhitelistTasks || showWhitelistJoined || showOperationArea) && <div className="divider" />}
       <Flex vertical gap={12}>
         {showViewWhitelistTasks && (
           <>
@@ -289,7 +296,7 @@ export default function JoinCard({ projectInfo, isPreview, handleRefresh }: IJoi
             </Flex>
           </>
         )}
-        {shoeWhitelistJoined && (
+        {showWhitelistJoined && (
           <div className="flex-between-center">
             <Text>Whitelist</Text>
             <Text className="purple-text" fontWeight={FontWeightEnum.Medium}>
