@@ -88,7 +88,7 @@ function reducer(state: any, { type, payload }: any) {
   }
 }
 
-const LOGOUT_STAY_PATH = ['example'];
+const LOGOUT_STAY_PATH = ['example', 'project'];
 export function WalletProvider({ children }: { children: React.ReactNode }) {
   const [state, dispatch] = useReducer(reducer, INITIAL_STATE);
   const webLoginContext = useWebLoginContext();

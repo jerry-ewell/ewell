@@ -4,6 +4,7 @@ import { getContract } from './utils';
 import { DEFAULT_CHAIN_ID, NETWORK_CONFIG } from 'constants/network';
 import { unifyMillisecond } from 'utils/time';
 import { TWhitelistUser } from './types';
+import { ZERO } from 'constants/misc';
 
 export function useViewContract() {
   const [{ tokenContract, ewellContract, whitelistContract }, dispatch] = useViewContractContext();
@@ -71,10 +72,30 @@ export function useViewContract() {
     [getWhitelistContract],
   );
 
+  const getApproveAmount = useCallback(
+    async ({ symbol, amount, owner }: { symbol: string; amount: string; owner: string }) => {
+      const tokenContract = await getTokenContract();
+      const { balance } = await tokenContract.GetBalance.call({
+        symbol,
+        owner,
+      });
+
+      const approveAmount = ZERO.plus(amount).minus(balance);
+      const isNeedApprove = approveAmount.gt(ZERO);
+
+      return {
+        isNeedApprove,
+        approveAmount: approveAmount.toFixed(),
+      };
+    },
+    [getTokenContract],
+  );
+
   return {
     getTokenContract,
     getEwellContract,
     getWhitelistContract,
     getWhitelistUserList,
+    getApproveAmount,
   };
 }

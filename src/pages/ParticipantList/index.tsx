@@ -2,7 +2,6 @@ import { useCallback, useMemo, useRef, useState } from 'react';
 import { Breadcrumb, Flex } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import { HashAddress, Search, Pagination, Typography, FontWeightEnum } from 'aelf-design';
-import BaseBreadcrumb from 'components/BaseBreadcrumb';
 import CommonTable from 'components/CommonTable';
 import './styles.less';
 import { NavLink, Navigate, useParams } from 'react-router-dom';
@@ -150,7 +149,7 @@ export default function ParticipantList() {
   return (
     <div className="common-page page-body participant-list-wrapper">
       <Breadcrumb className="bread-wrap" items={breadList}></Breadcrumb>
-      <Flex className="header" justify="space-between" align="flex-end">
+      <Flex className="participant-header" justify="space-between" align="flex-end">
         <Flex vertical>
           <Title level={5} fontWeight={FontWeightEnum.Medium}>
             Participants Users

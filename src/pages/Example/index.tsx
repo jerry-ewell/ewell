@@ -24,7 +24,7 @@ const { Dragger } = Upload;
 export default function Example() {
   const { login, logout, wallet, checkManagerSyncState } = useWallet();
 
-  const { getTokenContract, getEwellContract, getWhitelistContract } = useViewContract();
+  const { getTokenContract, getEwellContract, getWhitelistContract, getApproveAmount } = useViewContract();
   const [projectId, setProjectId] = useState('15d556a57222ef06ea9a46a6fb9db416bffb98b8de60ccef6bcded8ca851f407');
   const { updateFile } = useParseWhitelist();
 
@@ -83,7 +83,9 @@ export default function Example() {
     [getEwellContract, wallet],
   );
 
+  const [endTime, setEndTime] = useState('');
   const create = useCallback(async () => {
+    const endTimePb = getProtobufTime(Date.now() + (endTime === '' ? 40 * 60 : Number(endTime)) * 60 * 1000);
     const registerInput = {
       acceptedCurrency: 'ELF',
       projectCurrency: 'LINHONG',
@@ -91,13 +93,13 @@ export default function Example() {
       crowdFundingIssueAmount: '1000',
       preSalePrice: '1000',
       startTime: getProtobufTime(Date.now() + 60 * 1000),
-      endTime: getProtobufTime(Date.now() + 40 * 60 * 60 * 1000),
+      endTime: endTimePb,
       minSubscription: 1,
       maxSubscription: '1000000000',
       publicSalePrice: ZERO.plus('100000000').div(1.05).toFixed(), // preSalePrice / 1.05
       listMarketInfo: [], // fixed
       liquidityLockProportion: 0, // fixed
-      unlockTime: getProtobufTime(Date.now() + 45 * 60 * 60 * 1000), // fixed
+      unlockTime: endTimePb, // fixed
       isEnableWhitelist: false,
       isBurnRestToken: true,
       totalPeriod: 1, // fixed
@@ -118,7 +120,7 @@ export default function Example() {
       firstDistributeProportion: '100000000', // fixed 100%
       restDistributeProportion: 0, // fixed
       periodDuration: 0, // fixed
-      tokenReleaseTime: getProtobufTime(Date.now() + 45 * 60 * 60 * 1000),
+      tokenReleaseTime: endTimePb,
     };
     console.log('registerInput', registerInput);
 
@@ -135,7 +137,7 @@ export default function Example() {
     } catch (error) {
       console.log('error', error);
     }
-  }, [wallet]);
+  }, [endTime, wallet]);
 
   const getBalance = useCallback(async () => {
     const tokenContract = await getTokenContract();
@@ -375,6 +377,15 @@ export default function Example() {
     console.log('getWhitelistDetail ', whitelistDetail);
   }, [getEwellContract, getWhitelistContract, projectId]);
 
+  const shouldApproveLocal = useCallback(async () => {
+    const result = await getApproveAmount({
+      symbol: 'ELF',
+      owner: wallet?.walletInfo.address || '',
+      amount: '1000000000',
+    });
+    console.log('shouldApproveLocal', result);
+  }, [getApproveAmount, wallet?.walletInfo.address]);
+
   return (
     <div>
       <Web3Button
@@ -387,6 +398,12 @@ export default function Example() {
         value={projectId}
         onChange={(e) => {
           setProjectId(e.target.value);
+        }}></Input>
+      <Input
+        value={endTime}
+        placeholder="endTime: min"
+        onChange={(e) => {
+          setEndTime(e.target.value);
         }}></Input>
       <div>
         <Button
@@ -418,11 +435,15 @@ export default function Example() {
         <Button type="primary" onClick={getProjectUserList}>
           getProjectUserList
         </Button>
+        <Button type="primary" onClick={shouldApproveLocal}>
+          getApproveAmount
+        </Button>
       </div>
       <div>
         <Button onClick={addWhitelist}>addWhitelist</Button>
         <Button onClick={getWhitelistDetail}>getWhitelistDetail</Button>
       </div>
+
       <div>
         <Dragger
           accept=".xlsx,.csv"
