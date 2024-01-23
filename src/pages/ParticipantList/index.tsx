@@ -1,15 +1,16 @@
-import { useCallback, useRef, useState } from 'react';
-import { Flex } from 'antd';
+import { useCallback, useMemo, useRef, useState } from 'react';
+import { Breadcrumb, Flex } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import { HashAddress, Search, Pagination, Typography, FontWeightEnum } from 'aelf-design';
 import BaseBreadcrumb from 'components/BaseBreadcrumb';
 import CommonTable from 'components/CommonTable';
 import './styles.less';
-import { useParams } from 'react-router-dom';
+import { NavLink, Navigate, useParams } from 'react-router-dom';
 import { useEffectOnce } from 'react-use';
 import { request } from 'api';
 import { DEFAULT_CHAIN_ID } from 'constants/network';
 import { divDecimalsStr } from 'utils/calculate';
+import dayjs from 'dayjs';
 
 const { Title, Text } = Typography;
 
@@ -23,7 +24,7 @@ const columns: ColumnsType<any> = [
     title: 'Address',
     dataIndex: 'address',
     key: 'address',
-    render: (address) => <HashAddress address={address} />,
+    render: (address) => <HashAddress ignorePrefixSuffix={true} address={address} />,
   },
   {
     title: 'ELF',
@@ -84,8 +85,8 @@ export default function ParticipantList() {
           key: `${skipCount + idx + 1}`,
           order: `${skipCount + idx + 1}`,
           address: item.address,
-          elfCount: divDecimalsStr(item.investAmount, 8),
-          time: item.createTime,
+          elfCount: divDecimalsStr(item.investAmount, item.decimals || 8),
+          time: dayjs(item.createTime ?? 0).format('HH:mm:ss DD/MM/YYYY'),
         }));
         setList(_list);
         setTotalAmount(divDecimalsStr(data?.totalAmount || ''));
@@ -131,10 +132,25 @@ export default function ParticipantList() {
     }
   }, [getWhitelistInfo]);
 
+  const breadList = useMemo(
+    () => [
+      {
+        title: <NavLink to={`/project-list/my`}>My Projects</NavLink>,
+      },
+      {
+        title: <NavLink to={`/project-list`}>Citizen Conflict</NavLink>,
+      },
+      {
+        title: 'Participants List',
+      },
+    ],
+    [],
+  );
+
   return (
     <div className="common-page page-body participant-list-wrapper">
-      <BaseBreadcrumb />
-      <Flex className="header" justify="space-between">
+      <Breadcrumb className="bread-wrap" items={breadList}></Breadcrumb>
+      <Flex className="header" justify="space-between" align="flex-end">
         <Flex vertical>
           <Title level={5} fontWeight={FontWeightEnum.Medium}>
             Participants Users
