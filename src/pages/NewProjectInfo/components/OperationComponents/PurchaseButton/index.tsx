@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import BigNumber from 'bignumber.js';
 import { useParams } from 'react-router-dom';
 import { Flex, message } from 'antd';
-import { Button, FontWeightEnum, HashAddress, ITextProps, Modal, Typography } from 'aelf-design';
+import { Button, FontWeightEnum, HashAddress, Modal, Typography } from 'aelf-design';
 import ProjectLogo from 'components/ProjectLogo';
 import SuccessModal from '../SuccessModal';
 import { wallet as walletIcon } from 'assets/images';
@@ -16,6 +16,7 @@ import { timesDecimals } from 'utils/calculate';
 import { useTokenPrice, useTxFee } from 'contexts/useAssets/hooks';
 import { renderTokenPrice } from 'utils/project';
 import { useBalance } from 'hooks/useBalance';
+import { useViewContract } from 'contexts/useViewContract/hooks';
 import './styles.less';
 
 const { Title, Text } = Typography;
@@ -30,6 +31,7 @@ export default function PurchaseButton({ buttonDisabled, projectInfo, purchaseAm
   const { projectId } = useParams();
   const { additionalInfo } = projectInfo || {};
   const { wallet, checkManagerSyncState } = useWallet();
+  const { getApproveAmount } = useViewContract();
   const { tokenPrice } = useTokenPrice();
   const { txFee } = useTxFee();
   const [messageApi, contextHolder] = message.useMessage();
@@ -66,26 +68,53 @@ export default function PurchaseButton({ buttonDisabled, projectInfo, purchaseAm
       emitSyncTipsModal(true);
       return;
     }
-    const amount = allocationAmount.toFixed();
+
+    const amount = allocationAmount.toString();
+    let approveAmount = '';
+    let needApprove = false;
+
     try {
-      const approveResult = await wallet?.callContract({
-        contractAddress: NETWORK_CONFIG.sideChainInfo.tokenContractAddress,
-        methodName: 'Approve',
-        args: {
-          spender: NETWORK_CONFIG.ewellContractAddress,
-          symbol: projectInfo?.toRaiseToken?.symbol,
-          amount,
-        },
+      const result = await getApproveAmount({
+        symbol: projectInfo?.toRaiseToken?.symbol || '',
+        amount,
+        owner: wallet?.walletInfo.address || '',
       });
-      console.log('approveResult', approveResult);
+      console.log('getApproveAmount result', result);
+      needApprove = result?.isNeedApprove;
+      if (needApprove) {
+        approveAmount = result?.approveAmount;
+      }
     } catch (error: any) {
       console.log('error', error);
       messageApi.open({
         type: 'error',
-        content: error?.message || 'Approve failed',
+        content: error?.message || 'GetApproveAmount failed',
       });
       emitLoading(false);
       return;
+    }
+
+    if (needApprove) {
+      try {
+        const approveResult = await wallet?.callContract({
+          contractAddress: NETWORK_CONFIG.sideChainInfo.tokenContractAddress,
+          methodName: 'Approve',
+          args: {
+            spender: NETWORK_CONFIG.ewellContractAddress,
+            symbol: projectInfo?.toRaiseToken?.symbol,
+            amount: approveAmount,
+          },
+        });
+        console.log('approveResult', approveResult);
+      } catch (error: any) {
+        console.log('error', error);
+        messageApi.open({
+          type: 'error',
+          content: error?.message || 'Approve failed',
+        });
+        emitLoading(false);
+        return;
+      }
     }
 
     try {
