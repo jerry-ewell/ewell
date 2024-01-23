@@ -32,6 +32,18 @@ export default function ProjectManagementCard({ projectInfo }: IProjectManagemen
     return projectInfo?.status === ProjectStatus.UPCOMING || projectInfo?.status === ProjectStatus.PARTICIPATORY;
   }, [projectInfo?.status]);
 
+  const showCancelProjectButton = useMemo(() => {
+    return (
+      projectInfo?.status === ProjectStatus.UPCOMING ||
+      projectInfo?.status === ProjectStatus.PARTICIPATORY ||
+      projectInfo?.status === ProjectStatus.UNLOCKED
+    );
+  }, [projectInfo?.status]);
+
+  const showCreatorClaimTokenButton = useMemo(() => {
+    return projectInfo?.status === ProjectStatus.ENDED && !projectInfo?.isWithdraw;
+  }, [projectInfo?.status, projectInfo?.isWithdraw]);
+
   const handleWhitelistSwitchChange = async (checked: boolean) => {
     setIsWhitelistSwitchLoading(true);
     const isManagerSynced = await checkManagerSyncState();
@@ -41,18 +53,21 @@ export default function ProjectManagementCard({ projectInfo }: IProjectManagemen
       return;
     }
     try {
-      const txResult = await wallet?.callContract({
+      const result = await wallet?.callContract({
         contractAddress: NETWORK_CONFIG.whitelistContractAddress,
         methodName: checked ? 'DisableWhitelist' : 'EnableWhitelist',
         args: projectInfo?.whitelistId,
       });
-      console.log('txResult', txResult);
-      // TODO: refresh isEnableWhitelist
+      console.log('whitelist result', result);
+      messageApi.open({
+        type: 'success',
+        content: checked ? 'Disable whitelist successfully' : 'Enable whitelist successfully',
+      });
     } catch (error: any) {
       console.log('error', error);
       messageApi.open({
         type: 'error',
-        content: error?.message || 'Switch whitelist failed',
+        content: error?.message || (checked ? 'Disable whitelist failed' : 'Enable whitelist failed'),
       });
     } finally {
       setIsWhitelistSwitchLoading(false);
@@ -124,16 +139,16 @@ export default function ProjectManagementCard({ projectInfo }: IProjectManagemen
             </>
           )}
         </Flex>
-        <div className="divider" />
-        <Flex vertical gap={12}>
-          <Text fontWeight={FontWeightEnum.Medium}>Project</Text>
-          {(projectInfo?.status === ProjectStatus.UPCOMING ||
-            projectInfo?.status === ProjectStatus.PARTICIPATORY ||
-            projectInfo?.status === ProjectStatus.UNLOCKED) && <CancelProjectButton projectInfo={projectInfo} />}
-          {projectInfo?.status === ProjectStatus.ENDED && !projectInfo?.isWithdraw && (
-            <CreatorClaimTokenButton projectInfo={projectInfo} />
-          )}
-        </Flex>
+        {(showCancelProjectButton || showCreatorClaimTokenButton) && (
+          <>
+            <div className="divider" />
+            <Flex vertical gap={12}>
+              <Text fontWeight={FontWeightEnum.Medium}>Project</Text>
+              {showCancelProjectButton && <CancelProjectButton projectInfo={projectInfo} />}
+              {showCreatorClaimTokenButton && <CreatorClaimTokenButton projectInfo={projectInfo} />}
+            </Flex>
+          </>
+        )}
       </CommonCard>
     </>
   );

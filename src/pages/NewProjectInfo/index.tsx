@@ -55,14 +55,17 @@ export default function ProjectInfo({ previewData }: IProjectInfoProps) {
       }
 
       console.log('whitelistInfo', whitelistInfo);
-      const newProjectInfo = {
-        ...detail,
-        additionalInfo: JSON.parse(detail.additionalInfo),
-        listMarketInfo: JSON.parse(detail.listMarketInfo),
-        whitelistInfo,
-        isCreator,
-        isInWhitelist: whitelistInfo?.extraInfoIdList?.value?.[0]?.addressList?.value?.includes(addressRef.current),
-      };
+      let newProjectInfo = {};
+      if (detail) {
+        newProjectInfo = {
+          ...detail,
+          additionalInfo: detail?.additionalInfo ? JSON.parse(detail.additionalInfo) : {},
+          listMarketInfo: detail?.listMarketInfo ? JSON.parse(detail.listMarketInfo) : [],
+          whitelistInfo,
+          isCreator,
+          isInWhitelist: whitelistInfo?.extraInfoIdList?.value?.[0]?.addressList?.value?.includes(addressRef.current),
+        };
+      }
       console.log('newProjectInfo: ', newProjectInfo);
       setProjectInfo(newProjectInfo);
     } catch (error: any) {
@@ -80,9 +83,7 @@ export default function ProjectInfo({ previewData }: IProjectInfoProps) {
     if (isPreview) {
       return;
     }
-    if (!addressRef.current) {
-      getProjectInfo();
-    }
+    getProjectInfo();
     const { remove } = myEvents.AuthToken.addListener(() => {
       console.log('login success');
       getProjectInfo();

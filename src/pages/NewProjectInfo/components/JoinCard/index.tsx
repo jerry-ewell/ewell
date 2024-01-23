@@ -79,6 +79,18 @@ export default function JoinCard({ projectInfo, isPreview, handleRefresh }: IJoi
     return percent.isNaN() ? ZERO : percent;
   }, [projectInfo?.currentRaisedAmount, projectInfo?.toRaisedAmount]);
 
+  const showViewWhitelistTasks = useMemo(() => {
+    return projectInfo?.isEnableWhitelist && projectInfo?.whitelistInfo?.url && !projectInfo?.isInWhitelist;
+  }, [projectInfo?.isEnableWhitelist, projectInfo?.isInWhitelist, projectInfo?.whitelistInfo?.url]);
+
+  const shoeWhitelistJoined = useMemo(() => {
+    return projectInfo?.isEnableWhitelist && projectInfo?.isInWhitelist;
+  }, [projectInfo?.isEnableWhitelist, projectInfo?.isInWhitelist]);
+
+  const showOperation = useMemo(() => {
+    return isLogin && (!projectInfo?.isEnableWhitelist || projectInfo?.isInWhitelist);
+  }, [isLogin, projectInfo?.isEnableWhitelist, projectInfo?.isInWhitelist]);
+
   useEffect(() => {
     setIsPurchaseButtonDisabled((pre) => {
       if (isPreview) {
@@ -150,7 +162,7 @@ export default function JoinCard({ projectInfo, isPreview, handleRefresh }: IJoi
 
   return (
     <CommonCard className="join-card-wrapper">
-      <div className="swap-progress-wrapper">
+      <Flex className="swap-progress-wrapper" vertical gap={8}>
         <Flex align="center" justify="space-between">
           <Title fontWeight={FontWeightEnum.Medium}>Swap Progress</Title>
           {!!projectInfo?.status && (
@@ -163,7 +175,6 @@ export default function JoinCard({ projectInfo, isPreview, handleRefresh }: IJoi
             </div>
           )}
         </Flex>
-        {/* TODO: adjust the height */}
         <Progress
           size={['100%', 12]}
           percent={progressPercent.toNumber()}
@@ -173,12 +184,12 @@ export default function JoinCard({ projectInfo, isPreview, handleRefresh }: IJoi
         <div className="flex-between-center">
           <Title fontWeight={FontWeightEnum.Medium}>{progressPercent.toFixed(0)}%</Title>
           <Title fontWeight={FontWeightEnum.Medium}>
-            {divDecimalsStr(projectInfo?.currentRaisedAmount ?? 0, projectInfo?.toRaiseToken?.decimals)}/
+            {divDecimalsStr(projectInfo?.currentRaisedAmount ?? 0, projectInfo?.toRaiseToken?.decimals, '0')}/
             {divDecimalsStr(projectInfo?.toRaisedAmount, projectInfo?.toRaiseToken?.decimals)}{' '}
             {projectInfo?.toRaiseToken?.symbol || '--'}
           </Title>
         </div>
-      </div>
+      </Flex>
       <div className="divider" />
       <Flex vertical gap={12}>
         <div className="flex-between-center">{renderRemainder()}</div>
@@ -206,9 +217,9 @@ export default function JoinCard({ projectInfo, isPreview, handleRefresh }: IJoi
           )} ${projectInfo?.toRaiseToken?.symbol ?? '--'}`}</Text>
         </div>
       </Flex>
-      <div className="divider" />
+      {(showViewWhitelistTasks || shoeWhitelistJoined || showOperation) && <div className="divider" />}
       <Flex vertical gap={12}>
-        {projectInfo?.isEnableWhitelist && projectInfo?.whitelistInfo?.url && !projectInfo?.isInWhitelist && (
+        {showViewWhitelistTasks && (
           <>
             {(projectInfo?.status === ProjectStatus.UPCOMING ||
               projectInfo?.status === ProjectStatus.PARTICIPATORY) && (
@@ -226,7 +237,7 @@ export default function JoinCard({ projectInfo, isPreview, handleRefresh }: IJoi
             </Flex>
           </>
         )}
-        {projectInfo?.isEnableWhitelist && projectInfo?.isInWhitelist && (
+        {shoeWhitelistJoined && (
           <div className="flex-between-center">
             <Text>Whitelist</Text>
             <Text className="purple-text" fontWeight={FontWeightEnum.Medium}>
@@ -234,7 +245,7 @@ export default function JoinCard({ projectInfo, isPreview, handleRefresh }: IJoi
             </Text>
           </div>
         )}
-        {isLogin && (!projectInfo?.isEnableWhitelist || projectInfo?.isInWhitelist) && (
+        {showOperation && (
           <>
             {(projectInfo?.status === ProjectStatus.PARTICIPATORY ||
               projectInfo?.status === ProjectStatus.UNLOCKED ||
