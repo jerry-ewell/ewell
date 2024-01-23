@@ -10,7 +10,7 @@ import { ZERO } from 'constants/misc';
 import { divDecimals } from 'utils/calculate';
 import { NumberFormat } from 'utils/format';
 import { ProjectStatus as IProjectStatus } from 'types/project';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { stringifyUrl } from 'query-string';
 import { parseAdditionalInfo } from 'utils/project';
 import './styles.less';
@@ -58,6 +58,8 @@ const Card: React.FC<ProjectCardProps> = ({ data }) => {
   }, [currentRaisedAmount, toRaisedAmount]);
   const navigate = useNavigate();
 
+  const { type } = useParams();
+
   const jumpDetail = useCallback(() => {
     navigate(
       stringifyUrl({
@@ -66,8 +68,13 @@ const Card: React.FC<ProjectCardProps> = ({ data }) => {
           projectName: _additionalInfo?.projectName || '',
         },
       }),
+      {
+        state: {
+          from: type,
+        },
+      },
     );
-  }, [_additionalInfo?.projectName, data.id, navigate]);
+  }, [_additionalInfo?.projectName, data.id, navigate, type]);
 
   return (
     <div className="project-card" onClick={jumpDetail}>

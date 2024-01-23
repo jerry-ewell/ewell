@@ -140,13 +140,13 @@ export default function ParticipantList() {
         title: <NavLink to={`/project-list/my`}>My Projects</NavLink>,
       },
       {
-        title: <NavLink to={`/project-list`}>{projectName}</NavLink>,
+        title: <NavLink to={`/project/${projectId}`}>{projectName}</NavLink>,
       },
       {
         title: 'Participants List',
       },
     ],
-    [projectName],
+    [projectName, projectId],
   );
 
   return (
