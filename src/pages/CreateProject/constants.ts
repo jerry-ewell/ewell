@@ -17,7 +17,7 @@ export const stepsItems: StepProps[] = [
     title: stepTitle[TSteps.THREE],
   },
   {
-    title: stepTitle[TSteps.FOURE],
+    title: stepTitle[TSteps.FOUR],
   },
 ];
 

@@ -264,7 +264,6 @@ const IDOInfo: React.FC<CreateStepProps> = ({ onNext, onPre }) => {
   const onValuesChange = (changedValues: any, allValues: any) => {
     console.log('changeValues', changedValues);
     console.log('allValues', allValues);
-    const { isEnableWhitelist } = changedValues;
 
     if (Object.hasOwn(changedValues, 'isEnableWhitelist')) {
       return setShowWhitelist(changedValues.isEnableWhitelist);

@@ -7,6 +7,7 @@ import { NumberFormat } from 'utils/format';
 import { success } from 'assets/images';
 import { NETWORK_CONFIG } from 'constants/network';
 import { IProjectInfo } from 'types/project';
+import { divDecimals } from 'utils/calculate';
 // import SuccessModal from '../SuccessModal';
 
 const { Text, Title } = Typography;
@@ -32,9 +33,9 @@ export function ConfirmModal({ open, info, onCancel, onOk }: ITransferModalProps
         <Flex vertical gap={24}>
           <Flex gap={8} justify="center" align="baseline">
             <Title fontWeight={FontWeightEnum.Medium} level={4}>
-              {/* {info?.supply ? NumberFormat(info?.supply, 8) : '--'} */}
+              {divDecimals(info.crowdFundingIssueAmount, info.crowdFundingIssueToken?.decimals).toFixed()}
             </Title>
-            <Title fontWeight={FontWeightEnum.Medium}>PIGE</Title>
+            <Title fontWeight={FontWeightEnum.Medium}>{info.crowdFundingIssueToken?.symbol || '--'}</Title>
           </Flex>
           <Flex vertical gap={8}>
             <Flex>
@@ -58,14 +59,17 @@ export function ConfirmModal({ open, info, onCancel, onOk }: ITransferModalProps
                 <Text fontWeight={FontWeightEnum.Bold}>Balance</Text>
               </Flex>
               <Flex>
-                <Text fontWeight={FontWeightEnum.Bold}>{NumberFormat(100000)} PIGE</Text>
+                <Text fontWeight={FontWeightEnum.Bold}>
+                  {divDecimals(10000000000, info.crowdFundingIssueToken?.decimals).toFixed()}{' '}
+                  {info.crowdFundingIssueToken?.symbol || '--'}
+                </Text>
               </Flex>
             </Flex>
             <Flex vertical gap={8}>
               <Flex justify="space-between">
                 <Text>Estimated Transaction Fee</Text>
                 <Flex gap={8} align="baseline">
-                  <Text>0.3604 ELF</Text>
+                  <Text>{0.030635 * 2} ELF</Text>
                   <Text size="small">$ 0.19</Text>
                 </Flex>
               </Flex>

@@ -7,5 +7,5 @@ export enum TSteps {
   ONE,
   TWO,
   THREE,
-  FOURE,
+  FOUR,
 }

@@ -45,7 +45,7 @@ const CreateProject: React.FC = () => {
         return <ProjectInfo onNext={onNext} onPre={onPre} />;
       case TSteps.THREE:
         return <IDOInfo onNext={onNext} onPre={onPre} />;
-      case TSteps.FOURE:
+      case TSteps.FOUR:
         return <Transfer onPre={onPre} />;
     }
   }, [currentStep, onNext, onPre]);
@@ -53,7 +53,7 @@ const CreateProject: React.FC = () => {
   return (
     <div className="common-page-1360 cre-project page-body">
       {currentStep <= TSteps.THREE && <Breadcrumb className="project-nav" separator="\" items={breadTitles} />}
-      <div className={clsx('project-wrapper', currentStep === TSteps.FOURE && 'project-wrapper-full')}>
+      <div className={clsx('project-wrapper', currentStep === TSteps.FOUR && 'project-wrapper-full')}>
         {/* TODO: scroll top */}
         {/* <ScrollToTop /> */}
         <ESteps current={currentStep} items={stepsItems} />
