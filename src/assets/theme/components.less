@@ -6,7 +6,7 @@
 /* modal */
 .@{app-prefix}-modal-content {
   .@{app-prefix}-modal-close:hover svg path {
-    fill: #070A26 !important;
+    fill: #070a26 !important;
   }
   .@{app-prefix}-modal-header {
     margin-bottom: 24px !important;
@@ -52,7 +52,6 @@
       }
     }
   }
-  
 }
 
 /** tabs **/
@@ -86,7 +85,6 @@
       & + .@{app-prefix}-input-number-group-addon {
         border-color: #f53f3f;
       }
-    
     }
   }
 }
@@ -112,15 +110,33 @@
 
 /** upload **/
 .@{app-prefix}-upload {
-  .@{app-prefix}-upload-button{
+  .@{app-prefix}-upload-button {
     min-height: 240px;
   }
 }
 
-.@{app-prefix}-form-item .@{app-prefix}-form-item-label >label .@{app-prefix}-form-item-tooltip {
+.@{app-prefix}-form-item .@{app-prefix}-form-item-label > label .@{app-prefix}-form-item-tooltip {
   order: 2;
-  color: #070A26;
+  color: #070a26;
 }
-.@{app-prefix}-form-vertical .@{app-prefix}-form-item-label >label::after {
+.@{app-prefix}-form-vertical .@{app-prefix}-form-item-label > label::after {
   display: none;
+}
+
+/** pagination **/
+// To increase the weight of the css selector
+button.@{app-prefix}-pagination-button,
+div.@{app-prefix}-pageNumber-container {
+  padding: 0 16px;
+  border-radius: 6px;
+}
+button.@{app-prefix}-pagination-button {
+  &[disabled] {
+    color: #c1c2c9;
+    background-color: #ebebee;
+    border: none;
+  }
+}
+div.@{app-prefix}-pageNumber-container {
+  background-color: #f5f5f6;
 }
