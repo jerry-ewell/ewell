@@ -15,9 +15,11 @@ import { ZERO } from 'constants/misc';
 import { Input } from 'aelf-design';
 import { InboxOutlined } from '@ant-design/icons';
 import { useParseWhitelist } from 'hooks/useParseWhitelist';
-import { identifyWhitelistData } from 'hooks/useParseWhitelist/utils';
+import { identifyWhitelistData } from 'utils/parseWhiteList';
 import { UpdateType } from 'components/UpdateWhitelistUsersButton/types';
 import { useTokenPrice, useTxFee } from 'contexts/useAssets/hooks';
+import { stringify } from 'query-string';
+import { useLocation } from 'react-router-dom';
 
 const { Dragger } = Upload;
 
@@ -32,11 +34,19 @@ export default function Example() {
   const { txFee } = useTxFee();
   useEffect(() => {
     console.log('tokenPrice', tokenPrice);
+    console.log(
+      'stringify(apiData)',
+      stringify({
+        projectName: '123',
+      }),
+    );
   }, [tokenPrice]);
 
+  const { pathname } = useLocation();
   useEffect(() => {
-    console.log('txFee', txFee);
-  }, [txFee]);
+    const _pathname = `${pathname}/`;
+    console.log('pathname', pathname);
+  }, [pathname]);
 
   const transfer = useCallback(async () => {
     try {
@@ -93,15 +103,16 @@ export default function Example() {
       crowdFundingIssueAmount: '1000',
       preSalePrice: '1000',
       startTime: getProtobufTime(Date.now() + 60 * 1000),
-      endTime: endTimePb,
+      endTime: getProtobufTime(Date.now() + 60 * 1000 * 5),
       minSubscription: 1,
       maxSubscription: '1000000000',
       publicSalePrice: ZERO.plus('100000000').div(1.05).toFixed(), // preSalePrice / 1.05
       listMarketInfo: [], // fixed
       liquidityLockProportion: 0, // fixed
-      unlockTime: endTimePb, // fixed
-      isEnableWhitelist: false,
-      isBurnRestToken: true,
+      unlockTime: getProtobufTime(Date.now() + 60 * 1000 * 6), // fixed
+      tokenReleaseTime: getProtobufTime(Date.now() + 60 * 1000 * 6), // fixed
+      isEnableWhitelist: true,
+      isBurnRestToken: false,
       totalPeriod: 1, // fixed
       additionalInfo: {
         data: {
@@ -120,7 +131,6 @@ export default function Example() {
       firstDistributeProportion: '100000000', // fixed 100%
       restDistributeProportion: 0, // fixed
       periodDuration: 0, // fixed
-      tokenReleaseTime: endTimePb,
     };
     console.log('registerInput', registerInput);
 

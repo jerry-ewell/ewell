@@ -1,4 +1,4 @@
-export interface CreateStepPorps {
+export interface CreateStepProps {
   onNext?: () => void;
   onPre?: () => void;
 }
@@ -7,5 +7,5 @@ export enum TSteps {
   ONE,
   TWO,
   THREE,
-  FOURE,
+  FOUR,
 }

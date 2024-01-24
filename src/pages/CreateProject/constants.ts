@@ -2,19 +2,22 @@ import { StepProps } from 'antd';
 import { getInputOptions, normFile } from 'components/FormItem/utils';
 import { FormItemProps, FormFields } from 'components/FormItem';
 import { urlValidator } from 'pages/CreateProjectOld/validate';
+import { TSteps } from './types';
+
+export const stepTitle = ['Trading Pair', 'Project Information', 'IDO Information', 'Preview & Transfer'];
 
 export const stepsItems: StepProps[] = [
   {
-    title: 'Trading Pair',
+    title: stepTitle[TSteps.ONE],
   },
   {
-    title: 'Project Information',
+    title: stepTitle[TSteps.TWO],
   },
   {
-    title: 'IDO Information',
+    title: stepTitle[TSteps.THREE],
   },
   {
-    title: 'Preview & Transfer',
+    title: stepTitle[TSteps.FOUR],
   },
 ];
 
@@ -57,6 +60,7 @@ export const ProjectInfoFromJson: FormItemProps[] = [
     type: 'fileUpload',
     label: 'LogoUrl:',
     name: 'logoUrl',
+    required: true,
     valuePropName: 'fileList',
     getValueFromEvent: normFile,
     childrenProps: {
@@ -82,7 +86,7 @@ export const ProjectInfoFromJson: FormItemProps[] = [
     label: 'Official Website:',
     name: 'website',
     tooltip: 'test',
-    rules: [{ required: true, message: 'sdssds' }, { validator: urlValidator }],
+    rules: [{ required: true, message: '' }, { validator: urlValidator }],
   }),
   {
     type: 'fieldsGroup',

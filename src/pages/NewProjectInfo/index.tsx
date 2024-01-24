@@ -1,31 +1,35 @@
+import React from 'react';
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
-import { useParams, NavLink } from 'react-router-dom';
+import { useParams, useLocation, NavLink } from 'react-router-dom';
 import { request } from 'api';
 import { Breadcrumb, Flex, message } from 'antd';
 import { Typography } from 'aelf-design';
+import { WebLoginEvents, useWebLoginEvent } from 'aelf-web-login';
 import ActionCard from './components/ActionCard';
 import InfoWrapper from './components/InfoWrapper';
 import { useMobile } from 'contexts/useStore/hooks';
 import { useWallet } from 'contexts/useWallet/hooks';
 import { useViewContract } from 'contexts/useViewContract/hooks';
-import { DEFAULT_CHAIN_ID, NETWORK_CONFIG } from 'constants/network';
-import { IProjectInfo } from 'types/project';
+import { DEFAULT_CHAIN_ID } from 'constants/network';
+import { IProjectInfo, ProjectListType } from 'types/project';
 import myEvents from 'utils/myEvent';
-import { mockDetail, mockWhitelistInfo, mockPreviewData } from './mock';
 import { emitLoading } from 'utils/events';
 import { tableEmpty } from 'assets/images';
 import './styles.less';
 
 interface IProjectInfoProps {
   previewData?: IProjectInfo;
+  style?: React.CSSProperties;
 }
 
 const { Text } = Typography;
 
-export default function ProjectInfo({ previewData }: IProjectInfoProps) {
+export default function ProjectInfo({ previewData, style }: IProjectInfoProps) {
   const isMobile = useMobile();
   const { wallet } = useWallet();
   const { projectId } = useParams();
+  const location = useLocation();
+  const { from = ProjectListType.ALL } = (location.state || {}) as { from?: ProjectListType };
   const { getWhitelistContract } = useViewContract();
   const isPreview = useMemo(() => !!previewData, [previewData]);
   const [messageApi, contextHolder] = message.useMessage();
@@ -58,6 +62,11 @@ export default function ProjectInfo({ previewData }: IProjectInfoProps) {
         whitelistInfo = await whitelistContract.GetWhitelist.call(whitelistId);
       }
 
+      const whitelistAddressList =
+        whitelistInfo?.extraInfoIdList?.value?.[0]?.addressList?.value
+          ?.map((item) => item?.address)
+          .filter((item) => !!item) || [];
+
       console.log('whitelistInfo', whitelistInfo);
       let newProjectInfo = {};
       if (detail) {
@@ -67,7 +76,7 @@ export default function ProjectInfo({ previewData }: IProjectInfoProps) {
           listMarketInfo: detail?.listMarketInfo ? JSON.parse(detail.listMarketInfo) : [],
           whitelistInfo,
           isCreator,
-          isInWhitelist: whitelistInfo?.extraInfoIdList?.value?.[0]?.addressList?.value?.includes(addressRef.current),
+          isInWhitelist: whitelistAddressList.includes(addressRef.current),
         };
       }
       console.log('newProjectInfo: ', newProjectInfo);
@@ -104,20 +113,26 @@ export default function ProjectInfo({ previewData }: IProjectInfoProps) {
   const breadList = useMemo(
     () => [
       {
-        // TODO: adjust
-        title: <NavLink to={`/project-list/my`}>My Projects</NavLink>,
+        title: <NavLink to={`/project-list/${from}`}>{from === ProjectListType.MY && 'My '}Projects</NavLink>,
       },
       {
         title: projectInfo?.additionalInfo?.projectName || 'Project Info',
       },
     ],
-    [projectInfo?.additionalInfo?.projectName],
+    [projectInfo?.additionalInfo?.projectName, from],
   );
+
+  const onLogout = useCallback(() => {
+    console.log('onLogout');
+    getProjectInfo();
+  }, [getProjectInfo]);
+
+  useWebLoginEvent(WebLoginEvents.LOGOUT, onLogout);
 
   return (
     <>
       {contextHolder}
-      <div className="common-page-1360 min-height-container project-info-wrapper">
+      <div className="common-page page-body project-info-wrapper" style={style}>
         {!isPreview && <Breadcrumb className="bread-wrap" items={breadList} />}
         {showInfo ? (
           <div className="flex project-info-content">

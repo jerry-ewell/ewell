@@ -3,7 +3,7 @@ import type { ColumnsType } from 'antd/es/table';
 import { Modal, Button, Typography, FontWeightEnum, Table, HashAddress } from 'aelf-design';
 import { UpdateType } from '../types';
 import './styles.less';
-import { TWhitelistIdentifyItem, WhitelistAddressIdentifyStatusEnum } from 'hooks/useParseWhitelist/utils';
+import { TWhitelistIdentifyItem, WhitelistAddressIdentifyStatusEnum } from 'utils/parseWhiteList';
 import { useMemo } from 'react';
 import { DEFAULT_CHAIN_ID } from 'constants/network';
 import clsx from 'clsx';

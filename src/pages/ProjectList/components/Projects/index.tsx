@@ -2,16 +2,15 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Row, Col } from 'antd';
 import { useEffectOnce } from 'react-use';
 import { useCardCol } from '../../hooks/useCardCol';
-import PorjectCard from '../Card';
+import ProjectCard from '../Card';
 import Empty from 'components/Empty';
 import { useGetList, IListData } from '../../hooks/useGetList';
-import { ProjecType } from 'types/project';
+import { ProjectType } from 'types/project';
 import InfiniteList from 'components/InfiniteList';
 import { emitLoading } from 'utils/events';
 
 const Projects: React.FC = () => {
-  // const [colNum] = useCardCol();
-  const colNum = 3;
+  const [colNum] = useCardCol();
   const [activeItems, setActiveItems] = useState<IListData['activeItems']>([]);
   const [closedItems, setClosedItems] = useState<IListData['closedItems']>([]);
   const [closedListPage, setClosedListPage] = useState(0);
@@ -19,7 +18,7 @@ const Projects: React.FC = () => {
   const { getList } = useGetList();
 
   const getActiveProjects = useCallback(async () => {
-    const { activeItems } = await getList({ types: ProjecType.ACTIVE });
+    const { activeItems } = await getList({ types: ProjectType.ACTIVE });
     setActiveItems(activeItems || []);
   }, [getList]);
 
@@ -29,8 +28,8 @@ const Projects: React.FC = () => {
       if (loading) emitLoading(true, { text: 'loading...' });
 
       const list = await getList({
-        types: ProjecType.CLOSED,
-        skipCount: closedListPage,
+        types: ProjectType.CLOSED,
+        skipCount: closedItems.length,
         maxResultCount: colNum * 3,
         // maxResultCount: 3,
       });
@@ -64,18 +63,11 @@ const Projects: React.FC = () => {
     return (
       <>
         <div className="project-type">Active Projects</div>
-        {/* <Row gutter={[24, 24]}>
-          {Array.from({ length: 50 }).map((item, index) => (
-            <Col span={24 / colNum} key={`${index}`}>
-              <PorjectCard data={{}} />
-            </Col>
-          ))}
-        </Row> */}
         {activeItems.length ? (
           <Row gutter={[24, 24]}>
             {activeItems.map((item, index) => (
-              <Col span={24 / colNum} key={`${index}-${item.id}`}>
-                <PorjectCard data={item} />
+              <Col span={24 / colNum} key={index}>
+                <ProjectCard data={item} />
               </Col>
             ))}
           </Row>
@@ -83,7 +75,7 @@ const Projects: React.FC = () => {
           <Empty text="There are currently no active projects, please stay tuned" />
         )}
 
-        {/* <InfiniteList
+        <InfiniteList
           showScrollToTop={false}
           loaded={loadAllClosedItems}
           loadMoreData={getClosedProject}
@@ -93,20 +85,16 @@ const Projects: React.FC = () => {
           <Row gutter={[24, 24]}>
             {closedItems.map((item) => (
               <Col span={24 / colNum} key={item.id}>
-                <PorjectCard data={item} />
+                <ProjectCard data={item} />
               </Col>
             ))}
           </Row>
-        </InfiniteList> */}
+        </InfiniteList>
       </>
     );
-  }, [activeItems, closedItems, colNum, getClosedProject, loadAllClosedItems]);
+  }, [activeItems, closedItems, getClosedProject, loadAllClosedItems]);
 
-  return (
-    <div className="project-page" id="project-list-scroll">
-      {render}
-    </div>
-  );
+  return <div className="project-page">{render}</div>;
 };
 
 export default Projects;

@@ -5,7 +5,7 @@ import { FormItemProps, FormFields } from 'components/FormItem';
 import CustomMark from '../components/CustomMark';
 import storages from '../storages';
 import { minSubscriptionValidator, maxSubscriptionValidator, Validators } from '../validate';
-import { CreateStepPorps } from '../types';
+import { CreateStepProps } from '../types';
 import ButtonGroup from '../components/ButtonGroup';
 import { disabledDateBefore, disabledTimeBefore } from '../utils';
 import { integeNumberFormat, formatNumberParser } from 'components/FormItem/utils';
@@ -235,7 +235,7 @@ const formWhitelist: FormItemProps[] = [
   },
 ];
 
-const IDOInfo: React.FC<CreateStepPorps> = ({ onNext, onPre }) => {
+const IDOInfo: React.FC<CreateStepProps> = ({ onNext, onPre }) => {
   const [form] = Form.useForm();
   const [formList, setFormList] = useState(formListConfig);
   const [showWhitelist, setShowWhitelist] = useState(true);
@@ -264,7 +264,6 @@ const IDOInfo: React.FC<CreateStepPorps> = ({ onNext, onPre }) => {
   const onValuesChange = (changedValues: any, allValues: any) => {
     console.log('changeValues', changedValues);
     console.log('allValues', allValues);
-    const { isEnableWhitelist } = changedValues;
 
     if (Object.hasOwn(changedValues, 'isEnableWhitelist')) {
       return setShowWhitelist(changedValues.isEnableWhitelist);

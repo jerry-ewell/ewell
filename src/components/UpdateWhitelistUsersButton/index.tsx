@@ -13,7 +13,7 @@ import {
   TWhitelistIdentifyItem,
   WhitelistAddressIdentifyStatusEnum,
   identifyWhitelistData,
-} from 'hooks/useParseWhitelist/utils';
+} from 'utils/parseWhiteList';
 import { useWallet } from 'contexts/useWallet/hooks';
 import { NETWORK_CONFIG } from 'constants/network';
 

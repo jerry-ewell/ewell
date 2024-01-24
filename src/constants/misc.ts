@@ -19,6 +19,10 @@ export const isEffectiveNumber = (v: any) => {
 export const AELF_TOKEN_INFO = {
   symbol: 'ELF',
   decimals: 8,
+  chainId: 'tDVV',
+  name: 'Native Token',
+  address: '7RzVGiuVWkvL4VfVHdZfQF2Tri3sgLe9U991bohHFfSRZXuGX',
+  id: 'tDVV-ELF',
 };
 
 export const PriceDecimal = 8;

@@ -4,12 +4,14 @@ import type { ColumnsType } from 'antd/es/table';
 import { HashAddress, Search, Pagination, Typography, FontWeightEnum } from 'aelf-design';
 import CommonTable from 'components/CommonTable';
 import './styles.less';
-import { NavLink, Navigate, useParams } from 'react-router-dom';
+import { NavLink, useParams } from 'react-router-dom';
 import { useEffectOnce } from 'react-use';
 import { request } from 'api';
 import { DEFAULT_CHAIN_ID } from 'constants/network';
 import { divDecimalsStr } from 'utils/calculate';
 import dayjs from 'dayjs';
+import { useQuery } from 'hooks/useQuery';
+import { stringifyUrl } from 'query-string';
 
 const { Title, Text } = Typography;
 
@@ -58,6 +60,8 @@ export default function ParticipantList() {
   const [totalUserCount, setTotalUserCount] = useState<number>(0);
   const isSearchRef = useRef<boolean>(false);
   const [isSearch, setIsSearch] = useState(false);
+
+  const { projectName = 'Project' } = useQuery();
 
   const fetchTimeRef = useRef<number>();
   const getWhitelistInfo = useCallback(
@@ -137,13 +141,23 @@ export default function ParticipantList() {
         title: <NavLink to={`/project-list/my`}>My Projects</NavLink>,
       },
       {
-        title: <NavLink to={`/project-list`}>Citizen Conflict</NavLink>,
+        title: (
+          <NavLink
+            to={stringifyUrl({
+              url: `/project/${projectId}`,
+              query: {
+                projectName,
+              },
+            })}>
+            {projectName}
+          </NavLink>
+        ),
       },
       {
         title: 'Participants List',
       },
     ],
-    [],
+    [projectId, projectName],
   );
 
   return (

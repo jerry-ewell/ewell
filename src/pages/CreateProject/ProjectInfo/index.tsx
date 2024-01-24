@@ -3,12 +3,12 @@ import { useLocalStorage } from 'react-use';
 import { FormFields } from 'components/FormItem';
 import { Form, message } from 'antd';
 import CustomMark from '../components/CustomMark';
-import { CreateStepPorps } from '../types';
+import { CreateStepProps } from '../types';
 import ButtonGroup from '../components/ButtonGroup';
 import storages from '../storages';
 import { ProjectInfoFromJson } from '../constants';
 
-const ProjectInfo: React.FC<CreateStepPorps> = ({ onNext, onPre }) => {
+const ProjectInfo: React.FC<CreateStepProps> = ({ onNext, onPre }) => {
   const [additional, setAdditional] = useLocalStorage(storages.AdditionalInformation, {});
 
   const onFinish = useCallback(

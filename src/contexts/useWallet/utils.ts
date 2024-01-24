@@ -56,6 +56,7 @@ export const recoverPubKey = (msg, signature) => {
 };
 
 export const authToken = async (wallet: IWallet) => {
+  if (!wallet) return;
   const address = wallet.walletInfo.address;
   const key = `ELF_${address}_${NETWORK_CONFIG.sideChainId}`;
   const localJWT = getLocalJWT(key);

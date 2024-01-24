@@ -1,3 +1,4 @@
+// The claim operation of the creator is automatic
 import { useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import BigNumber from 'bignumber.js';

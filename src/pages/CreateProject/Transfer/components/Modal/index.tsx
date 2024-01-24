@@ -5,11 +5,14 @@ import { InfoCircleOutlined } from '@ant-design/icons';
 import { wallet } from 'assets/images';
 import { NumberFormat } from 'utils/format';
 import { success } from 'assets/images';
+import { NETWORK_CONFIG } from 'constants/network';
+import { IProjectInfo } from 'types/project';
+import { divDecimals } from 'utils/calculate';
 // import SuccessModal from '../SuccessModal';
 
 const { Text, Title } = Typography;
 
-interface ConfrimInfo {
+interface ConfirmInfo {
   supply?: number;
   contractAddress?: string;
   balance?: number;
@@ -18,21 +21,21 @@ interface ConfrimInfo {
 
 interface ITransferModalProps {
   open: boolean;
-  info: ConfrimInfo;
+  info: IProjectInfo;
   onCancel: () => void;
   onOk: () => void;
 }
 
-export function ComfirmModal({ open, info, onCancel, onOk }: ITransferModalProps) {
+export function ConfirmModal({ open, info, onCancel, onOk }: ITransferModalProps) {
   return (
     <>
       <Modal title="Confirm Transfer" footer={null} centered open={open} onCancel={onCancel}>
         <Flex vertical gap={24}>
           <Flex gap={8} justify="center" align="baseline">
             <Title fontWeight={FontWeightEnum.Medium} level={4}>
-              {NumberFormat(363604, 8)}
+              {divDecimals(info.crowdFundingIssueAmount, info.crowdFundingIssueToken?.decimals).toFixed()}
             </Title>
-            <Title fontWeight={FontWeightEnum.Medium}>PIGE</Title>
+            <Title fontWeight={FontWeightEnum.Medium}>{info.crowdFundingIssueToken?.symbol || '--'}</Title>
           </Flex>
           <Flex vertical gap={8}>
             <Flex>
@@ -45,7 +48,7 @@ export function ComfirmModal({ open, info, onCancel, onOk }: ITransferModalProps
                 className="hash-address-small"
                 preLen={8}
                 endLen={9}
-                address="ELF_0x00000000000000ADc04C56Bf30aC9d3c0aAF14dC_AELF"
+                address={NETWORK_CONFIG.ewellContractAddress}
               />
             </Flex>
           </Flex>
@@ -56,14 +59,17 @@ export function ComfirmModal({ open, info, onCancel, onOk }: ITransferModalProps
                 <Text fontWeight={FontWeightEnum.Bold}>Balance</Text>
               </Flex>
               <Flex>
-                <Text fontWeight={FontWeightEnum.Bold}>{NumberFormat(100000)} PIGE</Text>
+                <Text fontWeight={FontWeightEnum.Bold}>
+                  {divDecimals(10000000000, info.crowdFundingIssueToken?.decimals).toFixed()}{' '}
+                  {info.crowdFundingIssueToken?.symbol || '--'}
+                </Text>
               </Flex>
             </Flex>
             <Flex vertical gap={8}>
               <Flex justify="space-between">
                 <Text>Estimated Transaction Fee</Text>
                 <Flex gap={8} align="baseline">
-                  <Text>0.3604 ELF</Text>
+                  <Text>{0.030635 * 2} ELF</Text>
                   <Text size="small">$ 0.19</Text>
                 </Flex>
               </Flex>

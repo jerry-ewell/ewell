@@ -1,11 +1,11 @@
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Flex, Switch, message } from 'antd';
 import { Button, Typography, FontWeightEnum } from 'aelf-design';
 import CommonCard from 'components/CommonCard';
 import WhitelistTasksButton from './components/WhitelistTasksButton';
 import CancelProjectButton from './components/CancelProjectButton';
-import CreatorClaimTokenButton from '../OperationComponents/CreatorClaimTokenButton';
+// import CreatorClaimTokenButton from '../OperationComponents/CreatorClaimTokenButton';
 import { useWallet } from 'contexts/useWallet/hooks';
 import { IProjectInfo, ProjectStatus } from 'types/project';
 import { NETWORK_CONFIG } from 'constants/network';
@@ -13,6 +13,7 @@ import UpdateWhitelistUsersButton from 'components/UpdateWhitelistUsersButton';
 import { UpdateType } from 'components/UpdateWhitelistUsersButton/types';
 import './styles.less';
 import { emitSyncTipsModal } from 'utils/events';
+import { stringifyUrl } from 'query-string';
 
 const { Text } = Typography;
 
@@ -40,9 +41,10 @@ export default function ProjectManagementCard({ projectInfo }: IProjectManagemen
     );
   }, [projectInfo?.status]);
 
-  const showCreatorClaimTokenButton = useMemo(() => {
-    return projectInfo?.status === ProjectStatus.ENDED && !projectInfo?.isWithdraw;
-  }, [projectInfo?.status, projectInfo?.isWithdraw]);
+  // The claim operation of the creator is automatic
+  // const showCreatorClaimTokenButton = useMemo(() => {
+  //   return projectInfo?.status === ProjectStatus.ENDED && !projectInfo?.isWithdraw;
+  // }, [projectInfo?.status, projectInfo?.isWithdraw]);
 
   const handleWhitelistSwitchChange = async (checked: boolean) => {
     setIsWhitelistSwitchLoading(true);
@@ -55,24 +57,47 @@ export default function ProjectManagementCard({ projectInfo }: IProjectManagemen
     try {
       const result = await wallet?.callContract({
         contractAddress: NETWORK_CONFIG.whitelistContractAddress,
-        methodName: checked ? 'DisableWhitelist' : 'EnableWhitelist',
+        methodName: checked ? 'EnableWhitelist' : 'DisableWhitelist',
         args: projectInfo?.whitelistId,
       });
       console.log('whitelist result', result);
       messageApi.open({
         type: 'success',
-        content: checked ? 'Disable whitelist successfully' : 'Enable whitelist successfully',
+        content: checked ? 'Enable whitelist successfully' : 'Disable whitelist successfully',
       });
     } catch (error: any) {
       console.log('error', error);
       messageApi.open({
         type: 'error',
-        content: error?.message || (checked ? 'Disable whitelist failed' : 'Enable whitelist failed'),
+        content: error?.message || (checked ? 'Enable whitelist failed' : 'Disable whitelist failed'),
       });
     } finally {
       setIsWhitelistSwitchLoading(false);
     }
   };
+
+  const jumpParticipants = useCallback(() => {
+    navigate(
+      stringifyUrl({
+        url: `/participant-list/${projectId}`,
+        query: {
+          projectName: projectInfo?.additionalInfo?.projectName || '',
+        },
+      }),
+    );
+  }, [navigate, projectId, projectInfo]);
+
+  const jumpWhitelistUsers = useCallback(() => {
+    navigate(
+      stringifyUrl({
+        url: `/whitelist-users/${projectInfo?.whitelistId}`,
+        query: {
+          projectName: projectInfo?.additionalInfo?.projectName || '',
+          projectId,
+        },
+      }),
+    );
+  }, [navigate, projectId, projectInfo?.additionalInfo?.projectName, projectInfo?.whitelistId]);
 
   return (
     <>
@@ -83,12 +108,7 @@ export default function ProjectManagementCard({ projectInfo }: IProjectManagemen
         title="Project Management">
         <Flex vertical gap={12}>
           <Text fontWeight={FontWeightEnum.Medium}>Participants</Text>
-          <Button
-            onClick={() => {
-              navigate(`/participant-list/${projectId}`);
-            }}>
-            View Participants List
-          </Button>
+          <Button onClick={jumpParticipants}>View Participants List</Button>
         </Flex>
         <div className="divider" />
         <Flex vertical gap={12}>
@@ -112,12 +132,7 @@ export default function ProjectManagementCard({ projectInfo }: IProjectManagemen
                 whitelistTasksUrl={projectInfo?.whitelistInfo?.url}
                 disabled={!canEdit}
               />
-              <Button
-                onClick={() => {
-                  navigate(`/whitelist-users/${projectInfo?.whitelistId}`);
-                }}>
-                Whitelist Users
-              </Button>
+              <Button onClick={jumpWhitelistUsers}>Whitelist Users</Button>
               <UpdateWhitelistUsersButton
                 buttonProps={{
                   children: 'Add Whitelisted Users',
@@ -139,13 +154,14 @@ export default function ProjectManagementCard({ projectInfo }: IProjectManagemen
             </>
           )}
         </Flex>
-        {(showCancelProjectButton || showCreatorClaimTokenButton) && (
+        {showCancelProjectButton && (
           <>
             <div className="divider" />
             <Flex vertical gap={12}>
               <Text fontWeight={FontWeightEnum.Medium}>Project</Text>
               {showCancelProjectButton && <CancelProjectButton projectInfo={projectInfo} />}
-              {showCreatorClaimTokenButton && <CreatorClaimTokenButton projectInfo={projectInfo} />}
+              {/* The claim operation of the creator is automatic */}
+              {/* {showCreatorClaimTokenButton && <CreatorClaimTokenButton projectInfo={projectInfo} />} */}
             </Flex>
           </>
         )}

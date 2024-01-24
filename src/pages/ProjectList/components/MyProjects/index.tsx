@@ -1,13 +1,14 @@
-import React, { useMemo, useState, useCallback } from 'react';
+import React, { useMemo, useState, useCallback, useEffect, useRef } from 'react';
 import { Row, Col } from 'antd';
 import { useEffectOnce } from 'react-use';
 import { useCardCol } from '../../hooks/useCardCol';
 import PorjectCard, { IProjectCard } from '../Card';
 import { useGetList, IListData } from '../../hooks/useGetList';
-import { ProjecType } from 'types/project';
+import { ProjectType } from 'types/project';
 import Empty from 'components/Empty';
 import { emitLoading } from 'utils/events';
 import InfiniteList from 'components/InfiniteList';
+import myEvents from 'utils/myEvent';
 interface ProjectListProps {
   createdItems?: IProjectCard[];
   participateItems?: IProjectCard[];
@@ -22,7 +23,7 @@ const MyProjects: React.FC<ProjectListProps> = () => {
   const { getList } = useGetList();
 
   const getCreatedProjects = useCallback(async () => {
-    const { createdItems } = await getList({ types: ProjecType.CREATED });
+    const { createdItems } = await getList({ types: ProjectType.CREATED });
     setCreatedItems(createdItems || []);
   }, [getList]);
 
@@ -31,8 +32,8 @@ const MyProjects: React.FC<ProjectListProps> = () => {
       if (loading) emitLoading(true, { text: 'loading...' });
 
       const list = await getList({
-        types: ProjecType.PARTICIPATE,
-        skipCount: participateListPageNum,
+        types: ProjectType.PARTICIPATE,
+        skipCount: participateItems.length,
         maxResultCount: colNum * 3,
         // maxResultCount: 3,
       });
@@ -48,9 +49,24 @@ const MyProjects: React.FC<ProjectListProps> = () => {
     [colNum, getList, participateItems, participateListPageNum],
   );
 
-  useEffectOnce(() => {
+  const initList = useCallback(() => {
     getCreatedProjects();
     getParticipateProject();
+  }, [getCreatedProjects, getParticipateProject]);
+
+  const initListRef = useRef(initList);
+  initListRef.current = initList;
+  useEffect(() => {
+    const { remove } = myEvents.AuthToken.addListener(() => {
+      initListRef.current?.();
+    });
+    return () => {
+      remove();
+    };
+  }, []);
+
+  useEffectOnce(() => {
+    initList();
   });
 
   const emptyText = useMemo(() => {
@@ -63,10 +79,10 @@ const MyProjects: React.FC<ProjectListProps> = () => {
   }, []);
 
   return (
-    <div className="project-page" id="project-list-scroll">
+    <div className="project-page">
       {!createdItems.length && !participateItems.length && (
         <>
-          <div className="project-type"> No Projects</div>
+          <div className="project-type">No Projects</div>
           <Empty className="empty-full" text={emptyText} />
         </>
       )}
@@ -83,10 +99,10 @@ const MyProjects: React.FC<ProjectListProps> = () => {
         </>
       )}
       <InfiniteList
+        id="project-list-scroll"
         showScrollToTop={false}
         loaded={loadAllParticipateItems}
         loadMoreData={getParticipateProject}
-        id="project-list-scroll"
         dataLength={participateItems.length}>
         {!!participateItems.length && <div className="project-type">Participate</div>}
         <Row gutter={[24, 24]}>

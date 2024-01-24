@@ -35,9 +35,9 @@ export const useTransfer = () => {
 
         console.log('pre-create-txResult', txResult);
         return txResult;
-      } catch (error) {
+      } catch (error: any) {
         console.log('preCreate error', error);
-        return { errMsg: '' };
+        return { errMsg: error?.message || error?.error.message };
       }
     },
     [getEwellContract, wallet],

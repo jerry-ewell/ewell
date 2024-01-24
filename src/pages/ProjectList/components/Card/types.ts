@@ -13,7 +13,7 @@ export interface IAdditionalInfo {
 }
 
 export interface IProjectInfo {
-  additionalInfo?: string;
+  additionalInfo?: IAdditionalInfo;
   creator?: string;
   crowdFundingIssueAmount?: string;
   crowdFundingIssueToken?: TokenInfo & {
@@ -53,4 +53,5 @@ export interface IProjectInfo {
   whitelistInfo?: {
     url?: string;
   };
+  tokenReleaseTime?: string;
 }

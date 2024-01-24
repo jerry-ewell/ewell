@@ -6,7 +6,7 @@ import { download } from 'assets/images';
 import { UpdateType } from '../types';
 import './styles.less';
 import type { RcFile } from 'antd/es/upload';
-import { parseWhitelistFile, parseWhitelistInput } from 'hooks/useParseWhitelist/utils';
+import { parseWhitelistFile, parseWhitelistInput } from 'utils/parseWhiteList';
 
 const { TextArea } = Input;
 const { Text } = Typography;

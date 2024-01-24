@@ -7,7 +7,7 @@ export enum ProjectStatus {
   CANCELED = 6,
 }
 
-export enum ProjecType {
+export enum ProjectType {
   ACTIVE = 1,
   CLOSED = 2,
   CREATED = 3,
@@ -29,17 +29,19 @@ export interface TokenInfo {
   decimals: number;
 }
 
+export interface IAdditionalInfo {
+  projectName: string;
+  projectSummary: string;
+  projectDescription: string;
+  x: string;
+  telegram: string;
+  medium: string;
+  logoUrl: string;
+  projectImgs: string;
+}
+
 export interface IProjectInfo {
-  additionalInfo?: {
-    projectName: string;
-    projectSummary: string;
-    projectDescription: string;
-    x: string;
-    telegram: string;
-    medium: string;
-    logoUrl: string;
-    projectImgs: string;
-  };
+  additionalInfo?: IAdditionalInfo;
   creator?: string;
   crowdFundingIssueAmount?: string;
   crowdFundingIssueToken?: TokenInfo & {
@@ -86,6 +88,7 @@ export interface IProjectInfo {
   currentCrowdFundingIssueAmount?: string;
   claimedLiquidatedDamage?: boolean;
   isWithdraw?: boolean;
+  tokenReleaseTime?: string;
 }
 
 export interface ProjectItem {
@@ -129,4 +132,9 @@ export interface ProjectItem {
 export interface ListMarketInfo {
   market?: string;
   weight?: number;
+}
+
+export enum ProjectListType {
+  ALL = 'all',
+  MY = 'my',
 }
