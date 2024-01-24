@@ -1,4 +1,4 @@
-import { WalletInfo, WalletType, CallContractParams, SignatureData, SignatureParams } from 'aelf-web-login';
+import { WalletInfo, WalletType, CallContractParams, SignatureData } from 'aelf-web-login';
 import { CallContractFunc, GetSignatureFunc, IWallet, IWalletProps, TSignatureParams } from './types';
 import { sleep } from 'utils';
 import { getTxResult } from 'utils/aelfUtils';
