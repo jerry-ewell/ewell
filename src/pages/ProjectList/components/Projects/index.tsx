@@ -55,7 +55,7 @@ const Projects: React.FC = () => {
       return (
         <>
           <div className="project-type">All Projects</div>
-          <Empty className="empty-full" text="There are currently no projects, please stay tuned" />
+          <Empty className="project-empty-full" text="There are currently no projects, please stay tuned" />
         </>
       );
     }
@@ -64,35 +64,38 @@ const Projects: React.FC = () => {
       <>
         <div className="project-type">Active Projects</div>
         {activeItems.length ? (
-          <Row gutter={[24, 24]}>
-            {activeItems.map((item, index) => (
-              <Col span={24 / colNum} key={index}>
-                <ProjectCard data={item} />
-              </Col>
-            ))}
-          </Row>
+          <div className="project-list-wrapper">
+            <Row gutter={[24, 24]}>
+              {activeItems.map((item, index) => (
+                <Col span={24 / colNum} key={index}>
+                  <ProjectCard data={item} />
+                </Col>
+              ))}
+            </Row>
+          </div>
         ) : (
           <Empty text="There are currently no active projects, please stay tuned" />
         )}
-
-        <InfiniteList
-          showScrollToTop={false}
-          loaded={loadAllClosedItems}
-          loadMoreData={getClosedProject}
-          id="project-list-scroll"
-          dataLength={closedItems.length}>
-          {!!closedItems.length && <div className="project-type">Closed Projects</div>}
-          <Row gutter={[24, 24]}>
-            {closedItems.map((item) => (
-              <Col span={24 / colNum} key={item.id}>
-                <ProjectCard data={item} />
-              </Col>
-            ))}
-          </Row>
-        </InfiniteList>
+        {!!closedItems.length && (
+          <InfiniteList
+            showScrollToTop={false}
+            loaded={loadAllClosedItems}
+            loadMoreData={getClosedProject}
+            id="project-list-scroll"
+            dataLength={closedItems.length}>
+            {!!closedItems.length && <div className="project-type">Closed Projects</div>}
+            <Row gutter={[24, 24]}>
+              {closedItems.map((item) => (
+                <Col span={24 / colNum} key={item.id}>
+                  <ProjectCard data={item} />
+                </Col>
+              ))}
+            </Row>
+          </InfiniteList>
+        )}
       </>
     );
-  }, [activeItems, closedItems, getClosedProject, loadAllClosedItems]);
+  }, [activeItems, closedItems, colNum, getClosedProject, loadAllClosedItems]);
 
   return <div className="project-page">{render}</div>;
 };

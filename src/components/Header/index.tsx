@@ -65,7 +65,7 @@ export default function Header() {
   }, [pathname]);
 
   const { login, loginState, logout, wallet } = useWallet();
-  const isProjectPage = useCheckRoute('/project-list/all');
+  const isProjectPage = useCheckRoute('projects');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const menuList: TMenuItem[] = useMemo(
@@ -74,7 +74,7 @@ export default function Header() {
         name: 'Projects',
         onClick: () => {
           console.log('project');
-          navigate('/project-list/all', { replace: true });
+          navigate('/projects/all', { replace: true });
         },
         isActive: isProjectPage,
       },
@@ -185,7 +185,7 @@ export default function Header() {
                       <div
                         className="wallet-item-wrap"
                         onClick={() => {
-                          navigate('/project-list/my', { replace: true });
+                          navigate('/projects/my', { replace: true });
                         }}>
                         <img src={projectsSvg} alt="" />
                         <div className="wallet-item-body">

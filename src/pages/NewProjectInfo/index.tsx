@@ -112,7 +112,7 @@ export default function ProjectInfo({ previewData, style }: IProjectInfoProps) {
   const breadList = useMemo(
     () => [
       {
-        title: <NavLink to={`/project-list/${from}`}>{from === ProjectListType.MY && 'My '}Projects</NavLink>,
+        title: <NavLink to={`/projects/${from}`}>{from === ProjectListType.MY && 'My '}Projects</NavLink>,
       },
       {
         title: projectInfo?.additionalInfo?.projectName || 'Project Info',

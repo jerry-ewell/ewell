@@ -35,7 +35,7 @@ export const ProjectInfoFromJson: FormItemProps[] = [
   {
     type: 'textArea',
     label: 'Summary Project Description (20-500 character):',
-    name: 'projectSummmary',
+    name: 'projectSummary',
     rules: [
       { required: true, message: 'required' },
       { min: 20, message: 'Please enter the necessary information' },
@@ -108,6 +108,30 @@ export const ProjectInfoFromJson: FormItemProps[] = [
       getInputOptions({
         label: 'Telegram:',
         name: 'telegram',
+        required: false,
+        rules: [{ validator: urlValidator }],
+      }),
+      getInputOptions({
+        label: 'Github:',
+        name: 'github',
+        required: false,
+        rules: [{ validator: urlValidator }],
+      }),
+      getInputOptions({
+        label: 'Discord:',
+        name: 'discord',
+        required: false,
+        rules: [{ validator: urlValidator }],
+      }),
+      getInputOptions({
+        label: 'Reddit:',
+        name: 'reddit',
+        required: false,
+        rules: [{ validator: urlValidator }],
+      }),
+      getInputOptions({
+        label: 'Facebook:',
+        name: 'facebook',
         required: false,
         rules: [{ validator: urlValidator }],
       }),

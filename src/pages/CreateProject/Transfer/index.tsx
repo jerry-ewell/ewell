@@ -15,6 +15,7 @@ import { AELF_TOKEN_INFO } from 'constants/misc';
 import { Typography, FontWeightEnum } from 'aelf-design';
 import BigNumber from 'bignumber.js';
 import { ProjectStatus } from 'types/project';
+import { resetCreateProjectInfo } from '../utils';
 
 interface SuccessInfo {
   supply?: number;
@@ -59,14 +60,14 @@ const Transfer: React.FC<CreateStepProps> = ({ onPre }) => {
     emitLoading(true, { text: 'Processing on the blockchain...' });
     const result: any = await register({ tradingPair, idoInfo, additional });
     console.log('createResult:', result);
+    emitLoading(false);
     if (result?.errMsg) {
       console.log('error', result);
-      emitLoading(false);
       message.error('create failed');
       return;
     }
     setSuccessInfo(result);
-    emitLoading(false);
+    resetCreateProjectInfo();
     setOpenSuccessModal(true);
   }, [additional, idoInfo, register, tradingPair]);
 

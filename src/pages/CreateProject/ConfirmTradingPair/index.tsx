@@ -6,11 +6,12 @@ import { CreateStepProps } from '../types';
 import { useLocalStorage } from 'react-use';
 import storages from '../storages';
 import { request } from 'api';
-import { DEFAULT_CHAIN_ID } from 'constants/network';
+import { DEFAULT_CHAIN_ID, NETWORK_CONFIG } from 'constants/network';
 import ButtonGroup from '../components/ButtonGroup';
 import { useWallet } from 'contexts/useWallet/hooks';
 import { WebLoginState } from 'aelf-web-login';
 import myEvents from 'utils/myEvent';
+import { emitLoading } from 'utils/events';
 
 const ConfirmTradingPair: React.FC<CreateStepProps> = ({ onNext }) => {
   const [tradingPair, setTradingPair] = useLocalStorage(storages.ConfirmTradingPair);
@@ -36,9 +37,11 @@ const ConfirmTradingPair: React.FC<CreateStepProps> = ({ onNext }) => {
 
   const getTokenList = useCallback(async () => {
     try {
+      emitLoading(true);
       const { code, data, message } = await request.project.getTokenList({
         params: { chainId: DEFAULT_CHAIN_ID },
       });
+      emitLoading(false);
       if (code === '20000') {
         setTokenList(data);
         return;
@@ -66,7 +69,11 @@ const ConfirmTradingPair: React.FC<CreateStepProps> = ({ onNext }) => {
       <TradingPairList list={tokenList} current={select} onChange={onSelect} />
       <div className="trading-footer">
         <div className="footer-text">
-          There is proper token, go to <span className="link-text">Symbol Market</span> and create a?
+          There is proper token, go to{' '}
+          <span className="link-text" onClick={() => window.open(NETWORK_CONFIG.symbolMarket)}>
+            Symbol Market
+          </span>{' '}
+          and create a?
         </div>
       </div>
       <ButtonGroup onNext={onClick} disabledNext={isBtnDisabled} />
