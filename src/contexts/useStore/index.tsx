@@ -2,8 +2,6 @@ import { SupportedChainId } from 'constants/chain';
 import { ChainConstants } from 'constants/ChainConstants';
 import { supportedChainId } from 'constants/index';
 import { ZERO } from 'constants/misc';
-import { useAElfContractContext } from 'contexts/useAElfContract';
-import { useActiveWeb3React } from 'hooks/web3';
 import { createContext, ReactNode, useContext, useEffect, useMemo, useReducer, useState } from 'react';
 import { useEffectOnce, useSearchParam } from 'react-use';
 import isMobile from 'utils/isMobile';
