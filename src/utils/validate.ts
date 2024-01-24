@@ -1,5 +1,5 @@
 import { ZERO } from 'constants/misc';
-import { gtTip } from 'pages/CreateProjectOld/utils';
+import { gtTip } from 'pages/CreateProject/utils';
 
 export const numberValidator = async (_: any, v: any) => {
   const bigV = ZERO.plus(v);
