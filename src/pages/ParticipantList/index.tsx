@@ -138,7 +138,7 @@ export default function ParticipantList() {
   const breadList = useMemo(
     () => [
       {
-        title: <NavLink to={`/project-list/my`}>My Projects</NavLink>,
+        title: <NavLink to={`/projects/my`}>My Projects</NavLink>,
       },
       {
         title: (
