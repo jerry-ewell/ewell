@@ -51,11 +51,6 @@ export type selectProps = {
   } & SelectProps<any>;
 };
 
-export type cityCascaderProps = {
-  type: 'cityCascader';
-  childrenProps?: CascaderProps<any>;
-};
-
 export type datePickerProps = {
   type: 'datePicker';
   childrenProps?: DatePickerProps;
@@ -72,10 +67,6 @@ export type fileUploadProps = {
 export type idCardUploadProps = {
   type: 'idCardUpload';
   childrenProps?: IFUploadProps;
-};
-export type radioInputProps = {
-  type: 'radioInput';
-  childrenProps?: IInputProps;
 };
 
 export type rowProps = {

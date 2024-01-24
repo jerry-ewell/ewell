@@ -1,5 +1,4 @@
-import { ChainConstants } from 'constants/ChainConstants';
-import { InstallmentDecimal, ONE, ZERO } from 'constants/misc';
+import { InstallmentDecimal, ZERO } from 'constants/misc';
 import { getPriceDecimal, getProtobufTime } from 'utils';
 import { timesDecimals } from 'utils/calculate';
 import storages from './storages';

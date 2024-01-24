@@ -40,3 +40,13 @@ export function isValidNumber(n: string) {
 export const isValidBase58 = (str: string) => {
   return !/[\u4e00-\u9fa5\u3000-\u303f\uff01-\uff5e]/.test(str);
 };
+
+export const checkPathExist = (route: string | string[], pathname: string) => {
+  pathname = pathname + '/';
+  if (typeof route === 'string') return pathname.includes(`${route}/`);
+
+  const isExist = route.find((path) => {
+    return pathname.includes(`${path}/`);
+  });
+  return !!isExist;
+};
