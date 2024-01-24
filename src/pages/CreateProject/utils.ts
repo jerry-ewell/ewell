@@ -6,10 +6,10 @@ import storages from './storages';
 import dayjs, { Dayjs } from 'dayjs';
 import { AELF_TOKEN_INFO } from 'constants/misc';
 
-export function reSetSessionStorage() {
-  sessionStorage.setItem(storages.ConfirmTradingPair, JSON.stringify(undefined));
-  sessionStorage.setItem(storages.AdditionalInformation, JSON.stringify(undefined));
-  sessionStorage.setItem(storages.IDOInfo, JSON.stringify(undefined));
+export function resetCreateProjectInfo() {
+  localStorage.removeItem(storages.ConfirmTradingPair);
+  localStorage.removeItem(storages.AdditionalInformation);
+  localStorage.removeItem(storages.IDOInfo);
 }
 
 export function getInstallments(v: any) {
