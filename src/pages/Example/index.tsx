@@ -1,4 +1,4 @@
-import { Button, Modal, Upload } from 'antd';
+import { Button } from 'antd';
 import { useCallback, useEffect, useState } from 'react';
 import './styles.less';
 import { useWallet } from 'contexts/useWallet/hooks';
@@ -13,22 +13,15 @@ import { getLog } from 'utils/protoUtils';
 import { mockCreateResult, walletAddressList } from './data';
 import { ZERO } from 'constants/misc';
 import { Input } from 'aelf-design';
-import { InboxOutlined } from '@ant-design/icons';
-import { useParseWhitelist } from 'hooks/useParseWhitelist';
-import { identifyWhitelistData } from 'utils/parseWhiteList';
-import { UpdateType } from 'components/UpdateWhitelistUsersButton/types';
 import { useTokenPrice, useTxFee } from 'contexts/useAssets/hooks';
 import { stringify } from 'query-string';
 import { useLocation } from 'react-router-dom';
-
-const { Dragger } = Upload;
 
 export default function Example() {
   const { login, logout, wallet, checkManagerSyncState } = useWallet();
 
   const { getTokenContract, getEwellContract, getWhitelistContract, checkIsNeedApprove } = useViewContract();
   const [projectId, setProjectId] = useState('15d556a57222ef06ea9a46a6fb9db416bffb98b8de60ccef6bcded8ca851f407');
-  const { updateFile } = useParseWhitelist();
 
   const { tokenPrice } = useTokenPrice();
   const { txFee } = useTxFee();
@@ -80,7 +73,7 @@ export default function Example() {
           args: {
             symbol: 'LINHONG',
             to: addressData,
-            amount: amount || '1000000000',
+            amount: amount || '10000',
             memo: '',
           },
         });
@@ -100,12 +93,12 @@ export default function Example() {
       acceptedCurrency: 'ELF',
       projectCurrency: 'LINHONG',
       crowdFundingType: 'Sell at the set price',
-      crowdFundingIssueAmount: '1000',
+      crowdFundingIssueAmount: '10000',
       preSalePrice: '1000',
       startTime: getProtobufTime(Date.now() + 60 * 1000),
       endTime: getProtobufTime(Date.now() + 60 * 1000 * 5),
       minSubscription: 1,
-      maxSubscription: '1000000000',
+      maxSubscription: '10000',
       publicSalePrice: ZERO.plus('100000000').div(1.05).toFixed(), // preSalePrice / 1.05
       listMarketInfo: [], // fixed
       liquidityLockProportion: 0, // fixed
@@ -333,24 +326,6 @@ export default function Example() {
     }
   }, [projectId, wallet]);
 
-  const onUploadChange = useCallback(
-    async (e: any) => {
-      try {
-        const addressList = await updateFile(e);
-        const originList = ['ELF_2R7QtJp7e1qUcfh2RYYJzti9tKpPheNoAGD7dTVFd4m9NaCh27_tDVV'];
-        const fileResult = identifyWhitelistData({
-          originData: originList,
-          identifyData: addressList,
-          type: UpdateType.REMOVE,
-        });
-        console.log('fileResult', fileResult);
-      } catch (error) {
-        console.log('file error', error);
-      }
-    },
-    [updateFile],
-  );
-
   const addWhitelist = useCallback(async () => {
     const ewellContract = await getEwellContract();
     const whitelistId = await ewellContract.GetWhitelistId.call(projectId);
@@ -453,23 +428,6 @@ export default function Example() {
       <div>
         <Button onClick={addWhitelist}>addWhitelist</Button>
         <Button onClick={getWhitelistDetail}>getWhitelistDetail</Button>
-      </div>
-
-      <div>
-        <Dragger
-          accept=".xlsx,.csv"
-          onRemove={() => {
-            console.log('onRemove');
-            // setExcelData([]);
-          }}
-          beforeUpload={(e) => {
-            onUploadChange(e);
-          }}>
-          <p className="ant-upload-drag-icon">
-            <InboxOutlined />
-          </p>
-          <p className="ant-upload-text">Click or drag file to this area to upload</p>
-        </Dragger>
       </div>
 
       <Button

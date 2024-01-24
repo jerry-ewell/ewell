@@ -1,6 +1,6 @@
-import mediumSvg from 'assets/images/communityLogo/mediumLogo.svg';
-import xSvg from 'assets/images/communityLogo/xLogo.svg';
-import telegramSvg from 'assets/images/communityLogo/telegramLogo.svg';
+import mediumSvg from 'assets/images/communityLogo/medium.svg';
+import xSvg from 'assets/images/communityLogo/x.svg';
+import telegramSvg from 'assets/images/communityLogo/telegram.svg';
 
 export type TCommunityItem = {
   name: string;

@@ -103,4 +103,7 @@ export const AELFD_CUSTOM_TOKEN_CONFIG: IAelfdThemeProviderProps['customToken'] 
     colorMessageText: '#070A26',
     containerBg: '#F5F5F6',
   },
+  customPagination: {
+    colorTextSecondary: '#070A26',
+  },
 };

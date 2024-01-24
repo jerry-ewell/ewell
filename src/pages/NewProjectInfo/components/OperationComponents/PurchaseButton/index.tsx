@@ -55,9 +55,13 @@ export default function PurchaseButton({ buttonDisabled, projectInfo, purchaseAm
     return new BigNumber(projectInfo?.investAmount ?? 0).plus(allocationAmount);
   }, [allocationAmount, projectInfo?.investAmount]);
 
+  const totalTxFee = useMemo(() => {
+    return new BigNumber(txFee || 0).times(2);
+  }, [txFee]);
+
   const totalAmount = useMemo(() => {
-    return new BigNumber(purchaseAmount || 0).plus(txFee);
-  }, [purchaseAmount, txFee]);
+    return new BigNumber(purchaseAmount || 0).plus(totalTxFee);
+  }, [purchaseAmount, totalTxFee]);
 
   const handleSubmit = async () => {
     setIsSubmitModalOpen(false);
@@ -226,13 +230,13 @@ export default function PurchaseButton({ buttonDisabled, projectInfo, purchaseAm
               <Text>Estimated Transaction Fee</Text>
               <Flex gap={8} align="baseline">
                 <Text>
-                  {txFee} {projectInfo?.toRaiseToken?.symbol ?? '--'}
+                  {totalTxFee.toFixed()} {projectInfo?.toRaiseToken?.symbol ?? '--'}
                 </Text>
                 {renderTokenPrice({
                   textProps: {
                     size: 'small',
                   },
-                  amount: txFee,
+                  amount: totalTxFee,
                   decimals: 0,
                   tokenPrice,
                 })}
