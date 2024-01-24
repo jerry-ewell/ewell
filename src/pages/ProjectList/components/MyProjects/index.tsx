@@ -2,7 +2,7 @@ import React, { useMemo, useState, useCallback, useEffect, useRef } from 'react'
 import { Row, Col } from 'antd';
 import { useEffectOnce } from 'react-use';
 import { useCardCol } from '../../hooks/useCardCol';
-import PorjectCard, { IProjectCard } from '../Card';
+import ProjectCard, { IProjectCard } from '../Card';
 import { useGetList, IListData } from '../../hooks/useGetList';
 import { ProjectType } from 'types/project';
 import Empty from 'components/Empty';
@@ -35,7 +35,6 @@ const MyProjects: React.FC<ProjectListProps> = () => {
         types: ProjectType.PARTICIPATE,
         skipCount: participateItems.length,
         maxResultCount: colNum * 3,
-        // maxResultCount: 3,
       });
 
       if (loading) emitLoading(false);
@@ -83,36 +82,40 @@ const MyProjects: React.FC<ProjectListProps> = () => {
       {!createdItems.length && !participateItems.length && (
         <>
           <div className="project-type">No Projects</div>
-          <Empty className="empty-full" text={emptyText} />
+          <Empty className="project-empty-full" text={emptyText} />
         </>
       )}
       {!!createdItems.length && (
         <>
           <div className="project-type">Created</div>
+          <div className="project-list-wrapper">
+            <Row gutter={[24, 24]}>
+              {createdItems.map((item) => (
+                <Col span={24 / colNum} key={item.id}>
+                  <ProjectCard data={item} />
+                </Col>
+              ))}
+            </Row>
+          </div>
+        </>
+      )}
+      {!!participateItems.length && (
+        <InfiniteList
+          id="project-list-scroll"
+          showScrollToTop={false}
+          loaded={loadAllParticipateItems}
+          loadMoreData={getParticipateProject}
+          dataLength={participateItems.length}>
+          {!!participateItems.length && <div className="project-type">Participate</div>}
           <Row gutter={[24, 24]}>
-            {createdItems.map((item) => (
+            {participateItems.map((item) => (
               <Col span={24 / colNum} key={item.id}>
-                <PorjectCard data={item} />
+                <ProjectCard data={item} />
               </Col>
             ))}
           </Row>
-        </>
+        </InfiniteList>
       )}
-      <InfiniteList
-        id="project-list-scroll"
-        showScrollToTop={false}
-        loaded={loadAllParticipateItems}
-        loadMoreData={getParticipateProject}
-        dataLength={participateItems.length}>
-        {!!participateItems.length && <div className="project-type">Participate</div>}
-        <Row gutter={[24, 24]}>
-          {participateItems.map((item) => (
-            <Col span={24 / colNum} key={item.id}>
-              <PorjectCard data={item} />
-            </Col>
-          ))}
-        </Row>
-      </InfiniteList>
     </div>
   );
 };
