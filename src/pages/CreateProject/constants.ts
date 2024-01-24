@@ -1,8 +1,9 @@
 import { StepProps } from 'antd';
 import { getInputOptions, normFile } from 'components/FormItem/utils';
 import { FormItemProps, FormFields } from 'components/FormItem';
-import { urlValidator } from 'pages/CreateProjectOld/validate';
+
 import { TSteps } from './types';
+import { urlValidator } from './validate';
 
 export const stepTitle = ['Trading Pair', 'Project Information', 'IDO Information', 'Preview & Transfer'];
 

@@ -4,7 +4,6 @@ import { useRoutes } from 'react-router-dom';
 // const Home = lazy(() => import('pages/Home'));
 // const ProjectList = lazy(() => import('pages/ProjectList'));
 // const ProjectInfo = lazy(() => import('pages/ProjectInfo'));
-// const LiquidityUnlock = lazy(() => import('pages/LiquidityUnlock'));
 // const CreateProject = lazy(() => import('pages/CreateProject'));
 // const EditInformation = lazy(() => import('pages/EditInformation'));
 import Example from 'pages/Example';

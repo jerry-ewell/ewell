@@ -4,13 +4,13 @@ import { Form } from 'antd';
 import { FormItemProps, FormFields } from 'components/FormItem';
 import CustomMark from '../components/CustomMark';
 import storages from '../storages';
-import { minSubscriptionValidator, maxSubscriptionValidator, Validators } from '../validate';
+import { minSubscriptionValidator, maxSubscriptionValidator, Validators, urlValidator } from '../validate';
 import { CreateStepProps } from '../types';
 import ButtonGroup from '../components/ButtonGroup';
 import { disabledDateBefore, disabledTimeBefore } from '../utils';
 import { integeNumberFormat, formatNumberParser } from 'components/FormItem/utils';
 import BigNumber from 'bignumber.js';
-import { urlValidator } from 'pages/CreateProjectOld/validate';
+
 import dayjs from 'dayjs';
 
 const formListConfig: FormItemProps[] = [
@@ -319,7 +319,8 @@ const IDOInfo: React.FC<CreateStepProps> = ({ onNext, onPre }) => {
         scrollToFirstError
         onFinish={onFinish}
         onValuesChange={onValuesChange}
-        requiredMark={CustomMark}>
+        requiredMark={CustomMark}
+      >
         {FormFields(formList)}
         {showWhitelist && FormFields(formWhitelist)}
         <Form.Item>
