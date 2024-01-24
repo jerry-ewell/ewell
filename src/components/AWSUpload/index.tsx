@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Upload, IUploadProps } from 'aelf-design';
 import { GetProp, UploadFile, message } from 'antd';
 import { emitLoading } from 'utils/events';
@@ -32,6 +32,7 @@ const FUpload: React.FC<IFUploadProps> = ({ fileList, maxFileCount, fileLimit = 
   const { awsUploadFile } = useAWSUploadService();
 
   useEffect(() => {
+    console.log('maxFileCount', maxFileCount, inFileList);
     if (!maxFileCount) return setShowUploadBtn(true);
     setShowUploadBtn(inFileList.length < maxFileCount);
   }, [inFileList, maxFileCount]);
@@ -41,7 +42,9 @@ const FUpload: React.FC<IFUploadProps> = ({ fileList, maxFileCount, fileLimit = 
   }, [fileList]);
 
   const onFileChange: IFUploadProps['onChange'] = (info) => {
-    const { fileList } = info;
+    const { file, fileList } = info;
+    if (!file?.status) return;
+
     const newFileList = fileList.map((file) => {
       if (file.response) {
         file.url = file.response.url;

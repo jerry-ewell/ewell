@@ -37,7 +37,7 @@ export const ProjectInfoFromJson: FormItemProps[] = [
     label: 'Summary Project Description (20-500 character):',
     name: 'projectSummary',
     rules: [
-      { required: true, message: 'required' },
+      { required: true, message: 'Please enter the necessary information' },
       { min: 20, message: 'Please enter the necessary information' },
     ],
     childrenProps: {
@@ -54,6 +54,7 @@ export const ProjectInfoFromJson: FormItemProps[] = [
       { min: 300, max: 20000, message: '300-20000' },
     ],
     childrenProps: {
+      maxLength: 20000,
       autoSize: { minRows: 3, maxRows: 5 },
     },
   },
@@ -87,7 +88,13 @@ export const ProjectInfoFromJson: FormItemProps[] = [
     label: 'Official Website:',
     name: 'website',
     tooltip: 'test',
-    rules: [{ required: true, message: '' }, { validator: urlValidator }],
+    rules: [
+      {
+        required: true,
+        message: 'Please enter the necessary information',
+      },
+      { validator: urlValidator },
+    ],
   }),
   {
     type: 'fieldsGroup',
