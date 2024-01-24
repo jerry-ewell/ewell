@@ -6,11 +6,12 @@ import { CreateStepProps } from '../types';
 import { useLocalStorage } from 'react-use';
 import storages from '../storages';
 import { request } from 'api';
-import { DEFAULT_CHAIN_ID } from 'constants/network';
+import { DEFAULT_CHAIN_ID, NETWORK_CONFIG } from 'constants/network';
 import ButtonGroup from '../components/ButtonGroup';
 import { useWallet } from 'contexts/useWallet/hooks';
 import { WebLoginState } from 'aelf-web-login';
 import myEvents from 'utils/myEvent';
+import { useNavigate } from 'react-router-dom';
 
 const ConfirmTradingPair: React.FC<CreateStepProps> = ({ onNext }) => {
   const [tradingPair, setTradingPair] = useLocalStorage(storages.ConfirmTradingPair);
@@ -18,6 +19,7 @@ const ConfirmTradingPair: React.FC<CreateStepProps> = ({ onNext }) => {
   const [tokenList, setTokenList] = useState<ITrandingParCard[]>([]);
   const [disabledBtn, setDisabledBtn] = useState<boolean>(true);
   const { loginState } = useWallet();
+  const navigeta = useNavigate();
   const isBtnDisabled = useMemo(
     () => loginState !== WebLoginState.logined || (disabledBtn && !select),
     [disabledBtn, loginState, select],
@@ -66,7 +68,11 @@ const ConfirmTradingPair: React.FC<CreateStepProps> = ({ onNext }) => {
       <TradingPairList list={tokenList} current={select} onChange={onSelect} />
       <div className="trading-footer">
         <div className="footer-text">
-          There is proper token, go to <span className="link-text">Symbol Market</span> and create a?
+          There is proper token, go to{' '}
+          <span className="link-text" onClick={() => window.open(NETWORK_CONFIG.symbolMarket)}>
+            Symbol Market
+          </span>{' '}
+          and create a?
         </div>
       </div>
       <ButtonGroup onNext={onClick} disabledNext={isBtnDisabled} />

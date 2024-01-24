@@ -9,6 +9,7 @@ import Empty from 'components/Empty';
 import { emitLoading } from 'utils/events';
 import InfiniteList from 'components/InfiniteList';
 import myEvents from 'utils/myEvent';
+import { useNavigate } from 'react-router-dom';
 interface ProjectListProps {
   createdItems?: IProjectCard[];
   participateItems?: IProjectCard[];
@@ -20,6 +21,7 @@ const MyProjects: React.FC<ProjectListProps> = () => {
   const [participateItems, setParticipateItems] = useState<IListData['participateItems']>([]);
   const [participateListPageNum, setParticipateListPageNum] = useState(0);
   const [loadAllParticipateItems, setLoadAllParticipateItems] = useState(false);
+  const navigate = useNavigate();
   const { getList } = useGetList();
 
   const getCreatedProjects = useCallback(async () => {
@@ -72,10 +74,15 @@ const MyProjects: React.FC<ProjectListProps> = () => {
     return (
       <div style={{ fontSize: 14, textAlign: 'center', padding: '0 17vw' }}>
         There are currently no projects. Take a look at
-        <span style={{ color: '#863DFF', fontWeight: 500 }}> Projects</span>
+        <span
+          style={{ color: '#863DFF', fontWeight: 500, cursor: 'pointer' }}
+          onClick={() => navigate('/projects/all')}>
+          {' '}
+          Projects
+        </span>
       </div>
     );
-  }, []);
+  }, [navigate]);
 
   return (
     <div className="project-page">
