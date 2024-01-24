@@ -88,6 +88,13 @@ export const ANTD_THEME_CONFIG: ThemeConfig = {
     Checkbox: {
       controlInteractiveSize: 16,
     },
+    Breadcrumb: {
+      itemColor: '#070A26',
+      lastItemColor: '#070A26',
+      linkColor: '#070A26',
+      linkHoverColor: '#070A26',
+      separatorColor: '#070A26',
+    },
   },
 };
 

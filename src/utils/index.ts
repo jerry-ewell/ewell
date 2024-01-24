@@ -147,3 +147,11 @@ export const handleLoopFetch = async <T>({
     checkIsInvalid,
   });
 };
+
+export const pick = <T extends Record<string, any>, K extends string>(obj: T, keys: K[]) => {
+  const result = {} as Record<string, any>;
+  keys.forEach((key) => {
+    result[key] = obj[key];
+  });
+  return result;
+};
