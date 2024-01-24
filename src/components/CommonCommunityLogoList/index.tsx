@@ -1,4 +1,3 @@
-import React from 'react';
 import clsx from 'clsx';
 import { Flex, FlexProps } from 'antd';
 import communityLogo from 'assets/images/communityLogo';
@@ -11,11 +10,12 @@ enum CommunityLogoType {
   GITHUB = 'github',
   DISCORD = 'discord',
   REDDIT = 'reddit',
+  MEDIUM = 'medium',
 }
 
 interface ICommonCommunityLogoListProps {
   flexProps?: FlexProps;
-  imgProps?: React.ImgHTMLAttributes<HTMLImageElement>;
+  imgClassName?: string;
   communityLink: { [key in CommunityLogoType]?: string };
 }
 
@@ -27,9 +27,14 @@ export const COMMUNITY_LOGO_LIST = [
   CommunityLogoType.GITHUB,
   CommunityLogoType.DISCORD,
   CommunityLogoType.REDDIT,
+  CommunityLogoType.MEDIUM,
 ];
 
-export default function CommonCommunityLogoList({ flexProps, imgProps, communityLink }: ICommonCommunityLogoListProps) {
+export default function CommonCommunityLogoList({
+  flexProps,
+  imgClassName,
+  communityLink,
+}: ICommonCommunityLogoListProps) {
   const communityLogoList = COMMUNITY_LOGO_LIST.map((type) => ({
     type,
     logo: communityLogo[type],
@@ -42,9 +47,8 @@ export default function CommonCommunityLogoList({ flexProps, imgProps, community
         .map((item, index) => {
           return (
             <img
-              {...imgProps}
               key={index}
-              className={clsx('cursor-pointer', imgProps?.className)}
+              className={clsx('cursor-pointer', imgClassName)}
               src={item.logo}
               alt="community"
               onClick={() => {
