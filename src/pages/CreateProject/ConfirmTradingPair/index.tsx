@@ -11,7 +11,7 @@ import ButtonGroup from '../components/ButtonGroup';
 import { useWallet } from 'contexts/useWallet/hooks';
 import { WebLoginState } from 'aelf-web-login';
 import myEvents from 'utils/myEvent';
-import { useNavigate } from 'react-router-dom';
+import { emitLoading } from 'utils/events';
 
 const ConfirmTradingPair: React.FC<CreateStepProps> = ({ onNext }) => {
   const [tradingPair, setTradingPair] = useLocalStorage(storages.ConfirmTradingPair);
@@ -19,7 +19,6 @@ const ConfirmTradingPair: React.FC<CreateStepProps> = ({ onNext }) => {
   const [tokenList, setTokenList] = useState<ITrandingParCard[]>([]);
   const [disabledBtn, setDisabledBtn] = useState<boolean>(true);
   const { loginState } = useWallet();
-  const navigeta = useNavigate();
   const isBtnDisabled = useMemo(
     () => loginState !== WebLoginState.logined || (disabledBtn && !select),
     [disabledBtn, loginState, select],
@@ -38,9 +37,11 @@ const ConfirmTradingPair: React.FC<CreateStepProps> = ({ onNext }) => {
 
   const getTokenList = useCallback(async () => {
     try {
+      emitLoading(true);
       const { code, data, message } = await request.project.getTokenList({
         params: { chainId: DEFAULT_CHAIN_ID },
       });
+      emitLoading(false);
       if (code === '20000') {
         setTokenList(data);
         return;

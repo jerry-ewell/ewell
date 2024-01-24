@@ -34,6 +34,7 @@ const formListConfig: FormItemProps[] = [
     initialValue: '0',
     required: true,
     childrenProps: {
+      disabled: true,
       list: [
         { title: 'Return', value: '0' },
         { title: 'Burn', value: '1' },
