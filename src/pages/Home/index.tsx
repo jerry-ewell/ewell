@@ -15,7 +15,6 @@ export default function Home() {
           <div className="main-poster-wrap" style={{ backgroundImage: `url(${mainPosterImg})` }}>
             <div className="main-poster"></div>
           </div>
-          {/*  */}
           <div className="home-content-warp">
             <div className="home-content">
               <img className="multiple-circles-wrap" src={multipleCirclesImg} alt="" />
