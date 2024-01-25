@@ -1,6 +1,6 @@
 import BigNumber from 'bignumber.js';
 import type { FormItemProps } from '..';
-import type { inputProps, passwordProps, textAreaProps } from '../types';
+import type { inputProps, textAreaProps } from '../types';
 import type { FormItemProps as antFormItemProps } from 'antd';
 
 type Options = {
@@ -9,7 +9,9 @@ type Options = {
   required?: boolean;
 } & antFormItemProps;
 
-function unifyOptions<T>(option: T): Options & {
+function unifyOptions<T extends Options>(
+  option: T,
+): Options & {
   childrenProps?: any;
 } {
   if (typeof option === 'string') {
@@ -51,18 +53,6 @@ export function getTextAreaOptions(option: string | Options): textAreaProps & Fo
     rules: required ? [{ required: true, message: `Please enter ${label}!` }] : [],
     childrenProps: {
       placeholder: `Please enter ${label}`,
-    },
-  };
-}
-export function getPasswordOptions(option: string | Options): passwordProps & FormItemProps {
-  const { label, name, required = true } = unifyOptions(option);
-  return {
-    type: 'password',
-    label: label,
-    name: name || label,
-    rules: required ? [{ required: true, message: `Please enter ${label}!` }] : [],
-    childrenProps: {
-      placeholder: '6 - 16位 数字、字母、符号两种及以上！',
     },
   };
 }

@@ -2,7 +2,7 @@ import React from 'react';
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { useParams, useLocation, NavLink } from 'react-router-dom';
 import { request } from 'api';
-import { Breadcrumb, Flex, message } from 'antd';
+import { Breadcrumb, message } from 'antd';
 import { Typography } from 'aelf-design';
 import { WebLoginEvents, useWebLoginEvent } from 'aelf-web-login';
 import ActionCard from './components/ActionCard';
@@ -14,7 +14,6 @@ import { DEFAULT_CHAIN_ID } from 'constants/network';
 import { IProjectInfo, ProjectListType } from 'types/project';
 import myEvents from 'utils/myEvent';
 import { emitLoading } from 'utils/events';
-import { tableEmpty } from 'assets/images';
 import './styles.less';
 
 interface IProjectInfoProps {
@@ -113,7 +112,7 @@ export default function ProjectInfo({ previewData, style }: IProjectInfoProps) {
   const breadList = useMemo(
     () => [
       {
-        title: <NavLink to={`/project-list/${from}`}>{from === ProjectListType.MY && 'My '}Projects</NavLink>,
+        title: <NavLink to={`/projects/${from}`}>{from === ProjectListType.MY && 'My '}Projects</NavLink>,
       },
       {
         title: projectInfo?.additionalInfo?.projectName || 'Project Info',
@@ -134,17 +133,11 @@ export default function ProjectInfo({ previewData, style }: IProjectInfoProps) {
       {contextHolder}
       <div className="common-page page-body project-info-wrapper" style={style}>
         {!isPreview && <Breadcrumb className="bread-wrap" items={breadList} />}
-        {showInfo ? (
+        {showInfo && (
           <div className="flex project-info-content">
             <InfoWrapper projectInfo={info} />
             {!isMobile && <ActionCard projectInfo={info} isPreview={isPreview} handleRefresh={getProjectInfo} />}
           </div>
-        ) : (
-          // TODO: adjust ui
-          <Flex className="min-height-container" vertical justify="center" align="center" gap={16}>
-            <img src={tableEmpty} alt="empty" />
-            <Text>Empty</Text>
-          </Flex>
         )}
       </div>
     </>

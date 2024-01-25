@@ -4,13 +4,12 @@ import { Form } from 'antd';
 import { FormItemProps, FormFields } from 'components/FormItem';
 import CustomMark from '../components/CustomMark';
 import storages from '../storages';
-import { minSubscriptionValidator, maxSubscriptionValidator, Validators } from '../validate';
+import { minSubscriptionValidator, maxSubscriptionValidator, Validators, urlValidator } from '../validate';
 import { CreateStepProps } from '../types';
 import ButtonGroup from '../components/ButtonGroup';
 import { disabledDateBefore, disabledTimeBefore } from '../utils';
 import { integeNumberFormat, formatNumberParser } from 'components/FormItem/utils';
 import BigNumber from 'bignumber.js';
-import { urlValidator } from 'pages/CreateProjectOld/validate';
 import dayjs from 'dayjs';
 
 const formListConfig: FormItemProps[] = [
@@ -34,6 +33,7 @@ const formListConfig: FormItemProps[] = [
     initialValue: '0',
     required: true,
     childrenProps: {
+      disabled: true,
       list: [
         { title: 'Return', value: '0' },
         { title: 'Burn', value: '1' },

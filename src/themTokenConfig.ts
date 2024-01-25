@@ -88,6 +88,13 @@ export const ANTD_THEME_CONFIG: ThemeConfig = {
     Checkbox: {
       controlInteractiveSize: 16,
     },
+    Breadcrumb: {
+      itemColor: '#070A26',
+      lastItemColor: '#070A26',
+      linkColor: '#070A26',
+      linkHoverColor: '#070A26',
+      separatorColor: '#070A26',
+    },
   },
 };
 
@@ -102,5 +109,8 @@ export const AELFD_CUSTOM_TOKEN_CONFIG: IAelfdThemeProviderProps['customToken'] 
     borderColor: '#070A26',
     colorMessageText: '#070A26',
     containerBg: '#F5F5F6',
+  },
+  customPagination: {
+    colorTextSecondary: '#070A26',
   },
 };

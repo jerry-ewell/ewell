@@ -4,7 +4,6 @@ import { useRoutes } from 'react-router-dom';
 // const Home = lazy(() => import('pages/Home'));
 // const ProjectList = lazy(() => import('pages/ProjectList'));
 // const ProjectInfo = lazy(() => import('pages/ProjectInfo'));
-// const LiquidityUnlock = lazy(() => import('pages/LiquidityUnlock'));
 // const CreateProject = lazy(() => import('pages/CreateProject'));
 // const EditInformation = lazy(() => import('pages/EditInformation'));
 import Example from 'pages/Example';
@@ -13,7 +12,6 @@ import ProjectList from 'pages/ProjectList';
 import NewProjectInfo from 'pages/NewProjectInfo';
 import ParticipantList from 'pages/ParticipantList';
 import WhitelistUsers from 'pages/WhitelistUsers';
-import LiquidityUnlock from 'pages/LiquidityUnlock';
 import CreateProject from 'pages/CreateProject';
 import EditInformation from 'pages/EditInformation';
 
@@ -24,7 +22,7 @@ export const PageRouter = () =>
       element: <Home />,
     },
     {
-      path: '/project-list/:type',
+      path: '/projects/:type',
       element: <ProjectList />,
     },
     {
@@ -42,10 +40,6 @@ export const PageRouter = () =>
     {
       path: '/whitelist-users/:whitelistId',
       element: <WhitelistUsers />,
-    },
-    {
-      path: '/liquidity-unlock/:projectId',
-      element: <LiquidityUnlock />,
     },
     {
       path: '/create-project',

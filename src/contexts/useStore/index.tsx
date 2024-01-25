@@ -1,14 +1,8 @@
-import { SupportedChainId } from 'constants/chain';
-import { ChainConstants } from 'constants/ChainConstants';
-import { supportedChainId } from 'constants/index';
 import { ZERO } from 'constants/misc';
-import { useAElfContractContext } from 'contexts/useAElfContract';
-import { useActiveWeb3React } from 'hooks/web3';
 import { createContext, ReactNode, useContext, useEffect, useMemo, useReducer, useState } from 'react';
-import { useEffectOnce, useSearchParam } from 'react-use';
+import { useEffectOnce } from 'react-use';
 import isMobile from 'utils/isMobile';
-import { switchNetwork } from 'utils/network';
-import { provider } from 'web3-core';
+
 const INITIAL_STATE = {};
 const StoreContext = createContext<any>(INITIAL_STATE);
 
@@ -31,15 +25,7 @@ function reducer(state: any, { type, payload }: any) {
 
 export default function Provider({ children }: { children: ReactNode }) {
   const [state, dispatch] = useReducer(reducer, INITIAL_STATE);
-  // const { chainId, library, aelfInstance } = useActiveWeb3React();
-  // const [contracts] = useAElfContractContext();
   const [mobile, setMobile] = useState<boolean>();
-  // useMemo(() => initialized(chainId, library, aelfInstance, contracts), [chainId, library, aelfInstance, contracts]);
-  const toChainId = useSearchParam('toChainId');
-  useEffectOnce(() => {
-    if (toChainId && supportedChainId[Number(toChainId) as SupportedChainId])
-      switchNetwork(supportedChainId[Number(toChainId) as SupportedChainId].CHAIN_INFO);
-  });
 
   // isMobile
   useEffectOnce(() => {
@@ -75,13 +61,4 @@ export default function Provider({ children }: { children: ReactNode }) {
       {children}
     </StoreContext.Provider>
   );
-}
-function initialized(chainId?: number | string, library?: provider, aelfInstance?: any, aelfContracts?: any) {
-  if (chainId) {
-    if (typeof chainId === 'string') {
-      new ChainConstants(chainId, 'ELF', library, aelfInstance, aelfContracts);
-    } else {
-      new ChainConstants(chainId, 'ERC', library, aelfInstance, aelfContracts);
-    }
-  }
 }

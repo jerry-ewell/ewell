@@ -4,7 +4,7 @@ import storages from '../storages';
 import ButtonGroup from '../components/ButtonGroup';
 import { CreateStepProps } from '../types';
 import { ConfirmModal, SuccessModal } from './components/Modal';
-import { ITrandingParCard } from '../components/TradingPairList';
+import { ITradingParCard } from '../components/TradingPairList';
 import { useTransfer } from './useTransfer';
 import { emitLoading } from 'utils/events';
 import { message, Flex } from 'antd';
@@ -15,6 +15,7 @@ import { AELF_TOKEN_INFO } from 'constants/misc';
 import { Typography, FontWeightEnum } from 'aelf-design';
 import BigNumber from 'bignumber.js';
 import { ProjectStatus } from 'types/project';
+import { resetCreateProjectInfo } from '../utils';
 
 interface SuccessInfo {
   supply?: number;
@@ -25,7 +26,7 @@ interface SuccessInfo {
 const { Title } = Typography;
 
 const Transfer: React.FC<CreateStepProps> = ({ onPre }) => {
-  const [tradingPair] = useLocalStorage<ITrandingParCard>(storages.ConfirmTradingPair);
+  const [tradingPair] = useLocalStorage<ITradingParCard>(storages.ConfirmTradingPair);
   const [additional] = useLocalStorage(storages.AdditionalInformation);
   const [idoInfo] = useLocalStorage<any>(storages.IDOInfo);
   const [openConfirmModal, setOpenConfirmModal] = useState(false);
@@ -59,14 +60,14 @@ const Transfer: React.FC<CreateStepProps> = ({ onPre }) => {
     emitLoading(true, { text: 'Processing on the blockchain...' });
     const result: any = await register({ tradingPair, idoInfo, additional });
     console.log('createResult:', result);
+    emitLoading(false);
     if (result?.errMsg) {
       console.log('error', result);
-      emitLoading(false);
       message.error('create failed');
       return;
     }
     setSuccessInfo(result);
-    emitLoading(false);
+    resetCreateProjectInfo();
     setOpenSuccessModal(true);
   }, [additional, idoInfo, register, tradingPair]);
 

@@ -6,7 +6,6 @@ import './styles.less';
 
 const ProjectList: React.FC = () => {
   const { type } = useParams();
-  console.log('useparams', type);
   return <div className="common-page page-body project-list">{type === 'my' ? <MyProjects /> : <Projects />}</div>;
 };
 

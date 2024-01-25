@@ -6,15 +6,12 @@ import Footer from 'components/Footer';
 import PageLoading from 'components/PageLoading';
 import PageSyncTipsModal from 'components/PageSyncTipsModal';
 import { useInit } from 'hooks/useInit';
-// import { Suspense } from 'react';
 
 function App() {
   useInit();
 
   return (
     <>
-      {/* <Modals /> */}
-      {/* <Suspense fallback={null}> */}
       <div className="ewell-ui-root" id="project-list-scroll">
         <Header />
         <ScrollToTop />
@@ -25,7 +22,6 @@ function App() {
         <PageLoading />
         <PageSyncTipsModal />
       </div>
-      {/* </Suspense> */}
     </>
   );
 }

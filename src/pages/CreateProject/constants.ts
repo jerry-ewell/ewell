@@ -1,8 +1,9 @@
 import { StepProps } from 'antd';
 import { getInputOptions, normFile } from 'components/FormItem/utils';
 import { FormItemProps, FormFields } from 'components/FormItem';
-import { urlValidator } from 'pages/CreateProjectOld/validate';
+
 import { TSteps } from './types';
+import { urlValidator } from './validate';
 
 export const stepTitle = ['Trading Pair', 'Project Information', 'IDO Information', 'Preview & Transfer'];
 
@@ -34,9 +35,9 @@ export const ProjectInfoFromJson: FormItemProps[] = [
   {
     type: 'textArea',
     label: 'Summary Project Description (20-500 character):',
-    name: 'projectSummmary',
+    name: 'projectSummary',
     rules: [
-      { required: true, message: 'required' },
+      { required: true, message: 'Please enter the necessary information' },
       { min: 20, message: 'Please enter the necessary information' },
     ],
     childrenProps: {
@@ -53,12 +54,13 @@ export const ProjectInfoFromJson: FormItemProps[] = [
       { min: 300, max: 20000, message: '300-20000' },
     ],
     childrenProps: {
+      maxLength: 20000,
       autoSize: { minRows: 3, maxRows: 5 },
     },
   },
   {
     type: 'fileUpload',
-    label: 'LogoUrl:',
+    label: 'Logo:',
     name: 'logoUrl',
     required: true,
     valuePropName: 'fileList',
@@ -86,7 +88,13 @@ export const ProjectInfoFromJson: FormItemProps[] = [
     label: 'Official Website:',
     name: 'website',
     tooltip: 'test',
-    rules: [{ required: true, message: '' }, { validator: urlValidator }],
+    rules: [
+      {
+        required: true,
+        message: 'Please enter the necessary information',
+      },
+      { validator: urlValidator },
+    ],
   }),
   {
     type: 'fieldsGroup',
@@ -107,6 +115,30 @@ export const ProjectInfoFromJson: FormItemProps[] = [
       getInputOptions({
         label: 'Telegram:',
         name: 'telegram',
+        required: false,
+        rules: [{ validator: urlValidator }],
+      }),
+      getInputOptions({
+        label: 'Github:',
+        name: 'github',
+        required: false,
+        rules: [{ validator: urlValidator }],
+      }),
+      getInputOptions({
+        label: 'Discord:',
+        name: 'discord',
+        required: false,
+        rules: [{ validator: urlValidator }],
+      }),
+      getInputOptions({
+        label: 'Reddit:',
+        name: 'reddit',
+        required: false,
+        rules: [{ validator: urlValidator }],
+      }),
+      getInputOptions({
+        label: 'Facebook:',
+        name: 'facebook',
         required: false,
         rules: [{ validator: urlValidator }],
       }),

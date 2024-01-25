@@ -19,6 +19,7 @@ import { authToken, clearLocalJWT } from './utils';
 import myEvents from 'utils/myEvent';
 import { useLocation } from 'react-use';
 import { useNavigate } from 'react-router-dom';
+import { checkPathExist } from 'utils/reg';
 
 const APPNAME = 'explorer.aelf.io';
 
@@ -88,7 +89,7 @@ function reducer(state: any, { type, payload }: any) {
   }
 }
 
-const LOGOUT_STAY_PATH = ['/example', '/project', '/project-list/all'];
+const LOGOUT_STAY_PATH = ['example', 'project', 'projects/all'];
 export function WalletProvider({ children }: { children: React.ReactNode }) {
   const [state, dispatch] = useReducer(reducer, INITIAL_STATE);
   const webLoginContext = useWebLoginContext();
@@ -133,10 +134,7 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
     });
     clearLocalJWT();
 
-    const _pathname = `${pathnameRef.current || ''}/`;
-    const isStay = LOGOUT_STAY_PATH.find((path) => {
-      return _pathname.includes(`${path}/`);
-    });
+    const isStay = checkPathExist(LOGOUT_STAY_PATH, pathnameRef.current || '');
     if (!isStay) {
       navigate('/', { replace: true });
     }

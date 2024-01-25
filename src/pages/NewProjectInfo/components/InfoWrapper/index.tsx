@@ -1,9 +1,10 @@
 import { Flex } from 'antd';
 import { Typography, FontWeightEnum, Carousel } from 'aelf-design';
 import ProjectLogo from 'components/ProjectLogo';
+import CommonCommunityLogoList, { COMMUNITY_LOGO_LIST } from 'components/CommonCommunityLogoList';
 import ProjectTabs from '../ProjectTabs';
-import communityLogo from 'assets/images/communityLogo';
 import { IProjectInfo } from 'types/project';
+import { pick } from 'utils';
 import './styles.less';
 
 const { Title, Text } = Typography;
@@ -26,21 +27,7 @@ export default function InfoWrapper({ projectInfo }: IInfoWrapperProps) {
           <Title level={5} fontWeight={FontWeightEnum.Medium}>
             {additionalInfo?.projectName || '--'}
           </Title>
-          <Flex gap={12} align="center">
-            {Object.entries(additionalInfo || [])
-              .filter(([key]) => Object.keys(communityLogo).find((item) => item === key))
-              .map(([key, value], index) => (
-                <img
-                  key={index}
-                  className="cursor-pointer"
-                  src={communityLogo[key]}
-                  alt="community"
-                  onClick={() => {
-                    window.open(value, '_blank');
-                  }}
-                />
-              ))}
-          </Flex>
+          <CommonCommunityLogoList communityLink={pick(additionalInfo || {}, COMMUNITY_LOGO_LIST)} />
           {!!additionalInfo?.projectSummary && <Text>{additionalInfo?.projectSummary}</Text>}
         </div>
         {projectImgs.length > 0 && <Carousel className="carousel" data={projectImgs} />}

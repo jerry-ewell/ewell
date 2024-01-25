@@ -107,7 +107,7 @@ export default function WhitelistUsers() {
   const breadList = useMemo(
     () => [
       {
-        title: <NavLink to={`/project-list/my`}>My Projects</NavLink>,
+        title: <NavLink to={`/projects/my`}>My Projects</NavLink>,
       },
       {
         title: <NavLink to={`/project/${projectId}`}>{projectName}</NavLink>,

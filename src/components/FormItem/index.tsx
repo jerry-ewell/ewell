@@ -1,25 +1,11 @@
-import {
-  // Input,
-  Form,
-  Select,
-  FormItemProps as antFormItemProps,
-  // DatePicker,
-  TimePicker,
-  Flex,
-  InputNumber,
-  // Upload,
-  // Button,
-} from 'antd';
-import { Input, DatePickerForPC, DatePickerForMobile } from 'aelf-design';
+import { Form, Select, FormItemProps as antFormItemProps, TimePicker, Flex, InputNumber } from 'antd';
+import { Input, DatePickerForPC } from 'aelf-design';
 import { memo } from 'react';
-import CityCascader from './components/CityCascader';
 import FormGroup from './components/FormGroup';
-import FormRadioAndInput from './components/FormRadioAndInput';
 import FormTree from './components/FormTree';
-import Upload from '../Upload';
-import dayjs from 'dayjs';
+import Upload from '../AWSUpload';
+
 import {
-  cityCascaderProps,
   datePickerProps,
   rowProps,
   fileUploadProps,
@@ -27,7 +13,6 @@ import {
   idCardUploadProps,
   inputProps,
   passwordProps,
-  radioInputProps,
   selectProps,
   textAreaProps,
   treeProps,
@@ -46,11 +31,9 @@ export type FormItemProps = (
   | treeProps
   | passwordProps
   | selectProps
-  | cityCascaderProps
   | datePickerProps
   | fileUploadProps
   | idCardUploadProps
-  | radioInputProps
   | rowProps
   | searchSelectProps
   | timePickerProps
@@ -88,8 +71,6 @@ function getChildren(type: FormItemProps['type'], childrenProps: FormItemProps['
         </Select>
       );
     }
-    case 'cityCascader':
-      return <CityCascader {...(childrenProps as any)} />;
     case 'datePicker': {
       const customFormat = (value) => {
         // console.log('datepicker-value', dayjs(value));
@@ -105,8 +86,6 @@ function getChildren(type: FormItemProps['type'], childrenProps: FormItemProps['
     }
     case 'timePicker':
       return <TimePicker style={{ width: '100%' }} {...(childrenProps as timePickerProps['childrenProps'])} />;
-    case 'radioInput':
-      return <FormRadioAndInput {...(childrenProps as radioInputProps['childrenProps'])} />;
     case 'row':
       return <div {...(childrenProps as rowProps['childrenProps'])} />;
     case 'fileUpload':

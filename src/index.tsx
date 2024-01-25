@@ -1,6 +1,5 @@
 import ReactDOM from 'react-dom';
 import App from './App';
-import reportWebVitals from './reportWebVitals';
 
 import { prefixCls } from 'constants/theme';
 import WalletProvider from './contexts/useWallet';
@@ -46,5 +45,3 @@ ReactDOM.render(
   </ContextProviders>,
   document.getElementById('root'),
 );
-
-reportWebVitals();

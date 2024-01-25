@@ -1,5 +1,4 @@
 import BigNumber from 'bignumber.js';
-import { ZERO } from 'constants/misc';
 import { isValidNumber } from './reg';
 
 const formatDeci = (value: string, pivot: BigNumber, min: BigNumber, maxLength = 8) => {
